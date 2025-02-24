@@ -1,0 +1,108 @@
+<%- include('partials/header') %>
+<%- include('partials/navbar') %>
+
+<div class="container mt-4">
+    <div class="row">
+        <!-- Profile Sidebar -->
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-body text-center">
+                    <div class="profile-image mb-3">
+                        <i class="fas fa-user-circle fa-5x text-primary"></i>
+                    </div>
+                    <h3 class="card-title"><%= user.name %></h3>
+                    <p class="text-muted"><%= user.email %></p>
+                    <% if (!user.isAdmin) { %>
+                        <p>
+                            <i class="fab fa-leetcode"></i>
+                            <a href="https://leetcode.com/<%= user.leetcodeUsername %>" target="_blank">
+                                <%= user.leetcodeUsername %>
+                            </a>
+                        </p>
+                    <% } %>
+                    <p class="badge bg-<%= user.isAdmin ? 'danger' : 'primary' %>">
+                        <%= user.isAdmin ? 'Administrator' : 'User' %>
+                    </p>
+                </div>
+            </div>
+
+            <!-- Quick Stats -->
+            <div class="card mt-3">
+                <div class="card-body">
+                    <h5 class="card-title">Quick Stats</h5>
+                    <div class="list-group list-group-flush">
+                        <div class="list-group-item d-flex justify-content-between align-items-center">
+                            Problems Solved
+                            <span class="badge bg-primary rounded-pill">0</span>
+                        </div>
+                        <div class="list-group-item d-flex justify-content-between align-items-center">
+                            Submissions
+                            <span class="badge bg-primary rounded-pill">0</span>
+                        </div>
+                        <div class="list-group-item d-flex justify-content-between align-items-center">
+                            Days Streak
+                            <span class="badge bg-primary rounded-pill">0</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Profile Content -->
+        <div class="col-md-8">
+            <!-- Profile Settings -->
+            <div class="card">
+                <div class="card-body">
+                    <h4 class="card-title">Profile Settings</h4>
+                    <form action="/profile/update" method="POST">
+                        <div class="mb-3">
+                            <label for="name" class="form-label">Name</label>
+                            <input type="text" class="form-control" id="name" name="name" value="<%= user.name %>" readonly>
+                        </div>
+                        <div class="mb-3">
+                            <label for="email" class="form-label">Email</label>
+                            <input type="email" class="form-control" id="email" name="email" value="<%= user.email %>" readonly>
+                        </div>
+                        <% if (!user.isAdmin) { %>
+                            <div class="mb-3">
+                                <label for="leetcodeUsername" class="form-label">LeetCode Username</label>
+                                <input type="text" class="form-control" id="leetcodeUsername" name="leetcodeUsername" value="<%= user.leetcodeUsername || 'N/A' %>" readonly>
+                            </div>
+                        <% } %>
+                        <div class="mb-3">
+                            <label for="newPassword" class="form-label">New Password</label>
+                            <input type="password" class="form-control" id="newPassword" name="newPassword">
+                            <small class="form-text text-muted">Leave blank to keep current password.</small>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Update Profile</button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Recent Activity -->
+            <div class="card mt-3">
+                <div class="card-body">
+                    <h4 class="card-title">Recent Activity</h4>
+                    <div class="list-group">
+                        <div class="list-group-item text-muted">
+                            No recent activity to show.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.profile-image {
+    width: 120px;
+    height: 120px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+</style>
+
+<%- include('partials/footer') %> 

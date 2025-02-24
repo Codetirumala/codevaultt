@@ -1,0 +1,197 @@
+<%- include('../partials/header') %>
+<%- include('../partials/navbar') %>
+
+<div class="container mt-4">
+    <div class="row mb-4">
+        <div class="col">
+            <h2>DSA Sheet</h2>
+            <p class="text-muted">Master your Data Structures and Algorithms</p>
+        </div>
+    </div>
+
+    <!-- Difficulty tabs -->
+    <ul class="nav nav-pills mb-4" id="difficultyTabs" role="tablist">
+        <li class="nav-item" role="presentation">
+            <button class="nav-link active" id="all-tab" data-bs-toggle="pill" data-bs-target="#all" type="button">
+                All Topics
+            </button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="easy-tab" data-bs-toggle="pill" data-bs-target="#easy" type="button">
+                Easy
+            </button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="medium-tab" data-bs-toggle="pill" data-bs-target="#medium" type="button">
+                Medium
+            </button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="hard-tab" data-bs-toggle="pill" data-bs-target="#hard" type="button">
+                Hard
+            </button>
+        </li>
+    </ul>
+
+    <!-- Topics content -->
+    <div class="tab-content" id="topicsContent">
+        <!-- All Topics -->
+        <div class="tab-pane fade show active" id="all">
+            <div class="row">
+                <% Object.entries(groupedTopics).forEach(([difficulty, topics]) => { %>
+                    <% topics.forEach(topic => { %>
+                        <div class="col-md-4 mb-4">
+                            <div class="card h-100 shadow-sm" onclick="window.location.href='/dsa/topics/<%= topic._id %>'">
+                                <div class="card-body">
+                                    <div class="d-flex justify-content-between align-items-center mb-3">
+                                        <h5 class="card-title mb-0"><%= topic.name %></h5>
+                                        <span class="badge bg-<%= difficulty === 'Easy' ? 'success' : difficulty === 'Medium' ? 'warning' : 'danger' %>">
+                                            <%= difficulty %>
+                                        </span>
+                                    </div>
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <div>
+                                            <small class="text-muted">
+                                                <i class="fas fa-code"></i> <%= topicStats[topic._id].totalProblems %> Problems
+                                            </small>
+                                            <br>
+                                            <small class="text-muted">
+                                                <i class="fas fa-check"></i> <%= topicStats[topic._id].solvedProblems %> Solved
+                                            </small>
+                                        </div>
+                                        <a href="/dsa/topics/<%= topic._id %>" class="btn btn-primary btn-sm">
+                                            Start Practice
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    <% }); %>
+                <% }); %>
+            </div>
+        </div>
+
+        <!-- Easy Topics -->
+        <div class="tab-pane fade" id="easy">
+            <div class="row">
+                <% groupedTopics.Easy.forEach(topic => { %>
+                    <div class="col-md-4 mb-4">
+                        <div class="card h-100 shadow-sm" onclick="window.location.href='/dsa/topics/<%= topic._id %>'">
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between align-items-center mb-3">
+                                    <h5 class="card-title mb-0"><%= topic.name %></h5>
+                                    <span class="badge bg-success">Easy</span>
+                                </div>
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <small class="text-muted">
+                                            <i class="fas fa-code"></i> <%= topicStats[topic._id].totalProblems %> Problems
+                                        </small>
+                                        <br>
+                                        <small class="text-muted">
+                                            <i class="fas fa-check"></i> <%= topicStats[topic._id].solvedProblems %> Solved
+                                        </small>
+                                    </div>
+                                    <a href="/dsa/topics/<%= topic._id %>" class="btn btn-primary btn-sm">
+                                        Start Practice
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                <% }); %>
+            </div>
+        </div>
+
+        <!-- Medium Topics -->
+        <div class="tab-pane fade" id="medium">
+            <div class="row">
+                <% groupedTopics.Medium.forEach(topic => { %>
+                    <div class="col-md-4 mb-4">
+                        <div class="card h-100 shadow-sm" onclick="window.location.href='/dsa/topics/<%= topic._id %>'">
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between align-items-center mb-3">
+                                    <h5 class="card-title mb-0"><%= topic.name %></h5>
+                                    <span class="badge bg-warning">Medium</span>
+                                </div>
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <small class="text-muted">
+                                            <i class="fas fa-code"></i> <%= topicStats[topic._id].totalProblems %> Problems
+                                        </small>
+                                        <br>
+                                        <small class="text-muted">
+                                            <i class="fas fa-check"></i> <%= topicStats[topic._id].solvedProblems %> Solved
+                                        </small>
+                                    </div>
+                                    <a href="/dsa/topics/<%= topic._id %>" class="btn btn-primary btn-sm">
+                                        Start Practice
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                <% }); %>
+            </div>
+        </div>
+
+        <!-- Hard Topics -->
+        <div class="tab-pane fade" id="hard">
+            <div class="row">
+                <% groupedTopics.Hard.forEach(topic => { %>
+                    <div class="col-md-4 mb-4">
+                        <div class="card h-100 shadow-sm" onclick="window.location.href='/dsa/topics/<%= topic._id %>'">
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between align-items-center mb-3">
+                                    <h5 class="card-title mb-0"><%= topic.name %></h5>
+                                    <span class="badge bg-danger">Hard</span>
+                                </div>
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <small class="text-muted">
+                                            <i class="fas fa-code"></i> <%= topicStats[topic._id].totalProblems %> Problems
+                                        </small>
+                                        <br>
+                                        <small class="text-muted">
+                                            <i class="fas fa-check"></i> <%= topicStats[topic._id].solvedProblems %> Solved
+                                        </small>
+                                    </div>
+                                    <a href="/dsa/topics/<%= topic._id %>" class="btn btn-primary btn-sm">
+                                        Start Practice
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                <% }); %>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.nav-pills .nav-link {
+    color: #6c757d;
+    margin-right: 10px;
+}
+
+.nav-pills .nav-link.active {
+    background-color: #007bff;
+    color: white;
+}
+
+.card {
+    transition: transform 0.2s;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+}
+
+.badge {
+    font-size: 0.8rem;
+    padding: 0.4em 0.8em;
+}
+</style>
+
+<%- include('../partials/footer') %> 

@@ -1,0 +1,28 @@
+<%- include('partials/header') %>
+<%- include('partials/navbar') %>
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6 text-center">
+            <div class="error-page">
+                <i class="fas fa-exclamation-circle text-danger display-1 mb-4"></i>
+                <h2 class="mb-4">Error</h2>
+                <p class="lead mb-4"><%= message || 'Something went wrong!' %></p>
+                <a href="/" class="btn btn-primary">
+                    <i class="fas fa-home me-2"></i>Go Home
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.error-page {
+    padding: 40px;
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 0 15px rgba(0,0,0,0.1);
+}
+</style>
+
+<%- include('partials/footer') %> 

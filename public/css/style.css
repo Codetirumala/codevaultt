@@ -1,0 +1,21 @@
+.dropdown-item i {
+    width: 20px;
+    margin-right: 8px;
+}
+
+.navbar .fa-user-circle {
+    font-size: 1.2em;
+    margin-right: 5px;
+}
+
+.dropdown-menu {
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+}
+
+.dropdown-item:hover {
+    background-color: #f8f9fa;
+}
+
+.dropdown-item.text-danger:hover {
+    background-color: #fff5f5;
+} 

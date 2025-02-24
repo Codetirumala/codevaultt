@@ -1,0 +1,88 @@
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <div class="container">
+        <a class="navbar-brand" href="/">Code Vault</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav me-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="/dsa/sheet">DSA Sheet</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/companies">Companies</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/roadmap">Roadmap</a>
+                </li>
+            </ul>
+
+            <ul class="navbar-nav">
+                <% if (locals.user) { %>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="profileDropdown" role="button" data-bs-toggle="dropdown">
+                            <i class="fas fa-user-circle"></i>
+                            <%= user.name %>
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end">
+                            <li>
+                                <a class="dropdown-item" href="/profile">
+                                    <i class="fas fa-id-card"></i> Profile
+                                </a>
+                            </li>
+                            <% if (user.isAdmin) { %>
+                                <li>
+                                    <a class="dropdown-item" href="/admin/dashboard">
+                                        <i class="fas fa-user-shield"></i> Admin Dashboard
+                                    </a>
+                                </li>
+                            <% } %>
+                            <li><hr class="dropdown-divider"></li>
+                            <li>
+                                <a class="dropdown-item text-danger" href="/signout">
+                                    <i class="fas fa-sign-out-alt"></i> Sign Out
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+                <% } else { %>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/signin">
+                            <i class="fas fa-sign-in-alt"></i> Sign In
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/signup">
+                            <i class="fas fa-user-plus"></i> Sign Up
+                        </a>
+                    </li>
+                <% } %>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<style>
+.dropdown-item i {
+    width: 20px;
+    margin-right: 8px;
+}
+
+.navbar .fa-user-circle {
+    font-size: 1.2em;
+    margin-right: 5px;
+}
+
+.dropdown-menu {
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+}
+
+.dropdown-item:hover {
+    background-color: #f8f9fa;
+}
+
+.dropdown-item.text-danger:hover {
+    background-color: #fff5f5;
+}
+</style> 
