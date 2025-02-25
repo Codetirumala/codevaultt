@@ -1,10 +1,596 @@
 <%- include('partials/header') %>
 <%- include('partials/navbar') %>
 
-<div class="container mt-4">
-    <h1>Companies</h1>
-    <!-- Content will be added later -->
-    <p>Companies content coming soon...</p>
+<div class="companies-container">
+    <div class="companies-header" data-aos="fade-down">
+        <h1>Top Tech Companies</h1>
+        <p class="subtitle">Explore opportunities at leading technology companies</p>
+        
+        <div class="search-filter-container">
+            <div class="search-box">
+                <i class="fas fa-search"></i>
+                <input type="text" id="companySearch" placeholder="Search companies...">
+            </div>
+            <div class="filter-buttons">
+                <button class="filter-btn active" data-filter="all">All Companies</button>
+                <button class="filter-btn" data-filter="tech">Tech</button>
+                <button class="filter-btn" data-filter="automotive">Automotive</button>
+                <button class="filter-btn" data-filter="ecommerce">E-Commerce</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="companies-grid">
+        <!-- Google -->
+        <div class="company-card" data-aos="fade-up" data-category="tech">
+            <div class="card-glass">
+                <div class="company-logo">
+                    <img src="/images/companies/google.png" alt="Google">
+                </div>
+                <div class="company-info">
+                    <h3>Google</h3>
+                    <p class="company-type">Tech Giant</p>
+                    <div class="company-tags">
+                        <span class="tag">Search</span>
+                        <span class="tag">Cloud</span>
+                        <span class="tag">AI</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Microsoft -->
+        <div class="company-card" data-aos="fade-up" data-category="tech">
+            <div class="card-glass">
+                <div class="company-logo">
+                    <img src="/images/companies/microsoft.png" alt="Microsoft">
+                </div>
+                <div class="company-info">
+                    <h3>Microsoft</h3>
+                    <p class="company-type">Tech Giant</p>
+                    <div class="company-tags">
+                        <span class="tag">Cloud</span>
+                        <span class="tag">Software</span>
+                        <span class="tag">AI</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Amazon -->
+        <div class="company-card" data-aos="fade-up" data-category="ecommerce">
+            <div class="card-glass">
+                <div class="company-logo">
+                    <img src="/images/companies/amazon.svg" alt="Amazon">
+                </div>
+                <div class="company-info">
+                    <h3>Amazon</h3>
+                    <p class="company-type">E-Commerce & Cloud</p>
+                    <div class="company-tags">
+                        <span class="tag">AWS</span>
+                        <span class="tag">E-Commerce</span>
+                        <span class="tag">AI</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Meta (Facebook) -->
+        <div class="company-card" data-aos="fade-up" data-category="tech">
+            <div class="card-glass">
+                <div class="company-logo">
+                    <img src="/images/companies/facebook.png" alt="Meta">
+                </div>
+                <div class="company-info">
+                    <h3>Meta</h3>
+                    <p class="company-type">Social Media</p>
+                    <div class="company-tags">
+                        <span class="tag">Social</span>
+                        <span class="tag">VR/AR</span>
+                        <span class="tag">AI</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tesla -->
+        <div class="company-card" data-aos="fade-up" data-category="automotive">
+            <div class="card-glass">
+                <div class="company-logo">
+                    <img src="/images/companies/tesla.svg" alt="Tesla">
+                </div>
+                <div class="company-info">
+                    <h3>Tesla</h3>
+                    <p class="company-type">Automotive & Tech</p>
+                    <div class="company-tags">
+                        <span class="tag">EV</span>
+                        <span class="tag">AI</span>
+                        <span class="tag">Energy</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Add all other companies following the same pattern -->
+        <!-- Adobe -->
+        <div class="company-card" data-aos="fade-up" data-category="tech">
+            <div class="card-glass">
+                <div class="company-logo">
+                    <img src="/images/companies/adobe.png" alt="Adobe">
+                </div>
+                <div class="company-info">
+                    <h3>Adobe</h3>
+                    <p class="company-type">Software</p>
+                    <div class="company-tags">
+                        <span class="tag">Creative</span>
+                        <span class="tag">Software</span>
+                        <span class="tag">Cloud</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Continue with all other companies... -->
+        <!-- Add cards for: Airbnb, Alibaba, Coursera, eBay, Flipkart, 
+             Goldman Sachs, IBM, Intel, LinkedIn, NVIDIA, Samsung, 
+             Snapchat, Twitter, Uber -->
+
+        <!-- Airbnb -->
+        <div class="company-card" data-aos="fade-up" data-category="tech">
+            <div class="card-glass">
+                <div class="company-logo">
+                    <img src="/images/companies/airbnb.svg" alt="Airbnb">
+                </div>
+                <div class="company-info">
+                    <h3>Airbnb</h3>
+                    <p class="company-type">Travel & Tech</p>
+                    <div class="company-tags">
+                        <span class="tag">Travel</span>
+                        <span class="tag">Hospitality</span>
+                        <span class="tag">Platform</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Alibaba -->
+        <div class="company-card" data-aos="fade-up" data-category="ecommerce">
+            <div class="card-glass">
+                <div class="company-logo">
+                    <img src="/images/companies/alibaba.svg" alt="Alibaba">
+                </div>
+                <div class="company-info">
+                    <h3>Alibaba</h3>
+                    <p class="company-type">E-Commerce Giant</p>
+                    <div class="company-tags">
+                        <span class="tag">E-Commerce</span>
+                        <span class="tag">Cloud</span>
+                        <span class="tag">Fintech</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Coursera -->
+        <div class="company-card" data-aos="fade-up" data-category="tech">
+            <div class="card-glass">
+                <div class="company-logo">
+                    <img src="/images/companies/coursera.png" alt="Coursera">
+                </div>
+                <div class="company-info">
+                    <h3>Coursera</h3>
+                    <p class="company-type">EdTech</p>
+                    <div class="company-tags">
+                        <span class="tag">Education</span>
+                        <span class="tag">Learning</span>
+                        <span class="tag">Platform</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- eBay -->
+        <div class="company-card" data-aos="fade-up" data-category="ecommerce">
+            <div class="card-glass">
+                <div class="company-logo">
+                    <img src="/images/companies/ebay.png" alt="eBay">
+                </div>
+                <div class="company-info">
+                    <h3>eBay</h3>
+                    <p class="company-type">E-Commerce</p>
+                    <div class="company-tags">
+                        <span class="tag">Marketplace</span>
+                        <span class="tag">Auction</span>
+                        <span class="tag">Platform</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Flipkart -->
+        <div class="company-card" data-aos="fade-up" data-category="ecommerce">
+            <div class="card-glass">
+                <div class="company-logo">
+                    <img src="/images/companies/flipkart.png" alt="Flipkart">
+                </div>
+                <div class="company-info">
+                    <h3>Flipkart</h3>
+                    <p class="company-type">E-Commerce</p>
+                    <div class="company-tags">
+                        <span class="tag">E-Commerce</span>
+                        <span class="tag">Retail</span>
+                        <span class="tag">Tech</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Goldman Sachs -->
+        <div class="company-card" data-aos="fade-up" data-category="finance">
+            <div class="card-glass">
+                <div class="company-logo">
+                    <img src="/images/companies/goldman-sachs.svg" alt="Goldman Sachs">
+                </div>
+                <div class="company-info">
+                    <h3>Goldman Sachs</h3>
+                    <p class="company-type">Investment Banking</p>
+                    <div class="company-tags">
+                        <span class="tag">Finance</span>
+                        <span class="tag">Banking</span>
+                        <span class="tag">Fintech</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- IBM -->
+        <div class="company-card" data-aos="fade-up" data-category="tech">
+            <div class="card-glass">
+                <div class="company-logo">
+                    <img src="/images/companies/ibm.jpg" alt="IBM">
+                </div>
+                <div class="company-info">
+                    <h3>IBM</h3>
+                    <p class="company-type">Technology</p>
+                    <div class="company-tags">
+                        <span class="tag">Cloud</span>
+                        <span class="tag">AI</span>
+                        <span class="tag">Enterprise</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Intel -->
+        <div class="company-card" data-aos="fade-up" data-category="tech">
+            <div class="card-glass">
+                <div class="company-logo">
+                    <img src="/images/companies/intel-logo.png" alt="Intel">
+                </div>
+                <div class="company-info">
+                    <h3>Intel</h3>
+                    <p class="company-type">Semiconductor</p>
+                    <div class="company-tags">
+                        <span class="tag">Hardware</span>
+                        <span class="tag">Processors</span>
+                        <span class="tag">AI</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- LinkedIn -->
+        <div class="company-card" data-aos="fade-up" data-category="tech">
+            <div class="card-glass">
+                <div class="company-logo">
+                    <img src="/images/companies/linkedin.png" alt="LinkedIn">
+                </div>
+                <div class="company-info">
+                    <h3>LinkedIn</h3>
+                    <p class="company-type">Professional Network</p>
+                    <div class="company-tags">
+                        <span class="tag">Social</span>
+                        <span class="tag">Professional</span>
+                        <span class="tag">Network</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- NVIDIA -->
+        <div class="company-card" data-aos="fade-up" data-category="tech">
+            <div class="card-glass">
+                <div class="company-logo">
+                    <img src="/images/companies/nvidia.png" alt="NVIDIA">
+                </div>
+                <div class="company-info">
+                    <h3>NVIDIA</h3>
+                    <p class="company-type">Technology</p>
+                    <div class="company-tags">
+                        <span class="tag">GPU</span>
+                        <span class="tag">AI</span>
+                        <span class="tag">Gaming</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Samsung -->
+        <div class="company-card" data-aos="fade-up" data-category="tech">
+            <div class="card-glass">
+                <div class="company-logo">
+                    <img src="/images/companies/samsung.png" alt="Samsung">
+                </div>
+                <div class="company-info">
+                    <h3>Samsung</h3>
+                    <p class="company-type">Technology</p>
+                    <div class="company-tags">
+                        <span class="tag">Electronics</span>
+                        <span class="tag">Mobile</span>
+                        <span class="tag">Innovation</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Snapchat -->
+        <div class="company-card" data-aos="fade-up" data-category="tech">
+            <div class="card-glass">
+                <div class="company-logo">
+                    <img src="/images/companies/snapchat.png" alt="Snapchat">
+                </div>
+                <div class="company-info">
+                    <h3>Snapchat</h3>
+                    <p class="company-type">Social Media</p>
+                    <div class="company-tags">
+                        <span class="tag">Social</span>
+                        <span class="tag">AR</span>
+                        <span class="tag">Media</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Twitter -->
+        <div class="company-card" data-aos="fade-up" data-category="tech">
+            <div class="card-glass">
+                <div class="company-logo">
+                    <img src="/images/companies/twitter.png" alt="Twitter">
+                </div>
+                <div class="company-info">
+                    <h3>Twitter</h3>
+                    <p class="company-type">Social Media</p>
+                    <div class="company-tags">
+                        <span class="tag">Social</span>
+                        <span class="tag">Media</span>
+                        <span class="tag">Platform</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Uber -->
+        <div class="company-card" data-aos="fade-up" data-category="tech">
+            <div class="card-glass">
+                <div class="company-logo">
+                    <img src="/images/companies/uber.png" alt="Uber">
+                </div>
+                <div class="company-info">
+                    <h3>Uber</h3>
+                    <p class="company-type">Transportation</p>
+                    <div class="company-tags">
+                        <span class="tag">Mobility</span>
+                        <span class="tag">Platform</span>
+                        <span class="tag">Tech</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
 </div>
+
+<style>
+:root {
+    --primary-gradient: linear-gradient(135deg, #00ff95 0%, #00b8ff 100%);
+    --card-bg: rgba(31, 31, 35, 0.8);
+    --hover-bg: rgba(255, 255, 255, 0.1);
+}
+
+.companies-container {
+    padding: 3rem 5%;
+    min-height: 100vh;
+    background: #121212;
+}
+
+.companies-header {
+    text-align: center;
+    margin-bottom: 3rem;
+}
+
+.companies-header h1 {
+    font-size: 2.5rem;
+    color: #fff;
+    margin-bottom: 1rem;
+}
+
+.subtitle {
+    color: #888;
+    font-size: 1.1rem;
+    margin-bottom: 2rem;
+}
+
+.search-filter-container {
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.search-box {
+    position: relative;
+    margin-bottom: 1.5rem;
+}
+
+.search-box input {
+    width: 100%;
+    padding: 1rem 3rem;
+    border-radius: 15px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    background: rgba(255, 255, 255, 0.05);
+    color: #fff;
+    font-size: 1rem;
+}
+
+.search-box i {
+    position: absolute;
+    left: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #888;
+}
+
+.filter-buttons {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-bottom: 2rem;
+}
+
+.filter-btn {
+    padding: 0.8rem 1.5rem;
+    border-radius: 10px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    background: transparent;
+    color: #fff;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.filter-btn:hover {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.filter-btn.active {
+    background: var(--primary-gradient);
+    color: #000;
+    border: none;
+}
+
+.companies-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 2rem;
+}
+
+.company-card {
+    border-radius: 20px;
+    overflow: hidden;
+    transition: all 0.3s ease;
+}
+
+.card-glass {
+    background: var(--card-bg);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 2rem;
+    height: 100%;
+    transition: all 0.3s ease;
+}
+
+.company-card:hover .card-glass {
+    transform: translateY(-5px);
+    background: var(--hover-bg);
+}
+
+.company-logo {
+    width: 100px;
+    height: 100px;
+    margin: 0 auto 1.5rem;
+    background: #fff;
+    border-radius: 15px;
+    padding: 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.company-logo img {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+}
+
+.company-info {
+    text-align: center;
+}
+
+.company-info h3 {
+    color: #fff;
+    font-size: 1.5rem;
+    margin-bottom: 0.5rem;
+}
+
+.company-type {
+    color: #888;
+    font-size: 0.9rem;
+    margin-bottom: 1rem;
+}
+
+.company-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    justify-content: center;
+}
+
+.tag {
+    padding: 0.5rem 1rem;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 20px;
+    color: #888;
+    font-size: 0.8rem;
+}
+
+@media (max-width: 768px) {
+    .companies-container {
+        padding: 2rem;
+    }
+
+    .companies-header h1 {
+        font-size: 2rem;
+    }
+}
+</style>
+
+<script>
+AOS.init({
+    duration: 800,
+    once: true
+});
+
+document.getElementById('companySearch').addEventListener('input', function(e) {
+    const searchTerm = e.target.value.toLowerCase();
+    document.querySelectorAll('.company-card').forEach(card => {
+        const companyName = card.querySelector('h3').textContent.toLowerCase();
+        card.style.display = companyName.includes(searchTerm) ? 'block' : 'none';
+    });
+});
+
+document.querySelectorAll('.filter-btn').forEach(btn => {
+    btn.addEventListener('click', function() {
+        document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+        this.classList.add('active');
+        
+        const filter = this.dataset.filter;
+        document.querySelectorAll('.company-card').forEach(card => {
+            if (filter === 'all') {
+                card.style.display = 'block';
+            } else {
+                card.style.display = card.dataset.category === filter ? 'block' : 'none';
+            }
+        });
+    });
+});
+</script>
 
 <%- include('partials/footer') %> 
