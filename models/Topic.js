@@ -20,6 +20,10 @@ const topicSchema = new mongoose.Schema({
     problemCount: {
         type: Number,
         default: 0
+    },
+    solvedCount: {
+        type: Number,
+        default: 0
     }
 });
 

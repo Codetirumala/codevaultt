@@ -1,12 +1,284 @@
-    <footer class="footer mt-auto py-3 bg-dark text-white">
-        <div class="container text-center">
-            <span>© <%= new Date().getFullYear() %> Code Vault. All rights reserved.</span>
-        </div>
-    </footer>
+<footer class="footer">
+    <div class="footer-content">
+        <div class="container">
+            <div class="row g-4">
+                <div class="col-lg-4 col-md-6">
+                    <div class="footer-brand">
+                        <a href="/" class="footer-logo">
+                            <i class="fas fa-code"></i> Code Vault
+                        </a>
+                        <p class="footer-description">
+                            Empowering developers to master Data Structures & Algorithms through structured learning and practice.
+                        </p>
+                        <div class="social-links">
+                            <a href="#" class="social-link" title="GitHub">
+                                <i class="fab fa-github"></i>
+                            </a>
+                            <a href="#" class="social-link" title="LinkedIn">
+                                <i class="fab fa-linkedin"></i>
+                            </a>
+                            <a href="#" class="social-link" title="Twitter">
+                                <i class="fab fa-twitter"></i>
+                            </a>
+                            <a href="#" class="social-link" title="Discord">
+                                <i class="fab fa-discord"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
 
-    <!-- Bootstrap JS and dependencies -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+                <div class="col-lg-2 col-md-6">
+                    <h4 class="footer-title">Quick Links</h4>
+                    <ul class="footer-links">
+                        <li><a href="/dsa/sheet">DSA Sheet</a></li>
+                        <li><a href="/roadmap">Learning Path</a></li>
+                        <li><a href="/companies">Companies</a></li>
+                        <li><a href="/contests">Contests</a></li>
+                        <li><a href="/blog">Blog</a></li>
+                    </ul>
+                </div>
+
+                <div class="col-lg-2 col-md-6">
+                    <h4 class="footer-title">Resources</h4>
+                    <ul class="footer-links">
+                        <li><a href="/tutorials">Tutorials</a></li>
+                        <li><a href="/patterns">Patterns</a></li>
+                        <li><a href="/cheatsheets">Cheatsheets</a></li>
+                        <li><a href="/interview-prep">Interview Prep</a></li>
+                        <li><a href="/faqs">FAQs</a></li>
+                    </ul>
+                </div>
+
+                <div class="col-lg-4 col-md-6">
+                    <h4 class="footer-title">Stay Updated</h4>
+                    <p class="newsletter-text">Subscribe to our newsletter for weekly updates, tips, and resources.</p>
+                    <form class="newsletter-form">
+                        <div class="input-group">
+                            <input type="email" class="form-control" placeholder="Enter your email" required>
+                            <button class="btn subscribe-btn" type="submit">
+                                <i class="fas fa-paper-plane"></i>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="footer-bottom">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-md-6">
+                    <p class="copyright">
+                        © <%= new Date().getFullYear() %> Code Vault. All rights reserved.
+                    </p>
+                </div>
+                <div class="col-md-6">
+                    <ul class="bottom-links">
+                        <li><a href="/privacy">Privacy Policy</a></li>
+                        <li><a href="/terms">Terms of Service</a></li>
+                        <li><a href="/contact">Contact Us</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<!-- Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+<style>
+.footer {
+    background: linear-gradient(to bottom, var(--primary-bg), var(--secondary-bg));
+    color: var(--text-secondary);
+    padding-top: 4rem;
+    margin-top: auto;
+}
+
+.footer-content {
+    position: relative;
+    padding-bottom: 3rem;
+}
+
+.footer-content::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: url('/images/grid.png') repeat;
+    opacity: 0.05;
+    pointer-events: none;
+}
+
+.footer-brand {
+    margin-bottom: 1.5rem;
+}
+
+.footer-logo {
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: var(--accent-color);
+    text-decoration: none;
+    display: inline-block;
+    margin-bottom: 1rem;
+    transition: all 0.3s ease;
+}
+
+.footer-logo:hover {
+    color: var(--accent-hover);
+    transform: translateY(-2px);
+}
+
+.footer-description {
+    color: var(--text-secondary);
+    line-height: 1.6;
+    margin-bottom: 1.5rem;
+}
+
+.social-links {
+    display: flex;
+    gap: 1rem;
+}
+
+.social-link {
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.05);
+    color: var(--text-primary);
+    transition: all 0.3s ease;
+}
+
+.social-link:hover {
+    background: var(--accent-color);
+    color: var(--secondary-bg);
+    transform: translateY(-3px);
+}
+
+.footer-title {
+    color: var(--text-primary);
+    font-size: 1.2rem;
+    font-weight: 600;
+    margin-bottom: 1.5rem;
+}
+
+.footer-links {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.footer-links li {
+    margin-bottom: 0.8rem;
+}
+
+.footer-links a {
+    color: var(--text-secondary);
+    text-decoration: none;
+    transition: all 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+}
+
+.footer-links a:hover {
+    color: var(--accent-color);
+    transform: translateX(5px);
+}
+
+.newsletter-text {
+    margin-bottom: 1rem;
+}
+
+.newsletter-form .input-group {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 8px;
+    padding: 0.3rem;
+}
+
+.newsletter-form .form-control {
+    background: transparent;
+    border: none;
+    color: var(--text-primary);
+    padding: 0.8rem 1rem;
+}
+
+.newsletter-form .form-control:focus {
+    box-shadow: none;
+}
+
+.subscribe-btn {
+    background: var(--accent-color);
+    color: var(--secondary-bg);
+    border: none;
+    padding: 0.8rem 1.5rem;
+    border-radius: 6px;
+    transition: all 0.3s ease;
+}
+
+.subscribe-btn:hover {
+    background: var(--accent-hover);
+    transform: translateX(3px);
+}
+
+.footer-bottom {
+    background: rgba(0, 0, 0, 0.2);
+    padding: 1.5rem 0;
+    margin-top: 2rem;
+}
+
+.copyright {
+    margin: 0;
+    font-size: 0.9rem;
+}
+
+.bottom-links {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    justify-content: flex-end;
+    gap: 2rem;
+}
+
+.bottom-links a {
+    color: var(--text-secondary);
+    text-decoration: none;
+    font-size: 0.9rem;
+    transition: color 0.3s ease;
+}
+
+.bottom-links a:hover {
+    color: var(--accent-color);
+}
+
+@media (max-width: 768px) {
+    .footer {
+        padding-top: 3rem;
+    }
     
+    .bottom-links {
+        justify-content: center;
+        margin-top: 1rem;
+        gap: 1rem;
+        flex-wrap: wrap;
+    }
+    
+    .copyright {
+        text-align: center;
+    }
+    
+    .footer-title {
+        margin-top: 1.5rem;
+    }
+}
+</style>
+
     <!-- Custom JS -->
     <script src="/js/main.js"></script>
 

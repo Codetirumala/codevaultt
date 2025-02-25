@@ -1,264 +1,294 @@
 <%- include('../partials/header') %>
 <%- include('../partials/navbar') %>
 
-<div class="container-fluid">
-    <div class="row">
-        <!-- Sidebar -->
-        <div class="col-md-3 col-lg-2 d-md-block bg-light sidebar">
-            <div class="position-sticky pt-3">
-                <ul class="nav flex-column">
-                    <li class="nav-item">
-                        <a class="nav-link active" href="/admin/dashboard">
-                            <i class="fas fa-tachometer-alt"></i> Dashboard
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/admin/users">
-                            <i class="fas fa-users"></i> Users
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/admin/problems">
-                            <i class="fas fa-code"></i> Problems
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/admin/topics">
-                            <i class="fas fa-book"></i> Topics
-                        </a>
-                    </li>
-                </ul>
+<div class="admin-container">
+    <!-- Admin Sidebar -->
+    <div class="admin-sidebar">
+        <div class="sidebar-header">
+            <div class="admin-brand">
+                <i class="fas fa-shield-alt"></i>
+                <span>Admin Panel</span>
+            </div>
+        </div>
+        <div class="sidebar-menu">
+            <ul>
+                <li>
+                    <a href="/admin/dashboard">
+                        <i class="fas fa-chart-line"></i>
+                        <span>Dashboard</span>
+                    </a>
+                </li>
+                <li class="active">
+                    <a href="/admin/users">
+                        <i class="fas fa-users"></i>
+                        <span>Users</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="/admin/problems">
+                        <i class="fas fa-code"></i>
+                        <span>Problems</span>
+                    </a>
+                </li>
+                
+            </ul>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="admin-content">
+        <div class="content-header">
+            <h1>Dashboard Overview</h1>
+            <div class="header-actions">
+                <div class="search-box">
+                    <i class="fas fa-search"></i>
+                    <input type="text" placeholder="Search...">
+                </div>
+                <div class="admin-profile">
+                    <img src="/images/avatar.png" alt="Admin">
+                    
+                </div>
             </div>
         </div>
 
-        <!-- Main Content -->
-        <div class="col-md-9 col-lg-10 ms-sm-auto px-md-4">
-            <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-                <h1 class="h2">Dashboard</h1>
-            </div>
-
-            <!-- Stats Cards -->
-            <div class="row">
-                <div class="col-xl-3 col-md-6 mb-4">
-                    <div class="card border-left-primary shadow h-100 py-2">
-                        <div class="card-body">
-                            <div class="row no-gutters align-items-center">
-                                <div class="col mr-2">
-                                    <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
-                                        TOTAL USERS</div>
-                                    <div class="h5 mb-0 font-weight-bold text-gray-800">
-                                        <%= stats.totalUsers %>
-                                    </div>
-                                </div>
-                                <div class="col-auto">
-                                    <i class="fas fa-users fa-2x text-gray-300"></i>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+        <!-- Stats Grid -->
+        <div class="stats-grid">
+            <div class="stat-card" data-aos="fade-up">
+                <div class="stat-icon users">
+                    <i class="fas fa-users"></i>
                 </div>
-
-                <div class="col-xl-3 col-md-6 mb-4">
-                    <div class="card border-left-success shadow h-100 py-2">
-                        <div class="card-body">
-                            <div class="row no-gutters align-items-center">
-                                <div class="col mr-2">
-                                    <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
-                                        TOTAL PROBLEMS</div>
-                                    <div class="h5 mb-0 font-weight-bold text-gray-800">
-                                        <%= stats.totalProblems %>
-                                    </div>
-                                </div>
-                                <div class="col-auto">
-                                    <i class="fas fa-code fa-2x text-gray-300"></i>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                <div class="stat-details">
+                    <h3><%= stats.totalUsers %></h3>
+                    <p>Total Users</p>
                 </div>
-
-                <div class="col-xl-3 col-md-6 mb-4">
-                    <div class="card border-left-info shadow h-100 py-2">
-                        <div class="card-body">
-                            <div class="row no-gutters align-items-center">
-                                <div class="col mr-2">
-                                    <div class="text-xs font-weight-bold text-info text-uppercase mb-1">
-                                        COMPANIES</div>
-                                    <div class="h5 mb-0 font-weight-bold text-gray-800">0</div>
-                                </div>
-                                <div class="col-auto">
-                                    <i class="fas fa-building fa-2x text-gray-300"></i>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="col-xl-3 col-md-6 mb-4">
-                    <div class="card border-left-warning shadow h-100 py-2">
-                        <div class="card-body">
-                            <div class="row no-gutters align-items-center">
-                                <div class="col mr-2">
-                                    <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
-                                        ACTIVE USERS</div>
-                                    <div class="h5 mb-0 font-weight-bold text-gray-800">
-                                        <%= stats.totalUsers %>
-                                    </div>
-                                </div>
-                                <div class="col-auto">
-                                    <i class="fas fa-user-clock fa-2x text-gray-300"></i>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                <div class="stat-chart">
+                    <canvas id="usersChart"></canvas>
                 </div>
             </div>
 
+            <div class="stat-card" data-aos="fade-up" data-aos-delay="100">
+                <div class="stat-icon problems">
+                    <i class="fas fa-code"></i>
+                </div>
+                <div class="stat-details">
+                    <h3><%= stats.totalProblems %></h3>
+                    <p>Total Problems</p>
+                </div>
+                <div class="stat-chart">
+                    <canvas id="problemsChart"></canvas>
+                </div>
+            </div>
+
+            <div class="stat-card" data-aos="fade-up" data-aos-delay="200">
+                <div class="stat-icon companies">
+                    <i class="fas fa-building"></i>
+                </div>
+                <div class="stat-details">
+                    <h3>0</h3>
+                    <p>Companies</p>
+                </div>
+                <div class="stat-chart">
+                    <canvas id="companiesChart"></canvas>
+                </div>
+            </div>
+
+            <div class="stat-card" data-aos="fade-up" data-aos-delay="300">
+                <div class="stat-icon active">
+                    <i class="fas fa-user-clock"></i>
+                </div>
+                <div class="stat-details">
+                    <h3><%= stats.totalUsers %></h3>
+                    <p>Active Users</p>
+                </div>
+                <div class="stat-chart">
+                    <canvas id="activeUsersChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Action Cards -->
+        <div class="action-grid">
             <!-- Add Topic Card -->
-            <div class="row mt-4">
-                <div class="col-xl-4 col-md-6 mb-4">
-                    <div class="card shadow h-100">
-                        <div class="card-body">
-                            <h5 class="card-title">Add New Topic</h5>
-                            <form id="addTopicForm">
-                                <div class="mb-3">
-                                    <label for="topicName" class="form-label">Topic Name</label>
-                                    <input type="text" class="form-control" id="topicName" name="name" required>
-                                </div>
-                                <div class="mb-3">
-                                    <label for="difficulty" class="form-label">Difficulty Level</label>
-                                    <select class="form-select" id="difficulty" name="difficulty" required>
-                                        <option value="Easy">Easy</option>
-                                        <option value="Medium" selected>Medium</option>
-                                        <option value="Hard">Hard</option>
-                                    </select>
-                                </div>
-                                <button type="submit" class="btn btn-primary">Add Topic</button>
-                            </form>
-                        </div>
-                    </div>
+            <div class="action-card" data-aos="fade-up">
+                <div class="card-header">
+                    <h3><i class="fas fa-folder-plus"></i> Add New Topic</h3>
                 </div>
-
-                <!-- Topics List -->
-                <div class="col-xl-8 col-md-6 mb-4">
-                    <div class="card shadow h-100">
-                        <div class="card-header py-3">
-                            <h6 class="m-0 font-weight-bold text-primary">Recent Topics</h6>
+                <div class="card-body">
+                    <form id="addTopicForm">
+                        <div class="form-group">
+                            <label>Topic Name</label>
+                            <input type="text" id="topicName" required>
                         </div>
-                        <div class="card-body">
-                            <div class="table-responsive">
-                                <table class="table table-bordered">
-                                    <thead>
-                                        <tr>
-                                            <th>Topic Name</th>
-                                            <th>Difficulty</th>
-                                            <th>Problems</th>
-                                            <th>Created At</th>
-                                            <th>Actions</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody id="topicsTableBody">
-                                        <% if (stats.topics && stats.topics.length > 0) { %>
-                                            <% stats.topics.forEach(topic => { %>
-                                                <tr>
-                                                    <td><%= topic.name %></td>
-                                                    <td><%= topic.difficulty %></td>
-                                                    <td><%= topic.problemCount %></td>
-                                                    <td><%= new Date(topic.createdAt).toLocaleDateString() %></td>
-                                                    <td>
-                                                        <button class="btn btn-danger btn-sm delete-topic" data-id="<%= topic._id %>">Delete</button>
-                                                    </td>
-                                                </tr>
-                                            <% }); %>
-                                        <% } else { %>
-                                            <tr>
-                                                <td colspan="4" class="text-center">No topics found</td>
-                                            </tr>
-                                        <% } %>
-                                    </tbody>
-                                </table>
-                            </div>
+                        <div class="form-group">
+                            <label>Difficulty Level</label>
+                            <select id="difficulty" required>
+                                <option value="Easy">Easy</option>
+                                <option value="Medium" selected>Medium</option>
+                                <option value="Hard">Hard</option>
+                            </select>
                         </div>
-                    </div>
+                        <button type="submit" class="btn-primary">
+                            <i class="fas fa-plus"></i> Add Topic
+                        </button>
+                    </form>
                 </div>
             </div>
 
             <!-- Add Problem Card -->
-            <div class="row mt-4">
-                <div class="col-xl-4 col-md-6 mb-4">
-                    <div class="card shadow h-100">
-                        <div class="card-body">
-                            <h5 class="card-title">Add New Problem</h5>
-                            <form id="addProblemForm">
-                                <div class="mb-3">
-                                    <label for="topic" class="form-label">Select Topic</label>
-                                    <select class="form-select" id="topic" name="topic" required>
-                                        <option value="">Select a topic</option>
-                                        <% stats.topics.forEach(topic => { %>
-                                            <option value="<%= topic._id %>"><%= topic.name %></option>
-                                        <% }); %>
-                                    </select>
-                                </div>
-                                <div class="mb-3">
-                                    <label for="problemName" class="form-label">Problem Name</label>
-                                    <input type="text" class="form-control" id="problemName" name="name" required>
-                                </div>
-                                <div class="mb-3">
-                                    <label for="slug" class="form-label">Slug Name</label>
-                                    <input type="text" class="form-control" id="slug" name="slug" readonly>
-                                </div>
-                                <div class="mb-3">
-                                    <label for="leetcodeLink" class="form-label">LeetCode Link</label>
-                                    <input type="url" class="form-control" id="leetcodeLink" name="leetcodeLink" required>
-                                </div>
-                                <div class="mb-3">
-                                    <label for="difficulty" class="form-label">Difficulty Level</label>
-                                    <select class="form-select" id="difficulty" name="difficulty" required>
-                                        <option value="Easy">Easy</option>
-                                        <option value="Medium">Medium</option>
-                                        <option value="Hard">Hard</option>
-                                    </select>
-                                </div>
-                                <button type="submit" class="btn btn-primary">Add Problem</button>
-                            </form>
+            <div class="action-card" data-aos="fade-up" data-aos-delay="100">
+                <div class="card-header">
+                    <h3><i class="fas fa-plus-circle"></i> Add New Problem</h3>
+                </div>
+                <div class="card-body">
+                    <form id="addProblemForm">
+                        <div class="form-group">
+                            <label>Select Topic</label>
+                            <select id="topic" required>
+                                <option value="">Select a topic</option>
+                                <% stats.topics.forEach(topic => { %>
+                                    <option value="<%= topic._id %>"><%= topic.name %></option>
+                                <% }); %>
+                            </select>
                         </div>
+                        <div class="form-group">
+                            <label>Problem Name</label>
+                            <input type="text" id="problemName" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Slug</label>
+                            <input type="text" id="slug" readonly>
+                        </div>
+                        <div class="form-group">
+                            <label>LeetCode Link</label>
+                            <input type="url" id="leetcodeLink" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Difficulty</label>
+                            <select id="difficulty" required>
+                                <option value="Easy">Easy</option>
+                                <option value="Medium">Medium</option>
+                                <option value="Hard">Hard</option>
+                            </select>
+                        </div>
+                        <button type="submit" class="btn-primary">
+                            <i class="fas fa-plus"></i> Add Problem
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Data Tables -->
+        <div class="tables-grid">
+            <!-- Topics Table -->
+            <div class="table-card" data-aos="fade-up">
+                <div class="card-header">
+                    <h3><i class="fas fa-list"></i> Recent Topics</h3>
+                    <div class="header-actions">
+                        <button class="btn-refresh">
+                            <i class="fas fa-sync-alt"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Topic Name</th>
+                                    <th>Difficulty</th>
+                                    <th>Problems</th>
+                                    <th>Created At</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="topicsTableBody">
+                                <% if (stats.topics && stats.topics.length > 0) { %>
+                                    <% stats.topics.forEach(topic => { %>
+                                        <tr>
+                                            <td><%= topic.name %></td>
+                                            <td>
+                                                <span class="badge <%= topic.difficulty.toLowerCase() %>">
+                                                    <%= topic.difficulty %>
+                                                </span>
+                                            </td>
+                                            <td><%= topic.problemCount %></td>
+                                            <td><%= new Date(topic.createdAt).toLocaleDateString() %></td>
+                                            <td>
+                                                <button class="btn-icon edit" title="Edit">
+                                                    <i class="fas fa-edit"></i>
+                                                </button>
+                                                <button class="btn-icon delete delete-topic" data-id="<%= topic._id %>" title="Delete">
+                                                    <i class="fas fa-trash-alt"></i>
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    <% }); %>
+                                <% } else { %>
+                                    <tr>
+                                        <td colspan="5" class="text-center">No topics found</td>
+                                    </tr>
+                                <% } %>
+                            </tbody>
+                        </table>
                     </div>
                 </div>
             </div>
 
-            <!-- Recent Users Table -->
-            <div class="card shadow mb-4">
-                <div class="card-header py-3">
-                    <h6 class="m-0 font-weight-bold text-primary">Recent Users</h6>
+            <!-- Users Table -->
+            <div class="table-card" data-aos="fade-up" data-aos-delay="100">
+                <div class="card-header">
+                    <h3><i class="fas fa-users"></i> Recent Users</h3>
+                    <div class="header-actions">
+                        <button class="btn-refresh">
+                            <i class="fas fa-sync-alt"></i>
+                        </button>
+                    </div>
                 </div>
                 <div class="card-body">
                     <div class="table-responsive">
-                        <table class="table table-bordered" width="100%" cellspacing="0">
+                        <table>
                             <thead>
                                 <tr>
                                     <th>Name</th>
                                     <th>Email</th>
                                     <th>Role</th>
                                     <th>Joined Date</th>
+                                    <th>Actions</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 <% if (stats.recentUsers && stats.recentUsers.length > 0) { %>
                                     <% stats.recentUsers.forEach(user => { %>
                                         <tr>
-                                            <td><%= user.name %></td>
+                                            <td>
+                                                <div class="user-info">
+                                                    <div class="user-avatar">
+                                                        <i class="fas fa-user"></i>
+                                                    </div>
+                                                    <span><%= user.name %></span>
+                                                </div>
+                                            </td>
                                             <td><%= user.email %></td>
                                             <td>
-                                                <span class="badge bg-<%= user.isAdmin ? 'danger' : 'primary' %>">
+                                                <span class="badge <%= user.isAdmin ? 'admin' : 'user' %>">
                                                     <%= user.isAdmin ? 'Admin' : 'User' %>
                                                 </span>
                                             </td>
                                             <td><%= new Date(user.createdAt).toLocaleDateString() %></td>
+                                            <td>
+                                                <button class="btn-icon view" title="View">
+                                                    <i class="fas fa-eye"></i>
+                                                </button>
+                                                <button class="btn-icon edit" title="Edit">
+                                                    <i class="fas fa-edit"></i>
+                                                </button>
+                                            </td>
                                         </tr>
                                     <% }); %>
                                 <% } else { %>
                                     <tr>
-                                        <td colspan="4" class="text-center">No users found</td>
+                                        <td colspan="5" class="text-center">No users found</td>
                                     </tr>
                                 <% } %>
                             </tbody>
@@ -271,60 +301,473 @@
 </div>
 
 <style>
-.sidebar {
+/* Admin Dashboard Styles */
+.admin-container {
+    display: flex;
+    min-height: 100vh;
+    background: var(--primary-bg);
+}
+
+/* Sidebar Styles */
+.admin-sidebar {
+    width: 260px;
+    background: var(--secondary-bg);
+    border-right: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 1.5rem;
     position: fixed;
-    top: 0;
+    height: 100vh;
+    overflow-y: auto;
+}
+
+.sidebar-header {
+    padding-bottom: 1.5rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    margin-bottom: 1.5rem;
+}
+
+.admin-brand {
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+    font-size: 1.4rem;
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.admin-brand i {
+    color: var(--accent-color);
+}
+
+.sidebar-menu ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.sidebar-menu li {
+    margin-bottom: 0.5rem;
+}
+
+.sidebar-menu a {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 0.8rem 1rem;
+    color: var(--text-secondary);
+    text-decoration: none;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+}
+
+.sidebar-menu a:hover {
+    background: rgba(255, 255, 255, 0.05);
+    color: var(--text-primary);
+}
+
+.sidebar-menu li.active a {
+    background: var(--accent-color);
+    color: var(--secondary-bg);
+}
+
+/* Main Content Styles */
+.admin-content {
+    flex: 1;
+    margin-left: 260px;
+    padding: 2rem;
+}
+
+.content-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+}
+
+.header-actions {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+}
+
+.search-box {
+    position: relative;
+}
+
+.search-box input {
+    width: 300px;
+    padding: 0.8rem 1rem 0.8rem 2.5rem;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    color: var(--text-primary);
+}
+
+.search-box i {
+    position: absolute;
+    left: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--text-secondary);
+}
+
+.admin-profile {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.admin-profile img {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+/* Stats Grid Styles */
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.stat-card {
+    background: var(--card-bg);
+    border-radius: 12px;
+    padding: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    position: relative;
+    overflow: hidden;
+}
+
+.stat-icon {
+    width: 60px;
+    height: 60px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+}
+
+.stat-icon.users { background: rgba(0, 255, 149, 0.1); color: #00ff95; }
+.stat-icon.problems { background: rgba(0, 184, 255, 0.1); color: #00b8ff; }
+.stat-icon.companies { background: rgba(255, 77, 77, 0.1); color: #ff4d4d; }
+.stat-icon.active { background: rgba(255, 184, 0, 0.1); color: #ffb800; }
+
+.stat-details h3 {
+    font-size: 1.8rem;
+    margin: 0;
+    color: var(--text-primary);
+}
+
+.stat-details p {
+    margin: 0;
+    color: var(--text-secondary);
+}
+
+.stat-chart {
+    position: absolute;
+    right: 0;
     bottom: 0;
-    left: 0;
-    z-index: 100;
-    padding: 48px 0 0;
-    box-shadow: inset -1px 0 0 rgba(0, 0, 0, .1);
+    width: 100px;
+    height: 50px;
+    opacity: 0.2;
 }
 
-.sidebar .nav-link {
+/* Action Cards Styles */
+.action-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.action-card {
+    background: var(--card-bg);
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+.action-card .card-header {
+    padding: 1.5rem;
+    background: rgba(255, 255, 255, 0.02);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.action-card .card-header h3 {
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+    color: var(--text-primary);
+}
+
+.action-card .card-header h3 i {
+    color: var(--accent-color);
+}
+
+.action-card .card-body {
+    padding: 1.5rem;
+}
+
+.form-group {
+    margin-bottom: 1.2rem;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+    color: var(--text-secondary);
+}
+
+.form-group input,
+.form-group select {
+    width: 100%;
+    padding: 0.8rem;
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 8px;
+    background: var(--primary-bg); /* Dark background */
+    color: #ffffff; /* White text */
+}
+
+/* Style for select dropdown options */
+.form-group select option {
+    background: var(--primary-bg); /* Dark background for options */
+    color: #ffffff; /* White text */
+    padding: 12px;
+}
+
+/* Hover state for options */
+.form-group select option:hover {
+    background: #2d2d2d;
+}
+
+/* Focus state */
+.form-group input:focus,
+.form-group select:focus {
+    outline: none;
+    border-color: var(--accent-color);
+    box-shadow: 0 0 0 2px rgba(0, 184, 255, 0.1);
+}
+
+/* Additional styling for select elements */
+select {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    background: #1a1a1a url("data:image/svg+xml;charset=utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 4 5'%3E%3Cpath fill='%23ffffff' d='M2 0L0 2h4zm0 5L0 3h4z'/%3E%3C/svg%3E") no-repeat right .75rem center;
+    background-size: 8px 10px;
+    color: #ffffff;
+}
+
+.btn-primary {
+    width: 100%;
+    padding: 0.8rem;
+    background: linear-gradient(45deg, var(--accent-color), var(--accent-hover));
+    border: none;
+    border-radius: 8px;
+    color: var(--secondary-bg);
     font-weight: 500;
-    color: #333;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
 }
 
-.sidebar .nav-link.active {
-    color: #007bff;
+.btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(0, 255, 149, 0.4);
 }
 
-.sidebar .nav-link:hover {
-    color: #007bff;
+/* Tables Styles */
+.tables-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
 }
 
-.sidebar .nav-link i {
-    margin-right: 8px;
+.table-card {
+    background: var(--card-bg);
+    border-radius: 12px;
+    overflow: hidden;
 }
 
-.border-left-primary {
-    border-left: 4px solid #4e73df;
+.table-card .card-header {
+    padding: 1.5rem;
+    background: rgba(255, 255, 255, 0.02);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
 }
 
-.border-left-success {
-    border-left: 4px solid #1cc88a;
+.table-card .card-header h3 {
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+    color: var(--text-primary);
 }
 
-.border-left-info {
-    border-left: 4px solid #36b9cc;
+.table-card .card-header h3 i {
+    color: var(--accent-color);
 }
 
-.border-left-warning {
-    border-left: 4px solid #f6c23e;
+.btn-refresh {
+    width: 36px;
+    height: 36px;
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.05);
+    border: none;
+    color: var(--text-secondary);
+    cursor: pointer;
+    transition: all 0.3s ease;
 }
 
-@media (max-width: 767.98px) {
-    .sidebar {
-        position: static;
-        padding-top: 0;
+.btn-refresh:hover {
+    background: rgba(255, 255, 255, 0.1);
+    color: var(--accent-color);
+    transform: rotate(180deg);
+}
+
+.table-responsive {
+    overflow-x: auto;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+th, td {
+    padding: 1rem 1.5rem;
+    text-align: left;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+th {
+    color: var(--text-secondary);
+    font-weight: 500;
+    background: rgba(255, 255, 255, 0.02);
+}
+
+td {
+    color: var(--text-primary);
+}
+
+.user-info {
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+}
+
+.user-avatar {
+    width: 32px;
+    height: 32px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-secondary);
+}
+
+.badge {
+    display: inline-block;
+    padding: 0.3rem 0.8rem;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 500;
+}
+
+.badge.easy { background: rgba(0, 255, 149, 0.1); color: #00ff95; }
+.badge.medium { background: rgba(255, 184, 0, 0.1); color: #ffb800; }
+.badge.hard { background: rgba(255, 77, 77, 0.1); color: #ff4d4d; }
+.badge.admin { background: rgba(255, 77, 77, 0.1); color: #ff4d4d; }
+.badge.user { background: rgba(0, 184, 255, 0.1); color: #00b8ff; }
+
+.btn-icon {
+    width: 32px;
+    height: 32px;
+    border-radius: 6px;
+    background: rgba(255, 255, 255, 0.05);
+    border: none;
+    color: var(--text-secondary);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin-right: 0.5rem;
+}
+
+.btn-icon:hover {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.btn-icon.view:hover { color: #00b8ff; }
+.btn-icon.edit:hover { color: #ffb800; }
+.btn-icon.delete:hover { color: #ff4d4d; }
+
+@media (max-width: 768px) {
+    .admin-sidebar {
+        width: 0;
+        padding: 0;
+    }
+    
+    .admin-content {
+        margin-left: 0;
+    }
+    
+    .search-box input {
+        width: 200px;
     }
 }
 </style>
 
-<%- include('../partials/footer') %>
-
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
+// Initialize AOS
+AOS.init({
+    duration: 800,
+    easing: 'ease-out',
+    once: true
+});
+
+// Chart configurations
+const chartConfig = {
+    type: 'line',
+    data: {
+        labels: ['', '', '', '', ''],
+        datasets: [{
+            data: [10, 15, 8, 12, 20],
+            borderColor: 'rgba(255, 255, 255, 0.2)',
+            borderWidth: 2,
+            pointRadius: 0,
+            fill: false,
+            tension: 0.4
+        }]
+    },
+    options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: { legend: { display: false } },
+        scales: {
+            x: { display: false },
+            y: { display: false }
+        }
+    }
+};
+
+// Create charts
+const charts = ['usersChart', 'problemsChart', 'companiesChart', 'activeUsersChart'];
+charts.forEach(id => {
+    new Chart(document.getElementById(id), chartConfig);
+});
+
+// Form submissions and other JavaScript remain the same
 document.getElementById('addTopicForm').addEventListener('submit', async (e) => {
     e.preventDefault();
     
@@ -356,7 +799,6 @@ document.getElementById('addTopicForm').addEventListener('submit', async (e) => 
     }
 });
 
-// Delete topic functionality
 document.querySelectorAll('.delete-topic').forEach(button => {
     button.addEventListener('click', async function() {
         if (confirm('Are you sure you want to delete this topic?')) {
@@ -419,4 +861,17 @@ document.getElementById('addProblemForm').addEventListener('submit', async (e) =
         alert('Error adding problem');
     }
 });
-</script> 
+
+// Add refresh animation
+document.querySelectorAll('.btn-refresh').forEach(btn => {
+    btn.addEventListener('click', function() {
+        this.style.transform = 'rotate(180deg)';
+        setTimeout(() => {
+            this.style.transform = 'rotate(0deg)';
+            window.location.reload();
+        }, 500);
+    });
+});
+</script>
+
+<%- include('../partials/footer') %> 

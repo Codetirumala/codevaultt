@@ -9,7 +9,8 @@ const problemSchema = new mongoose.Schema({
     slug: {
         type: String,
         required: true,
-        unique: true
+        unique: true,
+        trim: true
     },
     leetcodeLink: {
         type: String,
@@ -25,14 +26,11 @@ const problemSchema = new mongoose.Schema({
         ref: 'Topic',
         required: true
     },
-    solved: {
-        type: Boolean,
-        default: false
-    },
     createdAt: {
         type: Date,
         default: Date.now
     }
 });
 
-module.exports = mongoose.model('Problem', problemSchema); 
+const Problem = mongoose.model('Problem', problemSchema);
+module.exports = Problem; 

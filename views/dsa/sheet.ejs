@@ -1,197 +1,457 @@
 <%- include('../partials/header') %>
 <%- include('../partials/navbar') %>
 
-<div class="container mt-4">
-    <div class="row mb-4">
-        <div class="col">
-            <h2>DSA Sheet</h2>
-            <p class="text-muted">Master your Data Structures and Algorithms</p>
+<%
+// Helper function for topic icons with more specific icons
+function getTopicIcon(topicName) {
+    const icons = {
+        'Trie': 'fa-sitemap',
+        'Array Basics': 'fa-layer-group',
+        'String Basics': 'fa-font',
+        'Two Pointers Approach': 'fa-arrows-h',
+        'Stacks & Queues': 'fa-stream',
+        'Trees': 'fa-tree',
+        'Matrixes': 'fa-th',
+        'Bit Manipulation': 'fa-microchip',
+        'Linked List': 'fa-link',
+        'Stack': 'fa-database',
+        'Queue': 'fa-stream',
+        'Graph': 'fa-project-diagram',
+        'Dynamic Programming': 'fa-chess-board',
+        'Recursion': 'fa-redo',
+        'Binary Search': 'fa-search',
+        'Sorting': 'fa-sort',
+        'Greedy': 'fa-forward',
+        'Backtracking': 'fa-undo',
+        'Heap': 'fa-mountain',
+        'Hashing': 'fa-hashtag',
+        'default': 'fa-code'
+    };
+    return icons[topicName] || icons.default;
+}
+%>
+
+<div class="dsa-sheet-container">
+    <!-- Hero Section -->
+    <div class="hero-section">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-lg-6" data-aos="fade-right">
+                    <h1 class="hero-title">
+                        Master Your 
+                        <span class="gradient-text">DSA Journey</span>
+                    </h1>
+                    <p class="hero-subtitle">Track your progress through carefully curated problem sets</p>
+                    <div class="progress-stats">
+                        <div class="stat-item">
+                            <div class="stat-value"><%= Object.values(topicStats).reduce((acc, curr) => acc + curr.solvedProblems, 0) %></div>
+                            <div class="stat-label">Problems Solved</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-value"><%= Object.values(topicStats).reduce((acc, curr) => acc + curr.totalProblems, 0) %></div>
+                            <div class="stat-label">Total Problems</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-6 d-none d-lg-block" data-aos="fade-left">
+                    <div class="hero-image">
+                        <div class="code-window">
+                            <div class="window-header">
+                                <span class="dot red"></span>
+                                <span class="dot yellow"></span>
+                                <span class="dot green"></span>
+                            </div>
+                            <pre class="code-content"><code>class Solution {
+    void masterDSA() {
+        dedication = true;
+        practice = true;
+        success = dedication && practice;
+    }
+}</code></pre>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 
-    <!-- Difficulty tabs -->
-    <ul class="nav nav-pills mb-4" id="difficultyTabs" role="tablist">
-        <li class="nav-item" role="presentation">
-            <button class="nav-link active" id="all-tab" data-bs-toggle="pill" data-bs-target="#all" type="button">
-                All Topics
-            </button>
-        </li>
-        <li class="nav-item" role="presentation">
-            <button class="nav-link" id="easy-tab" data-bs-toggle="pill" data-bs-target="#easy" type="button">
-                Easy
-            </button>
-        </li>
-        <li class="nav-item" role="presentation">
-            <button class="nav-link" id="medium-tab" data-bs-toggle="pill" data-bs-target="#medium" type="button">
-                Medium
-            </button>
-        </li>
-        <li class="nav-item" role="presentation">
-            <button class="nav-link" id="hard-tab" data-bs-toggle="pill" data-bs-target="#hard" type="button">
-                Hard
-            </button>
-        </li>
-    </ul>
-
-    <!-- Topics content -->
-    <div class="tab-content" id="topicsContent">
-        <!-- All Topics -->
-        <div class="tab-pane fade show active" id="all">
-            <div class="row">
-                <% Object.entries(groupedTopics).forEach(([difficulty, topics]) => { %>
-                    <% topics.forEach(topic => { %>
-                        <div class="col-md-4 mb-4">
-                            <div class="card h-100 shadow-sm" onclick="window.location.href='/dsa/topics/<%= topic._id %>'">
-                                <div class="card-body">
-                                    <div class="d-flex justify-content-between align-items-center mb-3">
-                                        <h5 class="card-title mb-0"><%= topic.name %></h5>
-                                        <span class="badge bg-<%= difficulty === 'Easy' ? 'success' : difficulty === 'Medium' ? 'warning' : 'danger' %>">
-                                            <%= difficulty %>
-                                        </span>
-                                    </div>
-                                    <div class="d-flex justify-content-between align-items-center">
-                                        <div>
-                                            <small class="text-muted">
-                                                <i class="fas fa-code"></i> <%= topicStats[topic._id].totalProblems %> Problems
-                                            </small>
-                                            <br>
-                                            <small class="text-muted">
-                                                <i class="fas fa-check"></i> <%= topicStats[topic._id].solvedProblems %> Solved
-                                            </small>
-                                        </div>
-                                        <a href="/dsa/topics/<%= topic._id %>" class="btn btn-primary btn-sm">
-                                            Start Practice
-                                        </a>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    <% }); %>
-                <% }); %>
+    <!-- Difficulty Filter -->
+    <div class="container">
+        <div class="filter-section" data-aos="fade-up">
+            <div class="difficulty-tabs">
+                <button class="tab-btn active" data-filter="all">
+                    <i class="fas fa-th-large"></i> All Topics
+                </button>
+                <button class="tab-btn" data-filter="easy">
+                    <i class="fas fa-leaf"></i> Easy
+                </button>
+                <button class="tab-btn" data-filter="medium">
+                    <i class="fas fa-bolt"></i> Medium
+                </button>
+                <button class="tab-btn" data-filter="hard">
+                    <i class="fas fa-fire"></i> Hard
+                </button>
+            </div>
+            <div class="search-box">
+                <i class="fas fa-search"></i>
+                <input type="text" placeholder="Search topics..." id="topicSearch">
             </div>
         </div>
 
-        <!-- Easy Topics -->
-        <div class="tab-pane fade" id="easy">
-            <div class="row">
-                <% groupedTopics.Easy.forEach(topic => { %>
-                    <div class="col-md-4 mb-4">
-                        <div class="card h-100 shadow-sm" onclick="window.location.href='/dsa/topics/<%= topic._id %>'">
-                            <div class="card-body">
-                                <div class="d-flex justify-content-between align-items-center mb-3">
-                                    <h5 class="card-title mb-0"><%= topic.name %></h5>
-                                    <span class="badge bg-success">Easy</span>
+        <!-- Topics Grid -->
+        <div class="topics-grid">
+            <% Object.entries(groupedTopics).forEach(([difficulty, topics]) => { %>
+                <% topics.forEach(topic => { %>
+                    <div class="topic-card <%= difficulty.toLowerCase() %>" data-aos="fade-up">
+                        <div class="card-header">
+                            <div class="topic-icon">
+                                <i class="fas <%= getTopicIcon(topic.name) %>"></i>
+                            </div>
+                            <h3><%= topic.name %></h3>
+                            <div class="difficulty-badge <%= difficulty.toLowerCase() %>">
+                                <%= difficulty %>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="progress-bar">
+                                <div class="progress" style="width: <%= (topicStats[topic._id].solvedProblems / topicStats[topic._id].totalProblems) * 100 %>%"></div>
+                            </div>
+                            <div class="stats">
+                                <div class="stat">
+                                    <i class="fas fa-code"></i>
+                                    <%= topicStats[topic._id].totalProblems %> Problems
                                 </div>
-                                <div class="d-flex justify-content-between align-items-center">
-                                    <div>
-                                        <small class="text-muted">
-                                            <i class="fas fa-code"></i> <%= topicStats[topic._id].totalProblems %> Problems
-                                        </small>
-                                        <br>
-                                        <small class="text-muted">
-                                            <i class="fas fa-check"></i> <%= topicStats[topic._id].solvedProblems %> Solved
-                                        </small>
-                                    </div>
-                                    <a href="/dsa/topics/<%= topic._id %>" class="btn btn-primary btn-sm">
-                                        Start Practice
-                                    </a>
+                                <div class="stat">
+                                    <i class="fas fa-check-circle"></i>
+                                    <%= topicStats[topic._id].solvedProblems %> Solved
                                 </div>
                             </div>
+                            <a href="/dsa/topics/<%= topic._id %>" class="start-btn">
+                                Start Practice <i class="fas fa-arrow-right"></i>
+                            </a>
                         </div>
                     </div>
                 <% }); %>
-            </div>
-        </div>
-
-        <!-- Medium Topics -->
-        <div class="tab-pane fade" id="medium">
-            <div class="row">
-                <% groupedTopics.Medium.forEach(topic => { %>
-                    <div class="col-md-4 mb-4">
-                        <div class="card h-100 shadow-sm" onclick="window.location.href='/dsa/topics/<%= topic._id %>'">
-                            <div class="card-body">
-                                <div class="d-flex justify-content-between align-items-center mb-3">
-                                    <h5 class="card-title mb-0"><%= topic.name %></h5>
-                                    <span class="badge bg-warning">Medium</span>
-                                </div>
-                                <div class="d-flex justify-content-between align-items-center">
-                                    <div>
-                                        <small class="text-muted">
-                                            <i class="fas fa-code"></i> <%= topicStats[topic._id].totalProblems %> Problems
-                                        </small>
-                                        <br>
-                                        <small class="text-muted">
-                                            <i class="fas fa-check"></i> <%= topicStats[topic._id].solvedProblems %> Solved
-                                        </small>
-                                    </div>
-                                    <a href="/dsa/topics/<%= topic._id %>" class="btn btn-primary btn-sm">
-                                        Start Practice
-                                    </a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                <% }); %>
-            </div>
-        </div>
-
-        <!-- Hard Topics -->
-        <div class="tab-pane fade" id="hard">
-            <div class="row">
-                <% groupedTopics.Hard.forEach(topic => { %>
-                    <div class="col-md-4 mb-4">
-                        <div class="card h-100 shadow-sm" onclick="window.location.href='/dsa/topics/<%= topic._id %>'">
-                            <div class="card-body">
-                                <div class="d-flex justify-content-between align-items-center mb-3">
-                                    <h5 class="card-title mb-0"><%= topic.name %></h5>
-                                    <span class="badge bg-danger">Hard</span>
-                                </div>
-                                <div class="d-flex justify-content-between align-items-center">
-                                    <div>
-                                        <small class="text-muted">
-                                            <i class="fas fa-code"></i> <%= topicStats[topic._id].totalProblems %> Problems
-                                        </small>
-                                        <br>
-                                        <small class="text-muted">
-                                            <i class="fas fa-check"></i> <%= topicStats[topic._id].solvedProblems %> Solved
-                                        </small>
-                                    </div>
-                                    <a href="/dsa/topics/<%= topic._id %>" class="btn btn-primary btn-sm">
-                                        Start Practice
-                                    </a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                <% }); %>
-            </div>
+            <% }); %>
         </div>
     </div>
 </div>
 
 <style>
-.nav-pills .nav-link {
-    color: #6c757d;
-    margin-right: 10px;
+.dsa-sheet-container {
+    min-height: 100vh;
+    background: var(--primary-bg);
+    padding-bottom: 4rem;
 }
 
-.nav-pills .nav-link.active {
-    background-color: #007bff;
-    color: white;
+.hero-section {
+    background: linear-gradient(45deg, rgba(22,33,62,0.95), rgba(26,26,46,0.95));
+    padding: 4rem 0;
+    margin-bottom: 3rem;
+    position: relative;
+    overflow: hidden;
 }
 
-.card {
-    transition: transform 0.2s;
+.hero-section::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: url('/images/grid.png') repeat;
+    opacity: 0.1;
 }
 
-.card:hover {
+.hero-title {
+    font-size: 3.5rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+    color: var(--text-primary);
+}
+
+.gradient-text {
+    background: linear-gradient(45deg, #00ff95, #00b8ff);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.hero-subtitle {
+    font-size: 1.2rem;
+    color: var(--text-secondary);
+    margin-bottom: 2rem;
+}
+
+.progress-stats {
+    display: flex;
+    gap: 2rem;
+}
+
+.stat-item {
+    background: rgba(255, 255, 255, 0.05);
+    padding: 1rem;
+    border-radius: 12px;
+    text-align: center;
+}
+
+.stat-value {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--accent-color);
+}
+
+.stat-label {
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+}
+
+.code-window {
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+}
+
+.window-header {
+    background: rgba(255, 255, 255, 0.05);
+    padding: 0.8rem;
+    display: flex;
+    gap: 0.5rem;
+}
+
+.dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+}
+
+.red { background: #ff5f56; }
+.yellow { background: #ffbd2e; }
+.green { background: #27c93f; }
+
+.code-content {
+    padding: 1.5rem;
+    margin: 0;
+    color: #00ff95;
+    font-family: 'Fira Code', monospace;
+}
+
+.filter-section {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+
+.difficulty-tabs {
+    display: flex;
+    gap: 1rem;
+}
+
+.tab-btn {
+    background: rgba(255, 255, 255, 0.05);
+    border: none;
+    padding: 0.8rem 1.5rem;
+    border-radius: 8px;
+    color: var(--text-secondary);
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.tab-btn.active {
+    background: var(--accent-color);
+    color: var(--secondary-bg);
+}
+
+.search-box {
+    position: relative;
+}
+
+.search-box input {
+    background: rgba(255, 255, 255, 0.05);
+    border: none;
+    padding: 0.8rem 1rem 0.8rem 2.5rem;
+    border-radius: 8px;
+    color: var(--text-primary);
+    width: 250px;
+}
+
+.search-box i {
+    position: absolute;
+    left: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--text-secondary);
+}
+
+.topics-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 2rem;
+}
+
+.topic-card {
+    background: var(--card-bg);
+    border-radius: 12px;
+    overflow: hidden;
+    transition: all 0.3s ease;
+}
+
+.topic-card:hover {
     transform: translateY(-5px);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
 }
 
-.badge {
+.card-header {
+    padding: 1.5rem;
+    background: linear-gradient(45deg, rgba(26,26,46,0.95), rgba(22,33,62,0.95));
+    position: relative;
+}
+
+.topic-icon {
+    width: 48px;
+    height: 48px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 1rem;
+}
+
+.topic-icon i {
+    font-size: 1.5rem;
+    color: var(--accent-color);
+}
+
+.difficulty-badge {
+    position: absolute;
+    top: 1.5rem;
+    right: 1.5rem;
+    padding: 0.3rem 1rem;
+    border-radius: 20px;
     font-size: 0.8rem;
-    padding: 0.4em 0.8em;
+}
+
+.difficulty-badge.easy { background: rgba(0, 255, 149, 0.1); color: #00ff95; }
+.difficulty-badge.medium { background: rgba(255, 184, 0, 0.1); color: #ffb800; }
+.difficulty-badge.hard { background: rgba(255, 77, 77, 0.1); color: #ff4d4d; }
+
+.card-body {
+    padding: 1.5rem;
+}
+
+.progress-bar {
+    height: 6px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 3px;
+    margin-bottom: 1rem;
+    overflow: hidden;
+}
+
+.progress {
+    height: 100%;
+    background: var(--accent-color);
+    border-radius: 3px;
+    transition: width 0.3s ease;
+}
+
+.stats {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 1.5rem;
+}
+
+.stat {
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+}
+
+.stat i {
+    margin-right: 0.5rem;
+    color: var(--accent-color);
+}
+
+.start-btn {
+    display: block;
+    width: 100%;
+    padding: 0.8rem;
+    background: linear-gradient(45deg, var(--accent-color), var(--accent-hover));
+    border: none;
+    border-radius: 8px;
+    color: var(--secondary-bg);
+    text-align: center;
+    text-decoration: none;
+    font-weight: 500;
+    transition: all 0.3s ease;
+}
+
+.start-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(0, 255, 149, 0.4);
+}
+
+@media (max-width: 768px) {
+    .hero-title {
+        font-size: 2.5rem;
+    }
+    
+    .filter-section {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    
+    .search-box input {
+        width: 100%;
+    }
 }
 </style>
+
+<script>
+// Initialize AOS
+AOS.init({
+    duration: 800,
+    easing: 'ease-out',
+    once: true
+});
+
+// Filter functionality
+document.querySelectorAll('.tab-btn').forEach(btn => {
+    btn.addEventListener('click', function() {
+        // Remove active class from all buttons
+        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+        // Add active class to clicked button
+        this.classList.add('active');
+        
+        const filter = this.dataset.filter;
+        const cards = document.querySelectorAll('.topic-card');
+        
+        cards.forEach(card => {
+            if (filter === 'all' || card.classList.contains(filter)) {
+                card.style.display = 'block';
+            } else {
+                card.style.display = 'none';
+            }
+        });
+    });
+});
+
+// Search functionality
+document.getElementById('topicSearch').addEventListener('input', function() {
+    const searchTerm = this.value.toLowerCase();
+    const cards = document.querySelectorAll('.topic-card');
+    
+    cards.forEach(card => {
+        const topicName = card.querySelector('h3').textContent.toLowerCase();
+        if (topicName.includes(searchTerm)) {
+            card.style.display = 'block';
+        } else {
+            card.style.display = 'none';
+        }
+    });
+});
+</script>
 
 <%- include('../partials/footer') %> 

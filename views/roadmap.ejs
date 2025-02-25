@@ -1,10 +1,422 @@
 <%- include('partials/header') %>
 <%- include('partials/navbar') %>
 
-<div class="container mt-4">
-    <h1>Learning Roadmap</h1>
-    <!-- Content will be added later -->
-    <p>Roadmap content coming soon...</p>
+<div class="roadmap-container">
+    <div class="hero-section">
+        <div class="container">
+            <h1 class="roadmap-title">
+                <span class="gradient-text">Data Structures & Algorithms</span>
+                <span class="subtitle">Your Path to Mastery</span>
+            </h1>
+            <div class="progress-tracker">
+                <div class="progress-ring">
+                    <svg class="progress-circle">
+                        <circle class="progress-circle-bg" cx="60" cy="60" r="54"/>
+                        <circle class="progress-circle-path" cx="60" cy="60" r="54"/>
+                    </svg>
+                    <div class="progress-text">
+                        <span class="progress-value">100%</span>
+                        <span class="progress-label">Complete</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container mt-5">
+        <div class="roadmap-grid">
+            <!-- Programming Fundamentals -->
+            <div class="roadmap-card" data-aos="fade-up">
+                <div class="card-header">
+                    <div class="header-icon">
+                        <i class="fas fa-code"></i>
+                    </div>
+                    <h3>Programming Fundamentals</h3>
+                    <div class="difficulty beginner">Beginner</div>
+                </div>
+                <div class="card-body">
+                    <ul class="topic-list">
+                        <li>
+                            <i class="fas fa-check-circle"></i>
+                            <span>Basic Syntax and Variables</span>
+                        </li>
+                        <li>
+                            <i class="fas fa-check-circle"></i>
+                            <span>Control Structures</span>
+                        </li>
+                        <li>
+                            <i class="fas fa-check-circle"></i>
+                            <span>Functions and Methods</span>
+                        </li>
+                        <li>
+                            <i class="fas fa-check-circle"></i>
+                            <span>Arrays and Basic Operations</span>
+                        </li>
+                        <li>
+                            <i class="fas fa-check-circle"></i>
+                            <span>Time & Space Complexity</span>
+                        </li>
+                    </ul>
+                    <button class="start-btn">Begin Learning</button>
+                </div>
+            </div>
+
+            <!-- Basic Data Structures -->
+            <div class="roadmap-card" data-aos="fade-up" data-aos-delay="100">
+                <div class="card-header">
+                    <div class="header-icon">
+                        <i class="fas fa-layer-group"></i>
+                    </div>
+                    <h3>Basic Data Structures</h3>
+                    <div class="difficulty intermediate">Intermediate</div>
+                </div>
+                <div class="card-body">
+                    <ul class="topic-list">
+                        <li><i class="fas fa-check-circle"></i> Arrays and Dynamic Arrays</li>
+                        <li><i class="fas fa-check-circle"></i> Strings and Manipulation</li>
+                        <li><i class="fas fa-check-circle"></i> Linked Lists</li>
+                        <li><i class="fas fa-check-circle"></i> Stacks and Applications</li>
+                        <li><i class="fas fa-check-circle"></i> Queues and Variations</li>
+                    </ul>
+                    <button class="start-btn">Start Learning</button>
+                </div>
+            </div>
+
+            <!-- Advanced Data Structures -->
+            <div class="roadmap-card" data-aos="fade-up" data-aos-delay="200">
+                <div class="card-header">
+                    <div class="header-icon">
+                        <i class="fas fa-brain"></i>
+                    </div>
+                    <h3>Advanced Data Structures</h3>
+                    <div class="difficulty advanced">Advanced</div>
+                </div>
+                <div class="card-body">
+                    <ul class="topic-list">
+                        <li><i class="fas fa-check-circle"></i> Trees and BST</li>
+                        <li><i class="fas fa-check-circle"></i> Heaps and Priority Queues</li>
+                        <li><i class="fas fa-check-circle"></i> Hash Tables</li>
+                        <li><i class="fas fa-check-circle"></i> Graphs</li>
+                        <li><i class="fas fa-check-circle"></i> Advanced Tree Structures</li>
+                    </ul>
+                    <button class="start-btn">Explore Now</button>
+                </div>
+            </div>
+
+            <!-- Basic Algorithms -->
+            <div class="roadmap-card" data-aos="fade-up" data-aos-delay="300">
+                <div class="card-header">
+                    <div class="header-icon">
+                        <i class="fas fa-cogs"></i>
+                    </div>
+                    <h3>Basic Algorithms</h3>
+                    <div class="difficulty intermediate">Intermediate</div>
+                </div>
+                <div class="card-body">
+                    <ul class="topic-list">
+                        <li><i class="fas fa-check-circle"></i> Searching Algorithms</li>
+                        <li><i class="fas fa-check-circle"></i> Basic Sorting</li>
+                        <li><i class="fas fa-check-circle"></i> Basic Recursion</li>
+                        <li><i class="fas fa-check-circle"></i> Two Pointers</li>
+                        <li><i class="fas fa-check-circle"></i> Sliding Window</li>
+                    </ul>
+                    <button class="start-btn">Learn More</button>
+                </div>
+            </div>
+
+            <!-- Advanced Algorithms -->
+            <div class="roadmap-card" data-aos="fade-up" data-aos-delay="400">
+                <div class="card-header">
+                    <div class="header-icon">
+                        <i class="fas fa-microchip"></i>
+                    </div>
+                    <h3>Advanced Algorithms</h3>
+                    <div class="difficulty expert">Expert</div>
+                </div>
+                <div class="card-body">
+                    <ul class="topic-list">
+                        <li><i class="fas fa-check-circle"></i> Advanced Sorting</li>
+                        <li><i class="fas fa-check-circle"></i> Dynamic Programming</li>
+                        <li><i class="fas fa-check-circle"></i> Graph Algorithms</li>
+                        <li><i class="fas fa-check-circle"></i> Greedy Algorithms</li>
+                        <li><i class="fas fa-check-circle"></i> Backtracking</li>
+                    </ul>
+                    <button class="start-btn">Master Now</button>
+                </div>
+            </div>
+
+            <!-- Special Topics -->
+            <div class="roadmap-card" data-aos="fade-up" data-aos-delay="500">
+                <div class="card-header">
+                    <div class="header-icon">
+                        <i class="fas fa-star"></i>
+                    </div>
+                    <h3>Special Topics</h3>
+                    <div class="difficulty master">Master</div>
+                </div>
+                <div class="card-body">
+                    <ul class="topic-list">
+                        <li><i class="fas fa-check-circle"></i> Bit Manipulation</li>
+                        <li><i class="fas fa-check-circle"></i> Math & Number Theory</li>
+                        <li><i class="fas fa-check-circle"></i> Advanced Graphs</li>
+                        <li><i class="fas fa-check-circle"></i> String Algorithms</li>
+                        <li><i class="fas fa-check-circle"></i> System Design</li>
+                    </ul>
+                    <button class="start-btn">Dive Deep</button>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
+
+<style>
+.roadmap-container {
+    background: var(--primary-bg);
+    min-height: 100vh;
+    padding-bottom: 4rem;
+}
+
+.hero-section {
+    background: linear-gradient(135deg, rgba(26,26,46,0.95) 0%, rgba(22,33,62,0.95) 100%);
+    padding: 4rem 0;
+    position: relative;
+    overflow: hidden;
+}
+
+.hero-section::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: url('/images/grid.png') repeat;
+    opacity: 0.1;
+}
+
+.roadmap-title {
+    text-align: center;
+    margin-bottom: 2rem;
+}
+
+.gradient-text {
+    display: block;
+    font-size: 3rem;
+    font-weight: 700;
+    background: linear-gradient(45deg, var(--accent-color), var(--accent-hover));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin-bottom: 0.5rem;
+}
+
+.subtitle {
+    display: block;
+    color: var(--text-secondary);
+    font-size: 1.2rem;
+    font-weight: 400;
+}
+
+.progress-tracker {
+    display: flex;
+    justify-content: center;
+    margin-top: 2rem;
+}
+
+.progress-ring {
+    position: relative;
+    width: 120px;
+    height: 120px;
+}
+
+.progress-circle {
+    width: 120px;
+    height: 120px;
+    transform: rotate(-90deg);
+}
+
+.progress-circle-bg,
+.progress-circle-path {
+    fill: none;
+    stroke-width: 8;
+}
+
+.progress-circle-bg {
+    stroke: rgba(255, 255, 255, 0.1);
+}
+
+.progress-circle-path {
+    stroke: var(--accent-color);
+    stroke-linecap: round;
+    stroke-dasharray: 339.292;
+    stroke-dashoffset: 339.292;
+    transition: stroke-dashoffset 1s ease;
+}
+
+.progress-text {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+}
+
+.progress-value {
+    display: block;
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--accent-color);
+}
+
+.progress-label {
+    display: block;
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+}
+
+.roadmap-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 2rem;
+    padding: 0 1rem;
+}
+
+.roadmap-card {
+    background: var(--card-bg);
+    border-radius: 15px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    overflow: hidden;
+    transition: all 0.3s ease;
+}
+
+.roadmap-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+}
+
+.card-header {
+    padding: 2rem;
+    background: linear-gradient(45deg, rgba(26,26,46,0.95), rgba(22,33,62,0.95));
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    position: relative;
+}
+
+.header-icon {
+    width: 60px;
+    height: 60px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 1rem;
+}
+
+.header-icon i {
+    font-size: 1.8rem;
+    color: var(--accent-color);
+}
+
+.card-header h3 {
+    color: var(--text-primary);
+    font-size: 1.5rem;
+    margin-bottom: 0.5rem;
+}
+
+.difficulty {
+    display: inline-block;
+    padding: 0.3rem 1rem;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 500;
+}
+
+.beginner { background: rgba(0, 255, 149, 0.2); color: #00ff95; }
+.intermediate { background: rgba(0, 184, 255, 0.2); color: #00b8ff; }
+.advanced { background: rgba(255, 77, 77, 0.2); color: #ff4d4d; }
+.expert { background: rgba(255, 184, 0, 0.2); color: #ffb800; }
+.master { background: rgba(255, 0, 255, 0.2); color: #ff00ff; }
+
+.card-body {
+    padding: 2rem;
+}
+
+.topic-list {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 1.5rem 0;
+}
+
+.topic-list li {
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+    color: var(--text-secondary);
+    margin-bottom: 1rem;
+    padding: 0.5rem;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+}
+
+.topic-list li:hover {
+    background: rgba(255, 255, 255, 0.05);
+    transform: translateX(5px);
+}
+
+.topic-list li i {
+    color: var(--accent-color);
+    font-size: 1.2rem;
+}
+
+.start-btn {
+    width: 100%;
+    padding: 0.8rem;
+    background: linear-gradient(45deg, var(--accent-color), var(--accent-hover));
+    border: none;
+    border-radius: 8px;
+    color: var(--secondary-bg);
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.start-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(0, 255, 149, 0.4);
+}
+
+@media (max-width: 768px) {
+    .gradient-text {
+        font-size: 2rem;
+    }
+    
+    .roadmap-grid {
+        grid-template-columns: 1fr;
+    }
+}
+</style>
+
+<script>
+// Initialize AOS
+AOS.init({
+    duration: 800,
+    easing: 'ease-out',
+    once: true
+});
+
+// Progress circle animation
+document.addEventListener('DOMContentLoaded', function() {
+    const circle = document.querySelector('.progress-circle-path');
+    const value = document.querySelector('.progress-value');
+    const progress = 0; // Replace with actual progress
+    
+    const circumference = 2 * Math.PI * 54;
+    const offset = circumference - (progress / 100) * circumference;
+    
+    circle.style.strokeDasharray = `${circumference} ${circumference}`;
+    circle.style.strokeDashoffset = offset;
+    
+    value.textContent = `${progress}%`;
+});
+</script>
 
 <%- include('partials/footer') %> 

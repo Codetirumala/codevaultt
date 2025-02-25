@@ -4,11 +4,12 @@
 <div class="container mt-5">
   <div class="row justify-content-center">
     <div class="col-md-6">
-      <div class="card">
-        <div class="card-header">
+      <div class="auth-card">
+        <div class="auth-header">
+          <i class="fas fa-sign-in-alt auth-icon"></i>
           <h2>Sign In</h2>
         </div>
-        <div class="card-body">
+        <div class="auth-body">
           <% if (locals.error) { %>
             <div class="alert alert-danger alert-dismissible fade show">
               <%= error %>
@@ -16,23 +17,131 @@
             </div>
           <% } %>
           <form action="/signin" method="POST">
-            <div class="mb-3">
-              <label for="email" class="form-label">Email</label>
-              <input type="email" class="form-control" id="email" name="email" required>
+            <div class="form-group mb-3">
+              <label for="email" class="form-label">
+                <i class="fas fa-envelope"></i> Email
+              </label>
+              <input type="email" class="form-control custom-input" id="email" name="email" required>
             </div>
-            <div class="mb-3">
-              <label for="password" class="form-label">Password</label>
-              <input type="password" class="form-control" id="password" name="password" required>
+            <div class="form-group mb-4">
+              <label for="password" class="form-label">
+                <i class="fas fa-lock"></i> Password
+              </label>
+              <input type="password" class="form-control custom-input" id="password" name="password" required>
             </div>
-            <button type="submit" class="btn btn-primary w-100">Sign In</button>
+            <button type="submit" class="btn custom-btn w-100">
+              <i class="fas fa-sign-in-alt me-2"></i> Sign In
+            </button>
           </form>
-          <p class="mt-3 text-center">
-            Don't have an account? <a href="/signup">Sign Up</a>
+          <p class="mt-4 text-center signup-text">
+            Don't have an account? <a href="/signup" class="custom-link">Sign Up</a>
           </p>
         </div>
       </div>
     </div>
   </div>
 </div>
+
+<style>
+.auth-card {
+    background: rgba(26, 26, 46, 0.95);
+    border-radius: 15px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    overflow: hidden;
+}
+
+.auth-header {
+    background: linear-gradient(to right, #1a1a2e, #16213e);
+    padding: 2rem;
+    text-align: center;
+    color: #fff;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.auth-icon {
+    font-size: 2.5rem;
+    color: #00ff95;
+    margin-bottom: 1rem;
+}
+
+.auth-body {
+    padding: 2rem;
+    color: #fff;
+}
+
+.form-label {
+    color: #fff;
+    font-weight: 500;
+}
+
+.form-label i {
+    color: #00ff95;
+    margin-right: 8px;
+}
+
+.custom-input {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: #fff;
+    padding: 0.8rem;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+}
+
+.custom-input:focus {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: #00ff95;
+    box-shadow: 0 0 0 0.2rem rgba(0, 255, 149, 0.25);
+    color: #fff;
+}
+
+.custom-btn {
+    background: linear-gradient(45deg, #00ff95, #00b8ff);
+    color: #1a1a2e;
+    font-weight: 600;
+    padding: 0.8rem;
+    border-radius: 8px;
+    border: none;
+    transition: all 0.3s ease;
+}
+
+.custom-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(0, 255, 149, 0.4);
+}
+
+.signup-text {
+    color: #a0a0a0;
+}
+
+.custom-link {
+    color: #00ff95;
+    text-decoration: none;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.custom-link:hover {
+    color: #00b8ff;
+    text-decoration: none;
+}
+
+.alert {
+    background: rgba(220, 53, 69, 0.1);
+    border: 1px solid rgba(220, 53, 69, 0.3);
+    color: #ff4d4d;
+}
+
+.btn-close {
+    filter: invert(1) grayscale(100%) brightness(200%);
+}
+
+body {
+    background: #0f0f1a;
+    min-height: 100vh;
+}
+</style>
 
 <%- include('partials/footer') %> 

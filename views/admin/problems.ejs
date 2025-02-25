@@ -1,65 +1,637 @@
 <%- include('../partials/header') %>
 <%- include('../partials/navbar') %>
 
-<div class="container mt-5">
-    <h2>Manage Problems</h2>
-    <table class="table table-bordered">
-        <thead>
-            <tr>
-                <th>Problem Name</th>
-                <th>Slug</th>
-                <th>LeetCode Link</th>
-                <th>Difficulty</th>
-                <th>Topic</th>
-                <th>Actions</th>
-            </tr>
-        </thead>
-        <tbody>
-            <% if (problems.length > 0) { %>
-                <% problems.forEach(problem => { %>
+<div class="admin-container">
+    <!-- Admin Sidebar -->
+    <div class="admin-sidebar">
+        <div class="sidebar-header">
+            <div class="admin-brand">
+                <i class="fas fa-shield-alt"></i>
+                <span>Admin Panel</span>
+            </div>
+        </div>
+        <div class="sidebar-menu">
+            <ul>
+                <li>
+                    <a href="/admin/dashboard">
+                        <i class="fas fa-chart-line"></i>
+                        <span>Dashboard</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="/admin/users">
+                        <i class="fas fa-users"></i>
+                        <span>Users</span>
+                    </a>
+                </li>
+                <li class="active">
+                    <a href="/admin/problems">
+                        <i class="fas fa-code"></i>
+                        <span>Problems</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="admin-content">
+        <div class="content-header" data-aos="fade-down">
+            <div class="header-title">
+                <h1>Problems Management</h1>
+                <p class="subtitle">Manage your coding challenges collection</p>
+            </div>
+            <div class="header-actions">
+                <div class="search-box">
+                    <i class="fas fa-search"></i>
+                    <input type="text" id="searchProblem" placeholder="Search problems...">
+                </div>
+            </div>
+        </div>
+
+        <!-- Stats Cards -->
+        <div class="stats-grid">
+            <div class="stat-card glass" data-aos="fade-up">
+                <div class="stat-icon total">
+                    <i class="fas fa-code"></i>
+                </div>
+                <div class="stat-info">
+                    <h3><%= problems.length %></h3>
+                    <p>Total Problems</p>
+                </div>
+                <div class="stat-chart"></div>
+            </div>
+            <div class="stat-card glass" data-aos="fade-up" data-aos-delay="100">
+                <div class="stat-icon easy">
+                    <i class="fas fa-leaf"></i>
+                </div>
+                <div class="stat-info">
+                    <h3><%= problems.filter(p => p.difficulty === 'Easy').length %></h3>
+                    <p>Easy Problems</p>
+                </div>
+                <div class="stat-chart"></div>
+            </div>
+            <div class="stat-card glass" data-aos="fade-up" data-aos-delay="200">
+                <div class="stat-icon medium">
+                    <i class="fas fa-bolt"></i>
+                </div>
+                <div class="stat-info">
+                    <h3><%= problems.filter(p => p.difficulty === 'Medium').length %></h3>
+                    <p>Medium Problems</p>
+                </div>
+                <div class="stat-chart"></div>
+            </div>
+            <div class="stat-card glass" data-aos="fade-up" data-aos-delay="300">
+                <div class="stat-icon hard">
+                    <i class="fas fa-fire"></i>
+                </div>
+                <div class="stat-info">
+                    <h3><%= problems.filter(p => p.difficulty === 'Hard').length %></h3>
+                    <p>Hard Problems</p>
+                </div>
+                <div class="stat-chart"></div>
+            </div>
+        </div>
+
+        <!-- Problems Table -->
+        <div class="table-container glass" data-aos="fade-up">
+            <div class="table-header">
+                <div class="filter-buttons">
+                    <button class="filter-btn active" data-filter="all">
+                        <i class="fas fa-list"></i> All
+                    </button>
+                    <button class="filter-btn" data-filter="Easy">
+                        <i class="fas fa-leaf"></i> Easy
+                    </button>
+                    <button class="filter-btn" data-filter="Medium">
+                        <i class="fas fa-bolt"></i> Medium
+                    </button>
+                    <button class="filter-btn" data-filter="Hard">
+                        <i class="fas fa-fire"></i> Hard
+                    </button>
+                </div>
+            </div>
+
+            <table class="custom-table">
+                <thead>
                     <tr>
-                        <td><%= problem.name %></td>
-                        <td><%= problem.slug %></td>
-                        <td><a href="<%= problem.leetcodeLink %>" target="_blank">View</a></td>
-                        <td><%= problem.difficulty %></td>
-                        <td><%= problem.topic.name %></td>
-                        <td>
-                            <button class="btn btn-danger btn-sm delete-problem" data-id="<%= problem._id %>">Delete</button>
-                        </td>
+                        <th>Problem Name</th>
+                        <th>Topic</th>
+                        <th>Difficulty</th>
+                        <th>LeetCode Link</th>
+                        <th>Actions</th>
                     </tr>
-                <% }); %>
-            <% } else { %>
-                <tr>
-                    <td colspan="6" class="text-center">No problems found</td>
-                </tr>
-            <% } %>
-        </tbody>
-    </table>
+                </thead>
+                <tbody>
+                    <% if (problems && problems.length > 0) { %>
+                        <% problems.forEach(problem => { %>
+                            <tr class="problem-row" data-difficulty="<%= problem.difficulty %>">
+                                <td>
+                                    <div class="problem-info">
+                                        <div class="problem-icon <%= problem.difficulty.toLowerCase() %>">
+                                            <i class="fas fa-code"></i>
+                                        </div>
+                                        <span><%= problem.name %></span>
+                                    </div>
+                                </td>
+                                <td>
+                                    <span class="topic-badge">
+                                        <i class="fas fa-book"></i>
+                                        <%= problem.topic ? problem.topic.name : 'No Topic' %>
+                                    </span>
+                                </td>
+                                <td>
+                                    <span class="difficulty-badge <%= problem.difficulty.toLowerCase() %>">
+                                        <i class="fas <%= problem.difficulty === 'Easy' ? 'fa-leaf' : 
+                                                        problem.difficulty === 'Medium' ? 'fa-bolt' : 'fa-fire' %>">
+                                        </i>
+                                        <%= problem.difficulty %>
+                                    </span>
+                                </td>
+                                <td>
+                                    <a href="<%= problem.leetcodeLink %>" class="leetcode-link" target="_blank">
+                                        <i class="fab fa-leetcode"></i>
+                                        View Problem
+                                    </a>
+                                </td>
+                                <td>
+                                    <div class="action-buttons">
+                                        <button class="btn-icon edit" onclick="editProblem('<%= problem._id %>')" title="Edit Problem">
+                                            <i class="fas fa-edit"></i>
+                                        </button>
+                                        <button class="btn-icon delete delete-problem" 
+                                                data-id="<%= problem._id %>"
+                                                title="Delete Problem">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                        <% }); %>
+                    <% } else { %>
+                        <tr>
+                            <td colspan="5" class="empty-state">
+                                <div class="empty-content">
+                                    <i class="fas fa-code"></i>
+                                    <h3>No Problems Found</h3>
+                                    <p>Start by adding some coding problems</p>
+                                </div>
+                            </td>
+                        </tr>
+                    <% } %>
+                </tbody>
+            </table>
+        </div>
+    </div>
 </div>
 
+<style>
+:root {
+    --easy-color: #00ff95;
+    --medium-color: #ffb800;
+    --hard-color: #ff4d4d;
+    --accent-color: #00b8ff;
+    --bg-gradient: linear-gradient(135deg, #1a1a1a, #2d2d2d);
+}
+
+/* Premium Glass Effect */
+.glass {
+    background: rgba(255, 255, 255, 0.03);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+}
+
+/* Container Styles */
+.admin-container {
+    display: flex;
+    min-height: 100vh;
+    background: var(--primary-bg);
+}
+
+/* Sidebar Styles */
+.admin-sidebar {
+    width: 280px;
+    background: linear-gradient(to right, #1a1a2e, #16213e);
+    padding: 2rem;
+    border-right: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.admin-brand {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    color: #fff;
+    font-size: 1.3rem;
+    margin-bottom: 2.5rem;
+}
+
+.sidebar-menu ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.sidebar-menu li {
+    margin-bottom: 0.75rem;
+}
+
+.sidebar-menu a {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem;
+    color: #888;
+    text-decoration: none;
+    border-radius: 12px;
+    transition: all 0.3s ease;
+}
+
+.sidebar-menu a:hover {
+    background: rgba(255, 255, 255, 0.05);
+    color: #fff;
+    transform: translateX(5px);
+}
+
+.sidebar-menu li.active a {
+    background: var(--accent-color);
+    color: #000;
+    font-weight: 500;
+}
+
+/* Content Header */
+.admin-content {
+    flex: 1;
+    padding: 2rem;
+}
+
+.content-header {
+    margin-bottom: 2.5rem;
+}
+
+.header-title h1 {
+    color: #fff;
+    font-size: 2rem;
+    margin-bottom: 0.5rem;
+}
+
+.subtitle {
+    color: #888;
+    font-size: 1.1rem;
+}
+
+/* Search Box */
+.search-box {
+    position: relative;
+    width: 300px;
+}
+
+.search-box input {
+    width: 100%;
+    padding: 1rem 1rem 1rem 3rem;
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    background: rgba(255, 255, 255, 0.05);
+    color: #fff;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+}
+
+.search-box input:focus {
+    border-color: var(--accent-color);
+    box-shadow: 0 0 0 2px rgba(0, 184, 255, 0.1);
+}
+
+.search-box i {
+    position: absolute;
+    left: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #888;
+    font-size: 1.1rem;
+}
+
+/* Stats Grid */
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 2.5rem;
+}
+
+.stat-card {
+    border-radius: 16px;
+    padding: 1.5rem;
+    position: relative;
+    overflow: hidden;
+    transition: transform 0.3s ease;
+}
+
+.stat-card:hover {
+    transform: translateY(-5px);
+}
+
+.stat-icon {
+    width: 56px;
+    height: 56px;
+    border-radius: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
+}
+
+.stat-info h3 {
+    color: #fff;
+    font-size: 2rem;
+    margin-bottom: 0.5rem;
+}
+
+.stat-info p {
+    color: #888;
+    font-size: 1rem;
+}
+
+/* Table Styles */
+.table-container {
+    border-radius: 16px;
+    overflow: hidden;
+}
+
+.table-header {
+    padding: 1.5rem;
+    background: rgba(255, 255, 255, 0.02);
+}
+
+.filter-buttons {
+    display: flex;
+    gap: 0.75rem;
+}
+
+.filter-btn {
+    padding: 0.75rem 1.25rem;
+    border-radius: 12px;
+    border: none;
+    background: rgba(255, 255, 255, 0.05);
+    color: #888;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.95rem;
+}
+
+.filter-btn:hover {
+    background: rgba(255, 255, 255, 0.1);
+    color: #fff;
+}
+
+.filter-btn.active {
+    background: var(--accent-color);
+    color: #000;
+    font-weight: 500;
+}
+
+.custom-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.custom-table th {
+    padding: 1.25rem;
+    text-align: left;
+    color: #888;
+    font-weight: 500;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    font-size: 0.95rem;
+}
+
+.custom-table td {
+    padding: 1.25rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    color: #fff;
+}
+
+.problem-row {
+    transition: background-color 0.3s ease;
+}
+
+.problem-row:hover {
+    background: rgba(255, 255, 255, 0.02);
+}
+
+/* Problem Info */
+.problem-info {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.problem-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.1rem;
+}
+
+/* Badges */
+.topic-badge, .difficulty-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    font-size: 0.9rem;
+}
+
+.topic-badge {
+    background: rgba(255, 255, 255, 0.05);
+    color: #fff;
+}
+
+/* Action Buttons */
+.action-buttons {
+    display: flex;
+    gap: 0.75rem;
+}
+
+.btn-icon {
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
+    border: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-size: 1rem;
+}
+
+.btn-icon:hover {
+    transform: translateY(-3px);
+}
+
+/* Empty State */
+.empty-state {
+    text-align: center;
+    padding: 3rem !important;
+}
+
+.empty-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+    color: #888;
+}
+
+.empty-content i {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+}
+
+.empty-content h3 {
+    color: #fff;
+    font-size: 1.5rem;
+}
+
+/* Toast Notification */
+.toast {
+    position: fixed;
+    bottom: 2rem;
+    right: 2rem;
+    padding: 1rem 2rem;
+    border-radius: 12px;
+    color: #fff;
+    z-index: 1000;
+    animation: slideIn 0.3s ease;
+    backdrop-filter: blur(10px);
+}
+
+.toast.success { background: var(--easy-color); }
+.toast.error { background: var(--hard-color); }
+
+@keyframes slideIn {
+    from {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+    .admin-content {
+        padding: 1.5rem;
+    }
+    
+    .stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 768px) {
+    .admin-sidebar {
+        display: none;
+    }
+    
+    .stats-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .search-box {
+        width: 100%;
+    }
+    
+    .filter-buttons {
+        overflow-x: auto;
+        padding-bottom: 0.5rem;
+    }
+    
+    .custom-table {
+        display: block;
+        overflow-x: auto;
+    }
+}
+</style>
+
 <script>
+// Initialize AOS
+AOS.init({
+    duration: 800,
+    once: true
+});
+
+// Search functionality
+document.getElementById('searchProblem').addEventListener('input', function() {
+    const searchTerm = this.value.toLowerCase();
+    document.querySelectorAll('tbody tr').forEach(row => {
+        const text = row.textContent.toLowerCase();
+        row.style.display = text.includes(searchTerm) ? '' : 'none';
+    });
+});
+
+// Filter functionality
+document.querySelectorAll('.filter-btn').forEach(btn => {
+    btn.addEventListener('click', function() {
+        document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+        this.classList.add('active');
+        
+        const filter = this.dataset.filter;
+        document.querySelectorAll('tbody tr').forEach(row => {
+            if (filter === 'all' || row.dataset.difficulty === filter) {
+                row.style.display = '';
+            } else {
+                row.style.display = 'none';
+            }
+        });
+    });
+});
+
+// Delete problem functionality
 document.querySelectorAll('.delete-problem').forEach(button => {
     button.addEventListener('click', async function() {
-        const problemId = this.dataset.id;
         if (confirm('Are you sure you want to delete this problem?')) {
+            const problemId = this.dataset.id;
             try {
                 const response = await fetch(`/admin/problems/${problemId}`, {
                     method: 'DELETE'
                 });
+                
                 if (response.ok) {
-                    alert('Problem deleted successfully');
-                    window.location.reload();
+                    this.closest('tr').remove();
+                    showToast('Problem deleted successfully', 'success');
                 } else {
-                    const data = await response.json();
-                    alert(data.error || 'Error deleting problem');
+                    showToast('Error deleting problem', 'error');
                 }
             } catch (error) {
                 console.error('Error:', error);
-                alert('Error deleting problem');
+                showToast('Error deleting problem', 'error');
             }
         }
     });
 });
+
+// Toast notification
+function showToast(message, type) {
+    const toast = document.createElement('div');
+    toast.className = `toast ${type}`;
+    toast.textContent = message;
+    document.body.appendChild(toast);
+    
+    setTimeout(() => {
+        toast.remove();
+    }, 3000);
+}
 </script>
 
 <%- include('../partials/footer') %> 

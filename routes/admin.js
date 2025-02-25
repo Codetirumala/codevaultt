@@ -3,6 +3,7 @@ const router = express.Router();
 const { requireAuth, adminAuth } = require('../middleware/auth');
 const adminController = require('../controllers/adminController');
 const Problem = require('../models/Problem');
+const Topic = require('../models/Topic');
 
 // Apply auth middleware to all admin routes
 router.use(requireAuth, adminAuth);
@@ -12,11 +13,16 @@ router.get('/users', adminController.getUsers);
 router.delete('/users/:id', adminController.deleteUser);
 router.get('/problems', async (req, res) => {
     try {
-        const problems = await Problem.find().populate('topic'); // Fetch problems and populate topic
-        res.render('admin/problems', { problems }); // Render the problems view
+        const problems = await Problem.find().populate('topic').lean();
+        const topics = await Topic.find().lean();
+        
+        res.render('admin/problems', {
+            problems,
+            topics
+        });
     } catch (error) {
-        console.error('Error fetching problems:', error);
-        res.status(500).render('error', { message: 'Error loading problems' });
+        console.error('Error:', error);
+        res.status(500).send('Server Error');
     }
 });
 router.get('/companies', adminController.getCompanies);

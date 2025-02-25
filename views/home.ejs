@@ -1,85 +1,603 @@
 <%- include('partials/header') %>
 <%- include('partials/navbar') %>
 
-<div class="container mt-4">
-    <% if (user) { %>
-        <h1>Welcome, <%= user.leetcodeUsername %>!</h1>
-        <h2>Your LeetCode Profile</h2>
+<div class="hero-section">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-6 hero-content fade-in">
+                <h1 class="hero-title">Master Your Coding Journey</h1>
+                <p class="hero-text">Track your progress, solve DSA problems, and prepare for tech interviews with Code Vault.</p>
+                <div class="hero-buttons">
+                    <a href="/dsa/sheet" class="btn primary-btn">
+                        <i class="fas fa-code me-2"></i>Start Practicing
+                    </a>
+                    <a href="/roadmap" class="btn secondary-btn ms-3">
+                        <i class="fas fa-map-signs me-2"></i>View Roadmap
+                    </a>
+                </div>
+            </div>
+            <div class="col-lg-6 d-none d-lg-block">
+                <div class="hero-image">
+                    <div class="code-window">
+                        <div class="code-header">
+                            <span class="dot red"></span>
+                            <span class="dot yellow"></span>
+                            <span class="dot green"></span>
+                        </div>
+                        <pre class="code-content"><code>function success() {
+    const hardwork = true;
+    const practice = true;
+    const guidance = true;
+    
+    if (hardwork && practice) {
+        return guidance ? 
+            "Welcome to Code Vault!" 
+            : "Keep Going!";
+    }
+}</code></pre>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 
-        <% if (error) { %>
-            <div class="alert alert-danger mt-4" role="alert">
+<div class="features-section">
+    <div class="container">
+        <h2 class="section-title text-center mb-5">Why Choose Code Vault?</h2>
+        <div class="row g-4">
+            <div class="col-md-4">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-layer-group"></i>
+                    </div>
+                    <h3>Structured Learning</h3>
+                    <p>Follow our carefully curated DSA sheets and learning paths designed for optimal progress.</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-building"></i>
+                    </div>
+                    <h3>Company Specific</h3>
+                    <p>Practice questions specifically asked in top tech companies' interviews.</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-chart-line"></i>
+                    </div>
+                    <h3>Progress Tracking</h3>
+                    <p>Monitor your progress with detailed analytics and performance metrics.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container mt-5">
+    <% if (typeof user !== 'undefined' && user) { %>
+        <div class="profile-welcome" data-aos="fade-down">
+            <h1>Welcome back, <span class="highlight"><%= user.leetcodeUsername %></span></h1>
+            <p class="subtitle">Your LeetCode Progress Dashboard</p>
+        </div>
+
+        <% if (typeof error !== 'undefined' && error) { %>
+            <div class="alert custom-alert error" data-aos="fade-up">
+                <i class="fas fa-exclamation-circle"></i>
                 <%= error %>
             </div>
         <% } %>
 
-        <% if (profile) { %>
-            <div class="row mt-4">
-                <div class="col-md-12">
-                    <div class="card shadow">
-                        <div class="card-body">
-                            <h3 class="card-title mb-4">Profile Details</h3>
-                            
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <h4>Basic Info</h4>
-                                    <p><strong>Username:</strong> <%= profile.username || 'N/A' %></p>
-                                    <p><strong>Ranking:</strong> <%= profile.ranking || 'N/A' %></p>
-                                </div>
-                                
-                                <div class="col-md-6">
-                                    <h4>Problem Solving Stats</h4>
-                                    <p><strong>Total Solved:</strong> <%= profile.totalSolved || '0' %></p>
-                                    <p><strong>Easy Solved:</strong> <%= profile.easySolved || '0' %></p>
-                                    <p><strong>Medium Solved:</strong> <%= profile.mediumSolved || '0' %></p>
-                                    <p><strong>Hard Solved:</strong> <%= profile.hardSolved || '0' %></p>
-                                </div>
+        <% if (typeof profile !== 'undefined' && profile) { %>
+            <div class="profile-card glass" data-aos="fade-up">
+                <div class="profile-header">
+                    <div class="profile-avatar">
+                        <i class="fas fa-code-branch"></i>
+                    </div>
+                    <div class="profile-info">
+                        <h2><%= profile.username || user.leetcodeUsername %></h2>
+                        <div class="rank-badge">
+                            <i class="fas fa-trophy"></i>
+                            <span>Rank: <%= profile.ranking || 'N/A' %></span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="stats-container">
+                    <div class="stats-grid">
+                        <div class="stat-card total" data-aos="zoom-in" data-aos-delay="100">
+                            <div class="stat-icon">
+                                <i class="fas fa-check-circle"></i>
+                            </div>
+                            <div class="stat-details">
+                                <h3><%= profile.totalSolved || '0' %></h3>
+                                <p>Total Solved</p>
+                            </div>
+                        </div>
+
+                        <div class="stat-card easy" data-aos="zoom-in" data-aos-delay="200">
+                            <div class="stat-icon">
+                                <i class="fas fa-leaf"></i>
+                            </div>
+                            <div class="stat-details">
+                                <h3><%= profile.easySolved || '0' %></h3>
+                                <p>Easy</p>
+                            </div>
+                        </div>
+
+                        <div class="stat-card medium" data-aos="zoom-in" data-aos-delay="300">
+                            <div class="stat-icon">
+                                <i class="fas fa-bolt"></i>
+                            </div>
+                            <div class="stat-details">
+                                <h3><%= profile.mediumSolved || '0' %></h3>
+                                <p>Medium</p>
+                            </div>
+                        </div>
+
+                        <div class="stat-card hard" data-aos="zoom-in" data-aos-delay="400">
+                            <div class="stat-icon">
+                                <i class="fas fa-fire"></i>
+                            </div>
+                            <div class="stat-details">
+                                <h3><%= profile.hardSolved || '0' %></h3>
+                                <p>Hard</p>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-        <% } else if (!error) { %>
-            <div class="alert alert-info mt-4" role="alert">
-                Loading profile information...
+        <% } else { %>
+            <div class="loading-state" data-aos="fade-up">
+                <div class="loader"></div>
+                <p>Fetching your LeetCode profile...</p>
             </div>
         <% } %>
     <% } else { %>
-        <div class="alert alert-warning mt-4" role="alert">
-            Please log in to view your profile.
+        <div class="login-prompt glass" data-aos="fade-up">
+            <i class="fas fa-user-lock"></i>
+            <h2>Access Your Profile</h2>
+            <p>Please log in with your LeetCode username to view your statistics</p>
+            <a href="/auth/login" class="btn login-btn">
+                <i class="fas fa-sign-in-alt me-2"></i>
+                Login Now
+            </a>
         </div>
     <% } %>
 </div>
 
 <style>
-    .card {
-        border: none;
-        border-radius: 15px;
-        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+.hero-section {
+    padding: 5rem 0;
+    background: linear-gradient(135deg, rgba(26, 26, 46, 0.95) 0%, rgba(15, 15, 26, 0.95) 100%);
+    position: relative;
+    overflow: hidden;
+}
+
+.hero-section::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: url('/images/grid.png') repeat;
+    opacity: 0.1;
+    pointer-events: none;
+}
+
+.hero-content {
+    animation: slideUp 0.8s ease-out;
+}
+
+.hero-title {
+    font-size: 3.5rem;
+    font-weight: 700;
+    margin-bottom: 1.5rem;
+    background: linear-gradient(45deg, var(--accent-color), var(--accent-hover));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.hero-text {
+    font-size: 1.2rem;
+    color: var(--text-secondary);
+    margin-bottom: 2rem;
+    line-height: 1.6;
+}
+
+.primary-btn {
+    background: linear-gradient(45deg, var(--accent-color), var(--accent-hover));
+    color: var(--secondary-bg);
+    font-weight: 600;
+    padding: 0.8rem 1.5rem;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+}
+
+.primary-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(0, 255, 149, 0.4);
+}
+
+.secondary-btn {
+    background: rgba(255, 255, 255, 0.1);
+    color: var(--text-primary);
+    font-weight: 600;
+    padding: 0.8rem 1.5rem;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+}
+
+.secondary-btn:hover {
+    background: rgba(255, 255, 255, 0.2);
+    transform: translateY(-2px);
+}
+
+.code-window {
+    background: var(--secondary-bg);
+    border-radius: 10px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+    overflow: hidden;
+    animation: slideIn 0.8s ease-out;
+}
+
+.code-header {
+    background: rgba(255, 255, 255, 0.1);
+    padding: 0.8rem;
+    display: flex;
+    gap: 8px;
+}
+
+.dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+}
+
+.red { background: #ff5f56; }
+.yellow { background: #ffbd2e; }
+.green { background: #27c93f; }
+
+.code-content {
+    padding: 1.5rem;
+    margin: 0;
+    color: var(--accent-color);
+    font-size: 0.9rem;
+    line-height: 1.6;
+}
+
+.features-section {
+    padding: 5rem 0;
+    background: var(--primary-bg);
+}
+
+.section-title {
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin-bottom: 3rem;
+    background: linear-gradient(45deg, var(--accent-color), var(--accent-hover));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.feature-card {
+    background: var(--card-bg);
+    border-radius: 15px;
+    padding: 2rem;
+    height: 100%;
+    transition: all 0.3s ease;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.feature-card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+}
+
+.feature-icon {
+    font-size: 2.5rem;
+    color: var(--accent-color);
+    margin-bottom: 1.5rem;
+}
+
+.feature-card h3 {
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
+    color: var(--text-primary);
+}
+
+.feature-card p {
+    color: var(--text-secondary);
+    line-height: 1.6;
+    margin: 0;
+}
+
+@keyframes slideUp {
+    from {
+        opacity: 0;
+        transform: translateY(50px);
     }
-    .card-body {
-        padding: 2rem;
+    to {
+        opacity: 1;
+        transform: translateY(0);
     }
-    .card-title {
-        color: #2c3e50;
-        font-weight: bold;
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateX(50px);
     }
-    h4 {
-        color: #34495e;
-        margin-bottom: 1rem;
-        font-size: 1.2rem;
+    to {
+        opacity: 1;
+        transform: translateX(0);
     }
-    p {
-        margin-bottom: 0.75rem;
-        color: #2c3e50;
-        font-size: 1rem;
+}
+
+@media (max-width: 991.98px) {
+    .hero-title {
+        font-size: 2.5rem;
     }
-    strong {
-        color: #7f8c8d;
-        margin-right: 0.5rem;
+    
+    .hero-text {
+        font-size: 1.1rem;
     }
-    .alert {
-        border-radius: 10px;
+    
+    .hero-buttons {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
     }
+    
+    .hero-buttons .btn {
+        width: 100%;
+    }
+    
+    .secondary-btn {
+        margin-left: 0 !important;
+    }
+}
+
+:root {
+    --primary-gradient: linear-gradient(135deg, #00ff95 0%, #00b8ff 100%);
+    --card-bg: rgba(31, 31, 35, 0.8);
+    --easy-color: #00ff95;
+    --medium-color: #ffb800;
+    --hard-color: #ff4d4d;
+}
+
+.glass {
+    background: var(--card-bg);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+}
+
+.profile-welcome {
+    text-align: center;
+    margin-bottom: 2rem;
+    padding: 2rem;
+}
+
+.profile-welcome h1 {
+    font-size: 2.5rem;
+    margin-bottom: 0.5rem;
+    color: #fff;
+}
+
+.highlight {
+    background: var(--primary-gradient);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    font-weight: bold;
+}
+
+.subtitle {
+    color: #888;
+    font-size: 1.1rem;
+}
+
+.profile-card {
+    border-radius: 20px;
+    padding: 2rem;
+    margin-bottom: 2rem;
+}
+
+.profile-header {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+    padding-bottom: 2rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.profile-avatar {
+    width: 80px;
+    height: 80px;
+    background: var(--primary-gradient);
+    border-radius: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2rem;
+    color: #000;
+}
+
+.profile-info h2 {
+    font-size: 1.8rem;
+    margin-bottom: 0.5rem;
+    color: #fff;
+}
+
+.rank-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+    font-size: 0.9rem;
+    color: #fff;
+}
+
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1.5rem;
+}
+
+.stat-card {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 15px;
+    padding: 1.5rem;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.3s ease;
+}
+
+.stat-card:hover {
+    transform: translateY(-5px);
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.stat-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+}
+
+.stat-card.total::before { background: var(--primary-gradient); }
+.stat-card.easy::before { background: var(--easy-color); }
+.stat-card.medium::before { background: var(--medium-color); }
+.stat-card.hard::before { background: var(--hard-color); }
+
+.stat-icon {
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
+}
+
+.stat-card.total .stat-icon { color: #00b8ff; }
+.stat-card.easy .stat-icon { color: var(--easy-color); }
+.stat-card.medium .stat-icon { color: var(--medium-color); }
+.stat-card.hard .stat-icon { color: var(--hard-color); }
+
+.stat-details h3 {
+    font-size: 2rem;
+    margin-bottom: 0.25rem;
+    color: #fff;
+}
+
+.stat-details p {
+    color: #888;
+    font-size: 0.9rem;
+    margin: 0;
+}
+
+.loading-state {
+    text-align: center;
+    padding: 3rem;
+    background: var(--card-bg);
+    border-radius: 20px;
+    color: #fff;
+}
+
+.loader {
+    width: 50px;
+    height: 50px;
+    border: 3px solid rgba(255, 255, 255, 0.1);
+    border-radius: 50%;
+    border-top-color: #00ff95;
+    animation: spin 1s linear infinite;
+    margin: 0 auto 1rem;
+}
+
+.login-prompt {
+    text-align: center;
+    padding: 3rem;
+    border-radius: 20px;
+    color: #fff;
+}
+
+.login-prompt i {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+    background: var(--primary-gradient);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.login-btn {
+    background: var(--primary-gradient);
+    color: #000;
+    padding: 0.8rem 2rem;
+    border-radius: 10px;
+    font-weight: 600;
+    margin-top: 1rem;
+    transition: all 0.3s ease;
+    text-decoration: none;
+}
+
+.login-btn:hover {
+    transform: translateY(-2px);
+    opacity: 0.9;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+/* Custom Alert Styles */
+.custom-alert {
+    padding: 1rem;
+    border-radius: 10px;
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.custom-alert.error {
+    background: rgba(255, 77, 77, 0.1);
+    border: 1px solid rgba(255, 77, 77, 0.2);
+    color: #ff4d4d;
+}
+
+@media (max-width: 768px) {
+    .profile-welcome h1 {
+        font-size: 2rem;
+    }
+    
+    .stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 480px) {
+    .stats-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .profile-header {
+        flex-direction: column;
+        text-align: center;
+    }
+}
 </style>
+
+<script>
+// Initialize AOS
+AOS.init({
+    duration: 800,
+    once: true
+});
+</script>
 
 <%- include('partials/footer') %>

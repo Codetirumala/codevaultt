@@ -48,20 +48,31 @@ app.use((err, req, res, next) => {
     });
 });
 
+// Import all models
+require('./models/User');  // if you have this
+require('./models/Topic');
+require('./models/Problem');
+require('./models/Submission');  // Add this line
+
 // MongoDB connection with debug logging
-mongoose.connect(process.env.MONGODB_URI)
-    .then(() => {
-        console.log('Connected to MongoDB successfully');
-        // Log the connection string (remove sensitive info)
-        const sanitizedUri = process.env.MONGODB_URI.replace(
-            /mongodb(\+srv)?:\/\/([^:]+):([^@]+)@/,
-            'mongodb$1://***:***@'
-        );
-        console.log('Using database:', sanitizedUri);
-    })
-    .catch(err => {
-        console.error('MongoDB connection error:', err);
-    });
+mongoose.connect(process.env.MONGODB_URI, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true
+})
+.then(() => {
+    console.log('MongoDB connected successfully');
+    // Log registered models to verify
+    console.log('Registered Models:', mongoose.modelNames());
+    // Log the connection string (remove sensitive info)
+    const sanitizedUri = process.env.MONGODB_URI.replace(
+        /mongodb(\+srv)?:\/\/([^:]+):([^@]+)@/,
+        'mongodb$1://***:***@'
+    );
+    console.log('Using database:', sanitizedUri);
+})
+.catch(err => {
+    console.error('MongoDB connection error:', err);
+});
 
 // Add this to see if Mongoose is connected
 app.use((req, res, next) => {

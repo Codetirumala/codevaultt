@@ -1,50 +1,367 @@
 <%- include('../partials/header') %>
 <%- include('../partials/navbar') %>
 
-<div class="container mt-4">
-    <h2><%= topic.name %> Problems</h2>
-    <ul class="list-group">
-        <% problems.forEach(problem => { %>
-            <li class="list-group-item d-flex justify-content-between align-items-center">
-                <div>
-                    <h5><%= problem.name %></h5>
-                    <span class="badge bg-<%= problem.difficulty === 'Easy' ? 'success' : problem.difficulty === 'Medium' ? 'warning' : 'danger' %>">
-                        <%= problem.difficulty %>
-                    </span>
+<div class="topic-container">
+    <div class="topic-header" data-aos="fade-down">
+        <div class="header-content">
+            <div class="topic-info">
+                <h1><i class="fas fa-book"></i> <%= topic.name %></h1>
+                <div class="topic-stats">
+                    <div class="stat">
+                        <i class="fas fa-check-circle"></i>
+                        <span>Solved: <%= topic.solvedCount || 0 %>/<%= problems.length %></span>
+                    </div>
+                    <div class="stat">
+                        <i class="fas fa-chart-line"></i>
+                        <span>Progress: <%= Math.round((topic.solvedCount || 0) / problems.length * 100) %>%</span>
+                    </div>
                 </div>
-                <div>
-                    <a href="<%= problem.leetcodeLink %>" target="_blank" class="btn btn-primary btn-sm">Solve</a>
-                    <button class="btn btn-success btn-sm complete-button" data-id="<%= problem._id %>">Completed</button>
+            </div>
+            <div class="progress-circle" data-progress="<%= Math.round((topic.solvedCount || 0) / problems.length * 100) %>">
+                <div class="progress-text">
+                    <%= Math.round((topic.solvedCount || 0) / problems.length * 100) %>%
                 </div>
-            </li>
-        <% }); %>
-    </ul>
+            </div>
+        </div>
+    </div>
+
+    <div class="problems-section">
+        <div class="filters" data-aos="fade-up">
+            <div class="search-box">
+                <i class="fas fa-search"></i>
+                <input type="text" id="searchInput" placeholder="Search problems...">
+            </div>
+            <div class="difficulty-filters">
+                <button class="filter-btn active" data-difficulty="all">All</button>
+                <button class="filter-btn" data-difficulty="Easy">Easy</button>
+                <button class="filter-btn" data-difficulty="Medium">Medium</button>
+                <button class="filter-btn" data-difficulty="Hard">Hard</button>
+            </div>
+        </div>
+
+        <div class="table-container" data-aos="fade-up">
+            <table class="problems-table">
+                <thead>
+                    <tr>
+                        <th>Status</th>
+                        <th>Problem</th>
+                        <th>Difficulty</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% problems.forEach(problem => { %>
+                        <tr class="problem-row" data-difficulty="<%= problem.difficulty %>">
+                            <td>
+                                <span class="status-icon <%= problem.isSolved ? 'solved' : '' %>">
+                                    <i class="fas <%= problem.isSolved ? 'fa-check-circle' : 'fa-circle' %>"></i>
+                                </span>
+                            </td>
+                            <td>
+                                <div class="problem-name">
+                                    <%= problem.name %>
+                                </div>
+                            </td>
+                            <td>
+                                <span class="difficulty-badge <%= problem.difficulty.toLowerCase() %>">
+                                    <i class="fas <%= problem.difficulty === 'Easy' ? 'fa-smile' : 
+                                                   problem.difficulty === 'Medium' ? 'fa-meh' : 'fa-frown' %>"></i>
+                                    <%= problem.difficulty %>
+                                </span>
+                            </td>
+                            <td>
+                                <a href="<%= problem.leetcodeLink %>" 
+                                   target="_blank" 
+                                   class="solve-btn <%= problem.isSolved ? 'completed' : '' %>">
+                                    <i class="fas <%= problem.isSolved ? 'fa-check' : 'fa-code' %>"></i>
+                                    <%= problem.isSolved ? 'Review' : 'Solve' %>
+                                </a>
+                            </td>
+                        </tr>
+                    <% }); %>
+                </tbody>
+            </table>
+        </div>
+    </div>
 </div>
 
-<script>
-document.querySelectorAll('.complete-button').forEach(button => {
-    button.addEventListener('click', async function() {
-        const problemId = this.dataset.id;
-        try {
-            const response = await fetch(`/admin/problems/${problemId}`, {
-                method: 'PATCH', // Assuming you have a PATCH route to update the problem
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ solved: true }) // Mark as solved
-            });
+<style>
+:root {
+    --easy-color: #00ff95;
+    --medium-color: #ffb800;
+    --hard-color: #ff4d4d;
+    --table-bg: #1a1a1a;
+    --hover-bg: #2d2d2d;
+}
 
-            if (response.ok) {
-                alert('Problem marked as completed!');
-                window.location.reload(); // Reload the page to see the updated list
+.topic-container {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 2rem;
+}
+
+.topic-header {
+    background: linear-gradient(to right, #1a1a2e, #16213e);
+    border-radius: 16px;
+    padding: 2rem;
+    margin-bottom: 2rem;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+}
+
+.header-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.topic-info h1 {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1rem;
+    color: #fff;
+}
+
+.topic-info h1 i {
+    color: var(--accent-color);
+}
+
+.topic-stats {
+    display: flex;
+    gap: 2rem;
+}
+
+.stat {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: #888;
+}
+
+.stat i {
+    color: var(--accent-color);
+}
+
+.progress-circle {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    background: conic-gradient(var(--accent-color) var(--progress), #2d2d2d 0deg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+}
+
+.progress-circle::before {
+    content: '';
+    position: absolute;
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    background: var(--card-bg);
+}
+
+.progress-text {
+    position: relative;
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: var(--accent-color);
+}
+
+.problems-section {
+    background: linear-gradient(to right, #1a1a2e, #16213e);
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+}
+
+.filters {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem;
+    background: rgba(255,255,255,0.03);
+    gap: 1rem;
+}
+
+.search-box {
+    position: relative;
+    flex: 1;
+    max-width: 300px;
+}
+
+.search-box input {
+    width: 100%;
+    padding: 0.8rem 1rem 0.8rem 2.5rem;
+    border-radius: 8px;
+    border: 1px solid rgba(255,255,255,0.1);
+    background: var(--primary-bg);
+    color: #fff;
+}
+
+.search-box i {
+    position: absolute;
+    left: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #888;
+}
+
+.difficulty-filters {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.filter-btn {
+    padding: 0.5rem 1rem;
+    border-radius: 6px;
+    border: none;
+    background: var(--primary-bg);
+    color: #888;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.filter-btn:hover, .filter-btn.active {
+    background: var(--accent-color);
+    color: #000;
+}
+
+.table-container {
+    overflow-x: auto;
+}
+
+.problems-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.problems-table th {
+    padding: 1rem;
+    text-align: left;
+    background: rgba(255,255,255,0.02);
+    color: #888;
+    font-weight: 500;
+}
+
+.problems-table td {
+    padding: 1rem;
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+}
+
+.problem-row {
+    transition: background 0.3s ease;
+}
+
+.problem-row:hover {
+    background: var(--hover-bg);
+}
+
+.status-icon {
+    color: #888;
+    font-size: 1.2rem;
+}
+
+.status-icon.solved {
+    color: var(--easy-color);
+}
+
+.problem-name {
+    color: #fff;
+    font-weight: 500;
+}
+
+.difficulty-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.4rem 0.8rem;
+    border-radius: 6px;
+    font-size: 0.9rem;
+}
+
+.difficulty-badge.easy { background: rgba(0,255,149,0.1); color: var(--easy-color); }
+.difficulty-badge.medium { background: rgba(255,184,0,0.1); color: var(--medium-color); }
+.difficulty-badge.hard { background: rgba(255,77,77,0.1); color: var(--hard-color); }
+
+.solve-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+    border-radius: 6px;
+    background: var(--accent-color);
+    color: #000;
+    text-decoration: none;
+    font-size: 0.9rem;
+    transition: all 0.3s ease;
+}
+
+.solve-btn:hover {
+    transform: translateY(-2px);
+}
+
+.solve-btn.completed {
+    background: var(--easy-color);
+}
+
+@media (max-width: 768px) {
+    .topic-container {
+        padding: 1rem;
+    }
+    
+    .filters {
+        flex-direction: column;
+    }
+    
+    .search-box {
+        max-width: 100%;
+    }
+    
+    .problems-table th:nth-child(3),
+    .problems-table td:nth-child(3) {
+        display: none;
+    }
+}
+</style>
+
+<script>
+// Initialize AOS
+AOS.init({
+    duration: 800,
+    once: true
+});
+
+// Set progress circle
+document.querySelectorAll('.progress-circle').forEach(circle => {
+    const progress = circle.dataset.progress;
+    circle.style.setProperty('--progress', `${progress}%`);
+});
+
+// Search functionality
+document.getElementById('searchInput').addEventListener('input', function(e) {
+    const searchTerm = e.target.value.toLowerCase();
+    document.querySelectorAll('.problem-row').forEach(row => {
+        const title = row.querySelector('.problem-name').textContent.toLowerCase();
+        row.style.display = title.includes(searchTerm) ? '' : 'none';
+    });
+});
+
+// Difficulty filters
+document.querySelectorAll('.filter-btn').forEach(btn => {
+    btn.addEventListener('click', function() {
+        document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+        this.classList.add('active');
+        
+        const difficulty = this.dataset.difficulty;
+        document.querySelectorAll('.problem-row').forEach(row => {
+            if (difficulty === 'all') {
+                row.style.display = '';
             } else {
-                const data = await response.json();
-                alert(data.error || 'Error marking problem as completed');
+                row.style.display = row.dataset.difficulty === difficulty ? '' : 'none';
             }
-        } catch (error) {
-            console.error('Error:', error);
-            alert('Error marking problem as completed');
-        }
+        });
     });
 });
 </script>

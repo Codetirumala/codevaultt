@@ -1,91 +1,133 @@
 <%- include('partials/header') %>
 <%- include('partials/navbar') %>
 
-<div class="container mt-4">
-    <div class="row">
-        <!-- Profile Sidebar -->
-        <div class="col-md-4">
-            <div class="card">
-                <div class="card-body text-center">
-                    <div class="profile-image mb-3">
-                        <i class="fas fa-user-circle fa-5x text-primary"></i>
-                    </div>
-                    <h3 class="card-title"><%= user.name %></h3>
-                    <p class="text-muted"><%= user.email %></p>
-                    <% if (!user.isAdmin) { %>
-                        <p>
-                            <i class="fab fa-leetcode"></i>
-                            <a href="https://leetcode.com/<%= user.leetcodeUsername %>" target="_blank">
+<div class="profile-container">
+    <div class="container">
+        <div class="row g-4">
+            <!-- Profile Sidebar -->
+            <div class="col-lg-4">
+                <div class="profile-card">
+                    <div class="profile-header">
+                        <div class="profile-avatar">
+                            <div class="avatar-ring"></div>
+                            <i class="fas fa-user-circle"></i>
+                        </div>
+                        <h3 class="profile-name"><%= user.name %></h3>
+                        <p class="profile-email"><%= user.email %></p>
+                        <% if (!user.isAdmin) { %>
+                            <a href="https://leetcode.com/<%= user.leetcodeUsername %>" 
+                               class="leetcode-link" target="_blank">
+                                <i class="fab fa-leetcode"></i>
                                 <%= user.leetcodeUsername %>
                             </a>
-                        </p>
-                    <% } %>
-                    <p class="badge bg-<%= user.isAdmin ? 'danger' : 'primary' %>">
-                        <%= user.isAdmin ? 'Administrator' : 'User' %>
-                    </p>
-                </div>
-            </div>
+                        <% } %>
+                        <div class="role-badge <%= user.isAdmin ? 'admin' : 'user' %>">
+                            <i class="fas <%= user.isAdmin ? 'fa-shield-alt' : 'fa-user' %>"></i>
+                            <%= user.isAdmin ? 'Administrator' : 'User' %>
+                        </div>
+                    </div>
 
-            <!-- Quick Stats -->
-            <div class="card mt-3">
-                <div class="card-body">
-                    <h5 class="card-title">Quick Stats</h5>
-                    <div class="list-group list-group-flush">
-                        <div class="list-group-item d-flex justify-content-between align-items-center">
-                            Problems Solved
-                            <span class="badge bg-primary rounded-pill">0</span>
+                    <div class="stats-grid">
+                        <div class="stat-item">
+                            <div class="stat-value">0</div>
+                            <div class="stat-label">Problems Solved</div>
                         </div>
-                        <div class="list-group-item d-flex justify-content-between align-items-center">
-                            Submissions
-                            <span class="badge bg-primary rounded-pill">0</span>
+                        <div class="stat-item">
+                            <div class="stat-value">0</div>
+                            <div class="stat-label">Submissions</div>
                         </div>
-                        <div class="list-group-item d-flex justify-content-between align-items-center">
-                            Days Streak
-                            <span class="badge bg-primary rounded-pill">0</span>
+                        <div class="stat-item">
+                            <div class="stat-value">0</div>
+                            <div class="stat-label">Days Streak</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Achievement Card -->
+                <div class="achievement-card">
+                    <h4 class="section-title">
+                        <i class="fas fa-trophy"></i> Achievements
+                    </h4>
+                    <div class="achievement-grid">
+                        <div class="achievement locked">
+                            <i class="fas fa-award"></i>
+                            <span>First Solution</span>
+                        </div>
+                        <div class="achievement locked">
+                            <i class="fas fa-fire"></i>
+                            <span>7 Day Streak</span>
+                        </div>
+                        <div class="achievement locked">
+                            <i class="fas fa-star"></i>
+                            <span>50 Problems</span>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
 
-        <!-- Profile Content -->
-        <div class="col-md-8">
-            <!-- Profile Settings -->
-            <div class="card">
-                <div class="card-body">
-                    <h4 class="card-title">Profile Settings</h4>
-                    <form action="/profile/update" method="POST">
-                        <div class="mb-3">
-                            <label for="name" class="form-label">Name</label>
-                            <input type="text" class="form-control" id="name" name="name" value="<%= user.name %>" readonly>
-                        </div>
-                        <div class="mb-3">
-                            <label for="email" class="form-label">Email</label>
-                            <input type="email" class="form-control" id="email" name="email" value="<%= user.email %>" readonly>
-                        </div>
-                        <% if (!user.isAdmin) { %>
-                            <div class="mb-3">
-                                <label for="leetcodeUsername" class="form-label">LeetCode Username</label>
-                                <input type="text" class="form-control" id="leetcodeUsername" name="leetcodeUsername" value="<%= user.leetcodeUsername || 'N/A' %>" readonly>
+            <!-- Profile Content -->
+            <div class="col-lg-8">
+                <div class="content-card">
+                    <div class="card-tabs">
+                        <button class="tab-btn active" onclick="switchTab('settings')">
+                            <i class="fas fa-cog"></i> Settings
+                        </button>
+                        <button class="tab-btn" onclick="switchTab('activity')">
+                            <i class="fas fa-chart-line"></i> Activity
+                        </button>
+                    </div>
+
+                    <!-- Settings Tab -->
+                    <div id="settings" class="tab-content active">
+                        <form action="/profile/update" method="POST" class="settings-form">
+                            <div class="form-group">
+                                <label>
+                                    <i class="fas fa-user"></i>
+                                    Name
+                                </label>
+                                <input type="text" value="<%= user.name %>" readonly>
                             </div>
-                        <% } %>
-                        <div class="mb-3">
-                            <label for="newPassword" class="form-label">New Password</label>
-                            <input type="password" class="form-control" id="newPassword" name="newPassword">
-                            <small class="form-text text-muted">Leave blank to keep current password.</small>
-                        </div>
-                        <button type="submit" class="btn btn-primary">Update Profile</button>
-                    </form>
-                </div>
-            </div>
+                            
+                            <div class="form-group">
+                                <label>
+                                    <i class="fas fa-envelope"></i>
+                                    Email
+                                </label>
+                                <input type="email" value="<%= user.email %>" readonly>
+                            </div>
 
-            <!-- Recent Activity -->
-            <div class="card mt-3">
-                <div class="card-body">
-                    <h4 class="card-title">Recent Activity</h4>
-                    <div class="list-group">
-                        <div class="list-group-item text-muted">
-                            No recent activity to show.
+                            <% if (!user.isAdmin) { %>
+                                <div class="form-group">
+                                    <label>
+                                        <i class="fab fa-leetcode"></i>
+                                        LeetCode Username
+                                    </label>
+                                    <input type="text" value="<%= user.leetcodeUsername || 'N/A' %>" readonly>
+                                </div>
+                            <% } %>
+
+                            <div class="form-group">
+                                <label>
+                                    <i class="fas fa-lock"></i>
+                                    New Password
+                                </label>
+                                <input type="password" name="newPassword" placeholder="Enter new password">
+                                <small>Leave blank to keep current password</small>
+                            </div>
+
+                            <button type="submit" class="update-btn">
+                                <i class="fas fa-save"></i> Update Profile
+                            </button>
+                        </form>
+                    </div>
+
+                    <!-- Activity Tab -->
+                    <div id="activity" class="tab-content">
+                        <div class="activity-timeline">
+                            <div class="timeline-item empty">
+                                <i class="fas fa-code"></i>
+                                <p>No recent activity to show.</p>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -95,14 +137,329 @@
 </div>
 
 <style>
-.profile-image {
+.profile-container {
+    padding: 4rem 0;
+    background: var(--primary-bg);
+    min-height: 100vh;
+}
+
+.profile-card {
+    background: var(--card-bg);
+    border-radius: 15px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    overflow: hidden;
+}
+
+.profile-header {
+    padding: 2rem;
+    text-align: center;
+    background: linear-gradient(to right, rgba(26, 26, 46, 0.8), rgba(22, 33, 62, 0.8));
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.profile-avatar {
+    position: relative;
     width: 120px;
     height: 120px;
-    margin: 0 auto;
+    margin: 0 auto 1.5rem;
     display: flex;
     align-items: center;
     justify-content: center;
 }
+
+.avatar-ring {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    border: 3px solid transparent;
+    border-top-color: var(--accent-color);
+    border-left-color: var(--accent-hover);
+    animation: spin 2s linear infinite;
+}
+
+.avatar-ring::before {
+    content: '';
+    position: absolute;
+    top: 5px;
+    left: 5px;
+    right: 5px;
+    bottom: 5px;
+    border-radius: 50%;
+    border: 3px solid transparent;
+    border-top-color: var(--accent-hover);
+    border-right-color: var(--accent-color);
+    animation: spin 3s linear infinite;
+}
+
+.profile-avatar i {
+    font-size: 4rem;
+    color: var(--accent-color);
+    z-index: 1;
+}
+
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+.profile-name {
+    color: var(--text-primary);
+    font-size: 1.5rem;
+    margin-bottom: 0.5rem;
+}
+
+.profile-email {
+    color: var(--text-secondary);
+    margin-bottom: 1rem;
+}
+
+.leetcode-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: var(--accent-color);
+    text-decoration: none;
+    margin-bottom: 1rem;
+    transition: all 0.3s ease;
+}
+
+.leetcode-link:hover {
+    color: var(--accent-hover);
+    transform: translateY(-2px);
+}
+
+.role-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    font-weight: 500;
+}
+
+.role-badge.admin {
+    background: rgba(255, 77, 77, 0.2);
+    color: #ff4d4d;
+}
+
+.role-badge.user {
+    background: rgba(0, 184, 255, 0.2);
+    color: #00b8ff;
+}
+
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    padding: 1.5rem;
+    gap: 1rem;
+}
+
+.stat-item {
+    text-align: center;
+    padding: 1rem;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 10px;
+}
+
+.stat-value {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--accent-color);
+}
+
+.stat-label {
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+    margin-top: 0.5rem;
+}
+
+.achievement-card {
+    background: var(--card-bg);
+    border-radius: 15px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 1.5rem;
+    margin-top: 1.5rem;
+}
+
+.section-title {
+    color: var(--text-primary);
+    font-size: 1.2rem;
+    margin-bottom: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.achievement-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+}
+
+.achievement {
+    text-align: center;
+    padding: 1rem;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 10px;
+    transition: all 0.3s ease;
+}
+
+.achievement.locked {
+    opacity: 0.5;
+}
+
+.achievement i {
+    font-size: 1.5rem;
+    color: var(--accent-color);
+    margin-bottom: 0.5rem;
+}
+
+.achievement span {
+    display: block;
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+}
+
+.content-card {
+    background: var(--card-bg);
+    border-radius: 15px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    overflow: hidden;
+}
+
+.card-tabs {
+    display: flex;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.tab-btn {
+    flex: 1;
+    padding: 1rem;
+    background: none;
+    border: none;
+    color: var(--text-secondary);
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.tab-btn.active {
+    color: var(--accent-color);
+    background: rgba(255, 255, 255, 0.05);
+}
+
+.tab-content {
+    display: none;
+    padding: 2rem;
+}
+
+.tab-content.active {
+    display: block;
+}
+
+.settings-form .form-group {
+    margin-bottom: 1.5rem;
+}
+
+.settings-form label {
+    display: block;
+    color: var(--text-secondary);
+    margin-bottom: 0.5rem;
+}
+
+.settings-form label i {
+    margin-right: 0.5rem;
+    color: var(--accent-color);
+}
+
+.settings-form input {
+    width: 100%;
+    padding: 0.8rem;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    color: var(--text-primary);
+}
+
+.settings-form input:focus {
+    outline: none;
+    border-color: var(--accent-color);
+}
+
+.settings-form small {
+    display: block;
+    color: var(--text-secondary);
+    margin-top: 0.5rem;
+    font-size: 0.9rem;
+}
+
+.update-btn {
+    background: linear-gradient(45deg, var(--accent-color), var(--accent-hover));
+    color: var(--secondary-bg);
+    border: none;
+    padding: 0.8rem 1.5rem;
+    border-radius: 8px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.update-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(0, 255, 149, 0.4);
+}
+
+.activity-timeline {
+    padding: 1rem;
+}
+
+.timeline-item {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 8px;
+    color: var(--text-secondary);
+}
+
+.timeline-item.empty i {
+    color: var(--accent-color);
+}
+
+@media (max-width: 768px) {
+    .stats-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .achievement-grid {
+        grid-template-columns: 1fr;
+    }
+}
 </style>
+
+<script>
+function switchTab(tabId) {
+    // Hide all tab contents
+    document.querySelectorAll('.tab-content').forEach(tab => {
+        tab.classList.remove('active');
+    });
+    
+    // Deactivate all tab buttons
+    document.querySelectorAll('.tab-btn').forEach(btn => {
+        btn.classList.remove('active');
+    });
+    
+    // Show selected tab content and activate button
+    document.getElementById(tabId).classList.add('active');
+    event.currentTarget.classList.add('active');
+}
+</script>
 
 <%- include('partials/footer') %> 
