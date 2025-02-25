@@ -24,7 +24,12 @@
                             <span class="dot yellow"></span>
                             <span class="dot green"></span>
                         </div>
-                        <pre class="code-content"><code>function success() {
+                        <pre class="code-content"><code class="typewriter"></code></pre>
+                    </div>
+                </div>
+            </div>
+            <script>
+                const codeText = `function success() {
     const hardwork = true;
     const practice = true;
     const guidance = true;
@@ -34,10 +39,23 @@
             "Welcome to Code Vault!" 
             : "Keep Going!";
     }
-}</code></pre>
-                    </div>
-                </div>
-            </div>
+}`;
+
+                let i = 0;
+                const speed = 10; // Typing speed in milliseconds
+                const codeElement = document.querySelector('.typewriter');
+
+                function typeWriter() {
+                    if (i < codeText.length) {
+                        codeElement.innerHTML += codeText.charAt(i);
+                        i++;
+                        setTimeout(typeWriter, speed);
+                    }
+                }
+
+                // Start typing animation when page loads
+                document.addEventListener('DOMContentLoaded', typeWriter);
+            </script>
         </div>
     </div>
 </div>
