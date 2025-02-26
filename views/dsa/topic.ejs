@@ -9,20 +9,40 @@
                 <div class="topic-stats">
                     <div class="stat">
                         <i class="fas fa-check-circle"></i>
-                        <span>Solved: <%= topic.solvedCount || 0 %>/<%= problems.length %></span>
+                        <span>Solved: <%= problems.filter(p => p.isSolved).length %>/<%= problems.length %></span>
                     </div>
                     <div class="stat">
                         <i class="fas fa-chart-line"></i>
-                        <span>Progress: <%= Math.round((topic.solvedCount || 0) / problems.length * 100) %>%</span>
+                        <span>Progress: <%= Math.round((problems.filter(p => p.isSolved).length / problems.length) * 100) %>%</span>
                     </div>
                 </div>
             </div>
-            <div class="progress-circle" data-progress="<%= Math.round((topic.solvedCount || 0) / problems.length * 100) %>">
+            <div class="progress-circle" data-progress="<%= Math.round((problems.filter(p => p.isSolved).length / problems.length) * 100) %>">
                 <div class="progress-text">
-                    <%= Math.round((topic.solvedCount || 0) / problems.length * 100) %>%
+                    <%= Math.round((problems.filter(p => p.isSolved).length / problems.length) * 100) %>%
                 </div>
             </div>
+            
         </div>
+    </div>
+
+    <% if (!user.leetcodeUsername) { %>
+        <div class="leetcode-setup">
+            <form id="leetcodeForm" class="leetcode-form">
+                <div class="form-group">
+                    <label for="leetcodeUsername">Enter your LeetCode username to sync progress:</label>
+                    <input type="text" id="leetcodeUsername" name="leetcodeUsername" required>
+                </div>
+                <button type="submit" class="save-btn">Save Username</button>
+            </form>
+        </div>
+    <% } %>
+
+    <div class="sync-section">
+        <button id="syncButton" class="sync-btn">
+            <i class="fas fa-sync"></i> Sync LeetCode Solutions
+        </button>
+        <div id="syncStatus" class="sync-status"></div>
     </div>
 
     <div class="problems-section">
@@ -51,11 +71,17 @@
                 </thead>
                 <tbody>
                     <% problems.forEach(problem => { %>
-                        <tr class="problem-row" data-difficulty="<%= problem.difficulty %>">
-                            <td>
-                                <span class="status-icon <%= problem.isSolved ? 'solved' : '' %>">
-                                    <i class="fas <%= problem.isSolved ? 'fa-check-circle' : 'fa-circle' %>"></i>
-                                </span>
+                        <tr class="problem-row <%= problem.isSolved ? 'solved' : '' %>" data-difficulty="<%= problem.difficulty %>">
+                            <td class="status-cell">
+                                <% if (problem.isSolved) { %>
+                                    <span class="status-badge solved">
+                                        <i class="fas fa-check-circle"></i>
+                                    </span>
+                                <% } else { %>
+                                    <span class="status-badge unsolved">
+                                        <i class="far fa-circle"></i>
+                                    </span>
+                                <% } %>
                             </td>
                             <td>
                                 <div class="problem-name">
@@ -64,8 +90,6 @@
                             </td>
                             <td>
                                 <span class="difficulty-badge <%= problem.difficulty.toLowerCase() %>">
-                                    <i class="fas <%= problem.difficulty === 'Easy' ? 'fa-smile' : 
-                                                   problem.difficulty === 'Medium' ? 'fa-meh' : 'fa-frown' %>"></i>
                                     <%= problem.difficulty %>
                                 </span>
                             </td>
@@ -324,6 +348,170 @@
         display: none;
     }
 }
+
+.problem-card {
+    border: 1px solid #ddd;
+    padding: 15px;
+    margin-bottom: 10px;
+    border-radius: 5px;
+}
+
+.problem-card.solved {
+    border-left: 4px solid #28a745;
+    background-color: #f8fff8;
+}
+
+.status {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 0.9em;
+}
+
+.status.solved {
+    color: #28a745;
+    background-color: #e6ffe6;
+}
+
+.status.unsolved {
+    color: #dc3545;
+    background-color: #fff5f5;
+}
+
+.problem-info {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.problem-actions {
+    display: flex;
+    justify-content: flex-end;
+}
+
+.sync-btn {
+    padding: 0.5rem 1rem;
+    background: var(--accent-color);
+    border: none;
+    border-radius: 6px;
+    color: #000;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    transition: all 0.3s ease;
+}
+
+.sync-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+}
+
+.sync-btn i {
+    font-size: 0.9em;
+}
+
+.status-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+}
+
+.status-badge.solved {
+    color: #00b894;
+}
+
+.status-badge.unsolved {
+    color: #636e72;
+}
+
+.leetcode-setup {
+    background: #1e1e2e;
+    padding: 20px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+}
+
+.leetcode-form {
+    display: flex;
+    gap: 15px;
+    align-items: flex-end;
+}
+
+.form-group {
+    flex: 1;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 8px;
+    color: #fff;
+}
+
+.form-group input {
+    width: 100%;
+    padding: 8px 12px;
+    border: 1px solid #2d2d3d;
+    border-radius: 4px;
+    background: #2d2d3d;
+    color: #fff;
+}
+
+.save-btn {
+    background: #00b894;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 4px;
+    cursor: pointer;
+    height: 35px;
+}
+
+.save-btn:hover {
+    background: #00a884;
+}
+
+.sync-section {
+    margin: 20px 0;
+    padding: 15px;
+    background: #1e1e2e;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.sync-btn {
+    background: #00b894;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 6px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.3s ease;
+}
+
+.sync-btn:hover {
+    background: #00a884;
+}
+
+.sync-btn:disabled {
+    background: #666;
+    cursor: not-allowed;
+}
+
+.sync-status {
+    color: #94a3b8;
+}
 </style>
 
 <script>
@@ -363,6 +551,74 @@ document.querySelectorAll('.filter-btn').forEach(btn => {
             }
         });
     });
+});
+
+// Add this if the form exists
+const leetcodeForm = document.getElementById('leetcodeForm');
+if (leetcodeForm) {
+    leetcodeForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const username = document.getElementById('leetcodeUsername').value;
+        
+        try {
+            const response = await fetch('/dsa/set-leetcode-username', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ username })
+            });
+            
+            const data = await response.json();
+            if (data.success) {
+                window.location.reload();
+            } else {
+                alert('Failed to save username: ' + data.message);
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            alert('Failed to save username');
+        }
+    });
+}
+
+// Update your existing sync button code
+document.getElementById('syncButton').addEventListener('click', async () => {
+    try {
+        const button = document.getElementById('syncButton');
+        const statusDiv = document.getElementById('syncStatus');
+        
+        // Disable button and show loading
+        button.disabled = true;
+        button.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Syncing...';
+        statusDiv.innerHTML = 'Checking submissions...';
+
+        // Call sync API
+        const response = await fetch('/dsa/sync-submissions', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+
+        const data = await response.json();
+
+        if (data.success) {
+            statusDiv.innerHTML = `✓ ${data.message}`;
+            // Reload page after successful sync
+            setTimeout(() => window.location.reload(), 1500);
+        } else {
+            statusDiv.innerHTML = `❌ ${data.message}`;
+        }
+    } catch (error) {
+        console.error('Sync error:', error);
+        document.getElementById('syncStatus').innerHTML = '❌ Failed to sync submissions';
+    } finally {
+        // Re-enable button
+        const button = document.getElementById('syncButton');
+        button.disabled = false;
+        button.innerHTML = '<i class="fas fa-sync"></i> Sync LeetCode Solutions';
+    }
 });
 </script>
 

@@ -18,9 +18,7 @@ const userSchema = new mongoose.Schema({
   },
   leetcodeUsername: {
     type: String,
-    required: function() {
-      return !this.isAdmin; // Only required for regular users
-    }
+    trim: true
   },
   isAdmin: {
     type: Boolean,
@@ -44,4 +42,11 @@ userSchema.methods.isAdminUser = function() {
   return this.isAdmin === true;
 };
 
-module.exports = mongoose.model('User', userSchema); 
+// Add method to update LeetCode username
+userSchema.methods.setLeetCodeUsername = async function(username) {
+  this.leetcodeUsername = username;
+  await this.save();
+};
+
+const User = mongoose.model('User', userSchema);
+module.exports = User; 

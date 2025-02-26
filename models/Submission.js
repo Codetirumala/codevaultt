@@ -11,22 +11,22 @@ const submissionSchema = new mongoose.Schema({
         ref: 'Problem',
         required: true
     },
-    leetcodeSlug: {
-        type: String,
-        required: true
-    },
     status: {
         type: String,
+        enum: ['Accepted', 'Wrong Answer', 'Time Limit Exceeded', 'Runtime Error'],
         required: true
     },
     submittedAt: {
         type: Date,
         default: Date.now
-    }
+    },
+    leetcodeSubmissionId: String
+}, {
+    timestamps: true
 });
 
-// Compound index to ensure unique submissions per user-problem combination
-submissionSchema.index({ user: 1, problem: 1 }, { unique: true });
+// Index for faster queries
+submissionSchema.index({ user: 1, problem: 1 });
 
 const Submission = mongoose.model('Submission', submissionSchema);
 module.exports = Submission; 

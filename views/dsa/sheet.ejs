@@ -61,16 +61,28 @@ function getTopicIcon(topicName) {
                                 <span class="dot yellow"></span>
                                 <span class="dot green"></span>
                             </div>
-                            <pre class="code-content"><code>class Solution {
+                            <pre class="code-content"><code id="codeAnimation"></code></pre>
+                        </div>
+                    </div>
+                </div>
+                <script>
+                    const codeString = `class Solution {
     void masterDSA() {
         dedication = true;
         practice = true;
         success = dedication && practice;
     }
-}</code></pre>
-                        </div>
-                    </div>
-                </div>
+}`;
+                    let index = 0;
+                    function typeCode() {
+                        if (index < codeString.length) {
+                            document.getElementById('codeAnimation').textContent += codeString.charAt(index);
+                            index++;
+                            setTimeout(typeCode, 40); // Adjust typing speed here
+                        }
+                    }
+                    typeCode();
+                </script>
             </div>
         </div>
     </div>

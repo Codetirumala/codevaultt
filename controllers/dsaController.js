@@ -145,4 +145,118 @@ exports.getTopicProblems = async (req, res) => {
         console.error('Main Error:', error);
         res.status(500).send('Error loading topic problems');
     }
+};
+
+const getTopics = async (req, res) => {
+    try {
+        const topics = await Topic.find({}).lean();
+        const userId = req.user._id;
+
+        // Get all problems with their solved status
+        const problems = await Problem.find({}).lean();
+        
+        // Calculate total solved problems for the header stats
+        const totalProblems = problems.length;
+        const totalSolved = problems.filter(problem => 
+            problem.solvedBy && problem.solvedBy.some(solve => 
+                solve.user.toString() === userId.toString()
+            )
+        ).length;
+
+        // Calculate stats per topic
+        const topicStats = {};
+        topics.forEach(topic => {
+            topicStats[topic._id.toString()] = {
+                totalProblems: 0,
+                solvedProblems: 0
+            };
+        });
+
+        // Update topic stats
+        problems.forEach(problem => {
+            const topicId = problem.topic.toString();
+            if (topicStats[topicId]) {
+                topicStats[topicId].totalProblems++;
+                if (problem.solvedBy && problem.solvedBy.some(solve => 
+                    solve.user.toString() === userId.toString()
+                )) {
+                    topicStats[topicId].solvedProblems++;
+                }
+            }
+        });
+
+        // Add stats to topics
+        const topicsWithStats = topics.map(topic => ({
+            ...topic,
+            problemCount: topicStats[topic._id.toString()].totalProblems,
+            solvedCount: topicStats[topic._id.toString()].solvedProblems,
+            progress: topicStats[topic._id.toString()].totalProblems > 0 
+                ? Math.round((topicStats[topic._id.toString()].solvedProblems / 
+                   topicStats[topic._id.toString()].totalProblems) * 100)
+                : 0
+        }));
+
+        res.render('dsa/topics', {
+            topics: topicsWithStats,
+            totalStats: {
+                solved: totalSolved,
+                total: totalProblems,
+                progress: totalProblems > 0 ? Math.round((totalSolved / totalProblems) * 100) : 0
+            },
+            user: req.user
+        });
+    } catch (error) {
+        console.error('Error fetching topics:', error);
+        res.status(500).render('error', { message: 'Error loading topics' });
+    }
+};
+
+// Add this new controller method for individual topic view
+const getTopic = async (req, res) => {
+    try {
+        const topicId = req.params.id;
+        const userId = req.user._id;
+
+        const topic = await Topic.findById(topicId).lean();
+        const problems = await Problem.find({ topic: topicId }).lean();
+
+        // Calculate solved count for this topic
+        const solvedCount = problems.filter(problem =>
+            problem.solvedBy && problem.solvedBy.some(solve =>
+                solve.user.toString() === userId.toString()
+            )
+        ).length;
+
+        const progress = problems.length > 0 
+            ? Math.round((solvedCount / problems.length) * 100)
+            : 0;
+
+        // Add solved status to each problem
+        const problemsWithStatus = problems.map(problem => ({
+            ...problem,
+            isSolved: problem.solvedBy?.some(solve =>
+                solve.user.toString() === userId.toString()
+            ) || false
+        }));
+
+        res.render('dsa/topic', {
+            topic: {
+                ...topic,
+                solvedCount,
+                totalProblems: problems.length,
+                progress
+            },
+            problems: problemsWithStatus,
+            user: req.user
+        });
+
+    } catch (error) {
+        console.error('Error fetching topic:', error);
+        res.status(500).render('error', { message: 'Error loading topic' });
+    }
+};
+
+module.exports = {
+    getTopics,
+    getTopic
 }; 
