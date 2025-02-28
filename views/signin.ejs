@@ -16,7 +16,7 @@
               <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
             </div>
           <% } %>
-          <form action="/signin" method="POST">
+          <form action="/signin" method="POST" id="signinForm">
             <div class="form-group mb-3">
               <label for="email" class="form-label">
                 <i class="fas fa-envelope"></i> Email
@@ -29,7 +29,7 @@
               </label>
               <input type="password" class="form-control custom-input" id="password" name="password" required>
             </div>
-            <button type="submit" class="btn custom-btn w-100">
+            <button type="submit" class="btn custom-btn w-100" id="signinBtn">
               <i class="fas fa-sign-in-alt me-2"></i> Sign In
             </button>
           </form>
@@ -44,6 +44,29 @@
     </div>
   </div>
 </div>
+
+<script>
+document.getElementById('signinForm').addEventListener('submit', function(e) {
+    const button = document.getElementById('signinBtn');
+    
+    // Create and show loader overlay
+    const loader = document.createElement('div');
+    loader.className = 'loader-overlay';
+    loader.innerHTML = `
+        <div class="loader-content">
+            <div class="loader"></div>
+            <div class="loader-text">
+                Signing In<span class="loader-dots"></span>
+            </div>
+        </div>
+    `;
+    document.body.appendChild(loader);
+    
+    // Update button state
+    button.disabled = true;
+    button.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i> Signing In...';
+});
+</script>
 
 <style>
 .auth-card {
@@ -144,6 +167,62 @@
 body {
     background: #0f0f1a;
     min-height: 100vh;
+}
+
+.loader-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(26, 26, 46, 0.95);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+    backdrop-filter: blur(5px);
+}
+
+.loader-content {
+    text-align: center;
+}
+
+.loader {
+    width: 60px;
+    height: 60px;
+    border: 4px solid rgba(0, 255, 149, 0.1);
+    border-radius: 50%;
+    border-left-color: #00ff95;
+    animation: spin 1s linear infinite;
+    margin: 0 auto 1rem;
+}
+
+.loader-text {
+    color: #00ff95;
+    font-size: 1.2rem;
+    font-weight: 500;
+    letter-spacing: 1px;
+}
+
+.loader-dots::after {
+    content: '';
+    animation: dots 1.5s infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+@keyframes dots {
+    0% { content: '.'; }
+    33% { content: '..'; }
+    66% { content: '...'; }
+    100% { content: '.'; }
+}
+
+.fa-spinner {
+    animation: spin 1s linear infinite;
 }
 </style>
 

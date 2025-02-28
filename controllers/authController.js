@@ -319,10 +319,16 @@ exports.getForgotPasswordPage = (req, res) => {
 exports.sendOTP = async (req, res) => {
     try {
         const { email } = req.body;
+        
+        // Add delay to show loading state (remove in production)
+        await new Promise(resolve => setTimeout(resolve, 1000));
+        
         const user = await User.findOne({ email });
 
         if (!user) {
-            return res.status(404).json({ error: 'User not found' });
+            return res.status(404).json({ 
+                error: 'No account found with this email address. Please check and try again.' 
+            });
         }
 
         // Generate OTP
@@ -339,15 +345,18 @@ exports.sendOTP = async (req, res) => {
             email,
             'Password Reset OTP',
             `Your OTP for password reset is: ${otp}. This OTP will expire in 1 minute.`,
-            `<h2>Password Reset OTP</h2>
-            <p>Your OTP for password reset is: <strong>${otp}</strong></p>
-            <p>This OTP will expire in 1 minute.</p>`
+            `<div style="background-color: #1a1a1a; color: #ffffff; padding: 20px; border-radius: 10px;">
+                <h2 style="color: #00ff9d;">Password Reset OTP</h2>
+                <p>Your OTP for password reset is: <strong style="color: #00ff9d; font-size: 24px;">${otp}</strong></p>
+                <p>This OTP will expire in 1 minute.</p>
+                <p style="color: #666;">If you didn't request this password reset, please ignore this email.</p>
+            </div>`
         );
 
-        res.json({ message: 'OTP sent successfully' });
+        res.json({ message: 'OTP sent successfully to your email!' });
     } catch (error) {
         console.error('Error sending OTP:', error);
-        res.status(500).json({ error: 'Error sending OTP' });
+        res.status(500).json({ error: 'Failed to send OTP. Please try again.' });
     }
 };
 
