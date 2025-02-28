@@ -9,6 +9,11 @@ const axios = require('axios');
 // DSA Sheet route
 router.get('/sheet', auth, async (req, res) => {
     try {
+        // If user is not authenticated, redirect to sign in page
+        if (!req.user) {
+            return res.redirect('/signin');
+        }
+
         const userId = req.user._id;
 
         // Get all topics and problems
@@ -341,5 +346,4 @@ router.post('/problems/:id/mark-solved', auth, async (req, res) => {
     }
 });
 
-module.exports = router;
 module.exports = router;
