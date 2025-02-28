@@ -102,7 +102,8 @@
                                         <i class="fab fa-leetcode"></i>
                                         LeetCode Username
                                     </label>
-                                    <input type="text" value="<%= user.leetcodeUsername || 'N/A' %>" readonly>
+                                    <input type="text" name="leetcodeUsername" value="<%= user.leetcodeUsername || '' %>" placeholder="Enter LeetCode username" required>
+                                    <small>Your LeetCode username is used to sync your solved problems</small>
                                 </div>
                             <% } %>
 

@@ -1,6 +1,7 @@
 const User = require('../models/User');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
+const { sendEmail } = require('../services/emailService');
 
 async function checkAdminExists() {
     const adminCount = await User.countDocuments({ isAdmin: true });
@@ -91,6 +92,22 @@ exports.signup = async (req, res) => {
             id: user._id, 
             isAdmin: user.isAdmin 
         });
+
+        // Send welcome email
+        try {
+            await sendEmail(
+                email,
+                'Welcome to CodeVault!',
+                `Dear ${name},\n\nWe are excited to welcome you to the CodeVault community! You are now part of a vibrant network of developers eager to enhance their coding skills.\n\nBest regards,\nThe CodeVault Team`,
+                `<h1>Welcome to CodeVault! 🎉</h1>
+                <p>Dear ${name},</p>
+                <p>We are excited to welcome you to the CodeVault community! You are now part of a vibrant network of developers eager to enhance their coding skills.</p>
+                <p>Best regards,<br>The CodeVault Team</p>`
+            );
+        } catch (emailError) {
+            console.error('Failed to send welcome email:', emailError);
+            // Continue with signup process even if email fails
+        }
 
         // Create token
         const token = jwt.sign(
@@ -247,8 +264,14 @@ exports.updateProfile = async (req, res) => {
             email
         };
 
-        // Add leetcodeUsername if user is not admin
-        if (!req.user.isAdmin && leetcodeUsername) {
+        // Add leetcodeUsername if user is not admin and it's provided
+        if (!req.user.isAdmin) {
+            if (!leetcodeUsername) {
+                return res.render('profile', {
+                    user: req.user,
+                    error: 'LeetCode username is required for regular users'
+                });
+            }
             updateData.leetcodeUsername = leetcodeUsername;
         }
 

@@ -5,7 +5,7 @@ const path = require('path');
 require('dotenv').config();
 const { auth } = require('./middleware/auth');
 const homeController = require('./controllers/homeController');
-
+const { sendEmail } = require('./services/emailService');
 const app = express();
 
 // Middleware
@@ -27,16 +27,23 @@ app.use('/dsa', require('./routes/dsa'));
 app.use('/companies', require('./routes/companies'));
 app.use('/roadmap', require('./routes/roadmap'));
 app.use('/admin', require('./routes/admin'));
+app.use('/email', require('./routes/email'));
+
+// Add route debugging middleware
+app.use((req, res, next) => {
+  console.log(`${req.method} ${req.url}`);
+  next();
+});
 
 // Home route
 app.get('/', homeController.getHomePage);
 
 // Add a 404 handler
-app.use((req, res) => {
-    res.status(404).render('error', { 
-        message: 'Page not found' 
-    });
-});
+// app.use((req, res) => {
+//     res.status(404).render('error', { 
+//         message: 'Page not found' 
+//     });
+// });
 
 // Error handler middleware (place this after all routes)
 app.use((err, req, res, next) => {
