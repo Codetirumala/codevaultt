@@ -3,6 +3,14 @@ const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
 const { sendEmail } = require('../services/emailService');
 
+// Store OTP and their expiry times (in memory - you might want to use Redis in production)
+const otpStore = new Map();
+
+// Generate OTP
+function generateOTP() {
+    return Math.floor(100000 + Math.random() * 900000).toString();
+}
+
 async function checkAdminExists() {
     const adminCount = await User.countDocuments({ isAdmin: true });
     return adminCount > 0;
@@ -148,7 +156,7 @@ exports.signin = async (req, res) => {
     try {
         const { email, password } = req.body;
         
-        console.log('Signin attempt for email:', email); // Debug log
+        console.log('Signin attempt for email:', email);
 
         // Find user by email
         const user = await User.findOne({ email });
@@ -167,9 +175,9 @@ exports.signin = async (req, res) => {
             });
         }
 
-        // Compare password
-        const isMatch = await bcrypt.compare(password, user.password);
-        console.log('Password match:', isMatch); // Debug log
+        // Compare password using the new method
+        const isMatch = await user.comparePassword(password);
+        console.log('Password match:', isMatch);
 
         if (!isMatch) {
             console.log('Password does not match');
@@ -200,14 +208,14 @@ exports.signin = async (req, res) => {
         delete userWithoutPassword.password;
         res.locals.user = userWithoutPassword;
 
-        console.log('Login successful, redirecting user'); // Debug log
+        console.log('Login successful, redirecting user');
 
         // Redirect based on user role
         if (user.isAdmin) {
-            console.log('Redirecting to admin dashboard'); // Debug log
+            console.log('Redirecting to admin dashboard');
             return res.redirect('/admin/dashboard');
         } else {
-            console.log('Redirecting to home'); // Debug log
+            console.log('Redirecting to home');
             return res.redirect('/');
         }
 
@@ -301,5 +309,95 @@ exports.updateProfile = async (req, res) => {
             user: req.user,
             error: 'Error updating profile'
         });
+    }
+};
+
+exports.getForgotPasswordPage = (req, res) => {
+    res.render('forgot-password');
+};
+
+exports.sendOTP = async (req, res) => {
+    try {
+        const { email } = req.body;
+        const user = await User.findOne({ email });
+
+        if (!user) {
+            return res.status(404).json({ error: 'User not found' });
+        }
+
+        // Generate OTP
+        const otp = generateOTP();
+        
+        // Store OTP with 1-minute expiry
+        otpStore.set(email, {
+            otp,
+            expiry: Date.now() + 60000 // 1 minute from now
+        });
+
+        // Send OTP via email
+        await sendEmail(
+            email,
+            'Password Reset OTP',
+            `Your OTP for password reset is: ${otp}. This OTP will expire in 1 minute.`,
+            `<h2>Password Reset OTP</h2>
+            <p>Your OTP for password reset is: <strong>${otp}</strong></p>
+            <p>This OTP will expire in 1 minute.</p>`
+        );
+
+        res.json({ message: 'OTP sent successfully' });
+    } catch (error) {
+        console.error('Error sending OTP:', error);
+        res.status(500).json({ error: 'Error sending OTP' });
+    }
+};
+
+exports.verifyOTP = async (req, res) => {
+    try {
+        const { email, otp } = req.body;
+        
+        const storedOTPData = otpStore.get(email);
+        
+        if (!storedOTPData) {
+            return res.status(400).json({ error: 'OTP expired or not found' });
+        }
+
+        if (Date.now() > storedOTPData.expiry) {
+            otpStore.delete(email);
+            return res.status(400).json({ error: 'OTP expired' });
+        }
+
+        if (storedOTPData.otp !== otp) {
+            return res.status(400).json({ error: 'Invalid OTP' });
+        }
+
+        // OTP verified successfully
+        otpStore.delete(email); // Clear the OTP
+        res.json({ message: 'OTP verified successfully' });
+    } catch (error) {
+        console.error('Error verifying OTP:', error);
+        res.status(500).json({ error: 'Error verifying OTP' });
+    }
+};
+
+exports.resetPassword = async (req, res) => {
+    try {
+        const { email, newPassword } = req.body;
+        
+        const user = await User.findOne({ email });
+        if (!user) {
+            return res.status(404).json({ error: 'User not found' });
+        }
+
+        // Set the new password - it will be hashed by the pre-save hook
+        user.password = newPassword;
+        await user.save();
+
+        // Clear any existing OTP data
+        otpStore.delete(email);
+
+        res.json({ message: 'Password updated successfully' });
+    } catch (error) {
+        console.error('Error resetting password:', error);
+        res.status(500).json({ error: 'Error resetting password' });
     }
 }; 

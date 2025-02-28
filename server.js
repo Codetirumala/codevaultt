@@ -38,6 +38,11 @@ app.use((req, res, next) => {
 // Home route
 app.get('/', homeController.getHomePage);
 
+// Forgot password route
+app.get('/forgot-password', (req, res) => {
+  res.render('forgot-password');
+});
+
 // Add a 404 handler
 // app.use((req, res) => {
 //     res.status(404).render('error', { 
