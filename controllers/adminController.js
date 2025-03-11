@@ -1,6 +1,7 @@
 const User = require('../models/User');
 const Topic = require('../models/Topic');
 const Problem = require('../models/Problem');
+const Submission = require('../models/Submission');
 
 exports.getDashboard = async (req, res) => {
     try {
@@ -124,5 +125,57 @@ exports.deleteTopic = async (req, res) => {
     } catch (error) {
         console.error('Delete topic error:', error);
         res.status(500).json({ error: 'Error deleting topic' });
+    }
+};
+
+exports.getUserStats = async (req, res) => {
+    try {
+        // Get all problems first
+        const problems = await Problem.find().lean();
+
+        // Get all non-admin users with their stats
+        const users = await User.find({ isAdmin: false })
+            .select('name email rollNumber branch section leetcodeUsername')
+            .lean();
+
+        // Get all accepted submissions
+        const submissions = await Submission.find({
+            user: { $in: users.map(u => u._id) },
+            status: 'Accepted'
+        }).lean();
+
+        // Create a map of user submissions for faster lookup
+        const userSubmissionsMap = new Map();
+        submissions.forEach(sub => {
+            const userId = sub.user.toString();
+            if (!userSubmissionsMap.has(userId)) {
+                userSubmissionsMap.set(userId, new Set());
+            }
+            userSubmissionsMap.get(userId).add(sub.problem.toString());
+        });
+
+        // Process user stats
+        const userStats = users.map(user => {
+            // Get solved problems for this user
+            const solvedProblemIds = userSubmissionsMap.get(user._id.toString()) || new Set();
+            
+            // Add problems array to user object with isSolved flag
+            return {
+                ...user,
+                problems: problems.map(prob => ({
+                    ...prob,
+                    isSolved: solvedProblemIds.has(prob._id.toString())
+                }))
+            };
+        });
+
+        res.render('admin/stats', {
+            userStats,
+            totalProblems: problems.length,
+            currentPage: 'stats'
+        });
+    } catch (error) {
+        console.error('Error fetching user stats:', error);
+        res.status(500).render('error', { message: 'Error loading statistics' });
     }
 }; 

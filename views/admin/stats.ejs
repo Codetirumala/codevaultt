@@ -1,0 +1,808 @@
+<%- include('../partials/header') %>
+<%- include('../partials/navbar') %>
+
+<div class="admin-container">
+    <!-- Admin Sidebar -->
+    <div class="admin-sidebar">
+        <div class="sidebar-header">
+            <div class="admin-brand">
+                <i class="fas fa-shield-alt"></i>
+                <span>Admin Panel</span>
+            </div>
+        </div>
+        <div class="sidebar-menu">
+            <ul>
+                <li>
+                    <a href="/admin/dashboard">
+                        <i class="fas fa-chart-line"></i>
+                        <span>Dashboard</span>
+                    </a>
+                </li>
+                <li class="active">
+                    <a href="/admin/users">
+                        <i class="fas fa-users"></i>
+                        <span>Users</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="/admin/problems">
+                        <i class="fas fa-code"></i>
+                        <span>Problems</span>
+                    </a>
+                </li>
+                <li class="active">
+                    <a href="/admin/stats">
+                        <i class="fas fa-chart-bar"></i>
+                        <span>User Stats</span>
+                    </a>
+                </li>
+                
+            </ul>
+        </div>
+    </div>
+    <!-- Main Content Area -->
+    <div class="admin-content">
+        <!-- Hero Stats Section -->
+        <div class="hero-stats" data-aos="fade-down">
+            <div class="stat-cards">
+                <div class="stat-card total-users" data-aos="zoom-in" data-aos-delay="100">
+                    <div class="stat-icon">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <div class="stat-details">
+                        <h3><%= userStats.length %></h3>
+                        <p>Total Students</p>
+                    </div>
+                    <div class="stat-chart"></div>
+                </div>
+
+                <div class="stat-card avg-solved" data-aos="zoom-in" data-aos-delay="200">
+                    <div class="stat-icon">
+                        <i class="fas fa-code"></i>
+                    </div>
+                    <div class="stat-details">
+                        <h3><%= Math.round(userStats.reduce((acc, user) => acc + (user.problems?.filter(p => p.isSolved)?.length || 0), 0) / userStats.length) %></h3>
+                        <p>Avg Problems Solved</p>
+                    </div>
+                    <div class="stat-chart"></div>
+                </div>
+
+                <div class="stat-card completion" data-aos="zoom-in" data-aos-delay="300">
+                    <div class="stat-icon">
+                        <i class="fas fa-trophy"></i>
+                    </div>
+                    <div class="stat-details">
+                        <% const topPerformer = userStats.reduce((max, user) => 
+                            ((user.problems?.filter(p => p.isSolved)?.length || 0) > (max.problems?.filter(p => p.isSolved)?.length || 0)) ? user : max, userStats[0]); %>
+                        <h3><%= topPerformer ? topPerformer.name : 'N/A' %></h3>
+                        <p>Top Performer</p>
+                    </div>
+                    <div class="stat-chart"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Leaderboard Section -->
+        <div class="leaderboard-section" data-aos="fade-up">
+            <div class="leaderboard-header">
+                <h2><i class="fas fa-crown"></i> Leaderboard</h2>
+                <div class="leaderboard-filters">
+                    <select id="branchFilter" class="filter-select" style=" color: white;">
+                        <option value="">All Branches</option>
+                        <option value="CSE">CSE</option>
+                        <option value="CSM">CSM</option>
+                        <option value="CSD">CSD</option>
+                        <option value="IT">IT</option>
+                    </select>
+                    <select id="sectionFilter" class="filter-select" style=" color: white;">
+                        <option value="">All Sections</option>
+                        <option value="A">Section A</option>
+                        <option value="B">Section B</option>
+                        <option value="C">Section C</option>
+                        <option value="D">Section D</option>
+                    </select>
+                    <div class="search-box">
+                        <i class="fas fa-search"></i>
+                        <input type="text" id="searchInput" placeholder="Search by roll number...">
+                    </div>
+                </div>
+            </div>
+
+            <div class="leaderboard-table">
+                <% 
+                const sortedUsers = userStats.sort((a, b) => (b.problems?.filter(p => p.isSolved)?.length || 0) - (a.problems?.filter(p => p.isSolved)?.length || 0));
+                %>
+                <% sortedUsers.forEach((user, index) => { %>
+                    <div class="leaderboard-row <%= index < 3 ? 'top-' + (index + 1) : '' %>" 
+                         data-branch="<%= user.branch %>" 
+                         data-section="<%= user.section %>"
+                         data-roll="<%= user.rollNumber %>"
+                         data-aos="fade-up"
+                         data-aos-delay="<%= index * 50 %>">
+                        
+                        <div class="rank">
+                            <% if(index < 3) { %>
+                                <div class="rank-medal rank-<%= index + 1 %>">
+                                    <i class="fas fa-medal"></i>
+                                </div>
+                            <% } else { %>
+                                #<%= index + 1 %>
+                            <% } %>
+                        </div>
+
+                        <div class="user-info">
+                            <div class="user-avatar">
+                                <i class="fas fa-user-graduate"></i>
+                            </div>
+                            <div class="user-details">
+                                <h4><%= user.name %></h4>
+                                <span class="roll-number"><%= user.rollNumber %></span>
+                            </div>
+                        </div>
+
+                        <div class="branch-badge">
+                            <i class="fas fa-code-branch"></i>
+                            <%= user.branch %>
+                        </div>
+
+                        <div class="section-badge">
+                            Section <%= user.section %>
+                        </div>
+
+                        <div class="problems-solved">
+                            <div class="solved-count">
+                                <span class="count"><%= user.problems?.filter(p => p.isSolved)?.length || 0 %></span>
+                                <span class="label">Problems Solved</span>
+                            </div>
+                            <div class="progress-container">
+                                <div class="progress-bar">
+                                    <% 
+                                        const solvedCount = user.problems?.filter(p => p.isSolved)?.length || 0;
+                                        const totalCount = user.problems?.length || 0;
+                                        const progressPercentage = totalCount > 0 ? (solvedCount / totalCount) * 100 : 0;
+                                    %>
+                                    <div class="progress" style="width: <%= progressPercentage %>%"></div>
+                                </div>
+                                <span class="progress-label"><%= solvedCount %>/<%= totalCount %></span>
+                            </div>
+                        </div>
+
+                        <div class="actions">
+                            <% if(user.leetcodeUsername) { %>
+                                <a href="https://leetcode.com/<%= user.leetcodeUsername %>" 
+                                   class="leetcode-link" 
+                                   target="_blank"
+                                   title="View LeetCode Profile">
+                                    <i class="fas fa-eye" style="color: red;"></i>
+                                </a>
+                            <% } %>
+                        </div>
+                    </div>
+                <% }); %>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+/* Reset and base styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* Admin Container Layout */
+.admin-container {
+    display: flex;
+    min-height: 100vh;
+    background: var(--primary-bg);
+}
+
+.admin-sidebar {
+    width: 260px;
+    background: var(--secondary-bg);
+    border-right: 1px solid rgba(255,255,255,0.1);
+    padding: 1.5rem;
+}
+
+.admin-brand {
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: var(--accent-color);
+    margin-bottom: 2rem;
+}
+
+.sidebar-menu ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.sidebar-menu li a {
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+    padding: 0.8rem 1rem;
+    color: var(--text-secondary);
+    text-decoration: none;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+}
+
+.sidebar-menu li.active a {
+    background: rgba(0, 255, 149, 0.1);
+    color: var(--accent-color);
+}
+/* Hero Stats Section */
+.hero-stats {
+    margin-bottom: 2rem;
+}
+
+.stat-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 1.5rem;
+    padding: 0.5rem;
+}
+
+.stat-card {
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 20px;
+    padding: 1.8rem;
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.stat-card:hover {
+    transform: translateY(-5px) scale(1.02);
+    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
+    border-color: rgba(255, 255, 255, 0.15);
+}
+
+.stat-icon {
+    width: 64px;
+    height: 64px;
+    border-radius: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.8rem;
+    transition: all 0.3s ease;
+}
+
+.total-users .stat-icon { 
+    background: linear-gradient(135deg, rgba(0, 255, 149, 0.15), rgba(0, 255, 149, 0.05));
+    color: #00ff95;
+    box-shadow: 0 0 20px rgba(0, 255, 149, 0.1);
+}
+
+.avg-solved .stat-icon { 
+    background: linear-gradient(135deg, rgba(0, 184, 255, 0.15), rgba(0, 184, 255, 0.05));
+    color: #00b8ff;
+    box-shadow: 0 0 20px rgba(0, 184, 255, 0.1);
+}
+
+.completion .stat-icon { 
+    background: linear-gradient(135deg, rgba(255, 184, 0, 0.15), rgba(255, 184, 0, 0.05));
+    color: #ffb800;
+    box-shadow: 0 0 20px rgba(255, 184, 0, 0.1);
+}
+
+.stat-details h3 {
+    margin: 0;
+    font-size: 1.8rem;
+    font-weight: 700;
+    background: linear-gradient(45deg, #fff, #888);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.stat-details p {
+    margin: 0;
+    color: var(--text-secondary);
+}
+
+/* Leaderboard Section */
+.leaderboard-section {
+    background: rgba(255, 255, 255, 0.03);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 24px;
+    padding: 2.5rem;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    overflow-x: auto;
+}
+
+.leaderboard-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+    padding: 1rem 1.5rem;
+    background: rgba(30, 38, 57, 0.95);
+    border-radius: 16px;
+    border: 1px solid rgba(99, 255, 203, 0.15);
+}
+
+.leaderboard-header h2 {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin: 0;
+    color: #00ff95;
+    font-size: 1.5rem;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+}
+
+.leaderboard-header h2 i {
+    font-size: 1.8rem;
+    background: linear-gradient(135deg, #00ff95, #00b8ff);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.leaderboard-filters {
+    display: flex;
+    gap: 1.5rem;
+    flex-wrap: wrap;
+    align-items: center;
+    margin-right: 1rem;
+}
+
+.filter-select {
+    padding: 0.8rem 2.5rem 0.8rem 1.2rem;
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    background: rgba(255, 255, 255, 0.05);
+    color: var(--text-primary);
+    font-size: 0.95rem;
+    transition: all 0.3s ease;
+}
+
+.filter-select:hover {
+    background: rgba(255, 255, 255, 0.08);
+    border-color: rgba(255, 255, 255, 0.2);
+}
+
+.search-box {
+    position: relative;
+}
+
+.search-box input {
+    padding: 0.8rem 1.2rem 0.8rem 2.8rem;
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    background: rgba(255, 255, 255, 0.05);
+    color: var(--text-primary);
+    width: 240px;
+    font-size: 0.95rem;
+    transition: all 0.3s ease;
+}
+
+.search-box input:focus {
+    border-color: var(--accent-color);
+    background: rgba(255, 255, 255, 0.08);
+    outline: none;
+    width: 280px;
+}
+
+.search-box i {
+    position: absolute;
+    left: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--text-secondary);
+}
+
+/* Leaderboard Table */
+.leaderboard-row {
+    display: grid;
+    grid-template-columns: 80px minmax(250px, 3fr) minmax(120px, 1fr) minmax(120px, 1fr) minmax(200px, 2fr) 100px;
+    align-items: center;
+    padding: 1.2rem 1.5rem;
+    margin-bottom: 0.8rem;
+    background: rgba(20, 28, 47, 0.4);
+    border-radius: 16px;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    border: 1px solid rgba(99, 255, 203, 0.1);
+    min-width: 1000px;
+    gap: 1.5rem;
+    position: relative;
+    overflow: hidden;
+}
+
+.leaderboard-row::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 4px;
+    height: 100%;
+    background: linear-gradient(to bottom, #00ff95, #00b8ff);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.leaderboard-row:hover::before {
+    opacity: 1;
+}
+
+.leaderboard-row:hover {
+    transform: translateX(10px) scale(1.01);
+    background: rgba(30, 38, 57, 0.95);
+    border-color: rgba(99, 255, 203, 0.2);
+    box-shadow: 0 4px 20px rgba(0, 255, 149, 0.1);
+}
+
+.rank {
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: #8A8F98;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.03);
+}
+
+.rank-medal {
+    font-size: 1.5rem;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.05);
+    transition: all 0.3s ease;
+}
+
+.rank-1 { 
+    background: linear-gradient(135deg, rgba(255, 215, 0, 0.15), rgba(255, 215, 0, 0.05));
+    border: 1px solid rgba(255, 215, 0, 0.3);
+    color: #FFD700;
+}
+
+.rank-2 { 
+    background: linear-gradient(135deg, rgba(192, 192, 192, 0.15), rgba(192, 192, 192, 0.05));
+    border: 1px solid rgba(192, 192, 192, 0.3);
+    color: #C0C0C0;
+}
+
+.rank-3 { 
+    background: linear-gradient(135deg, rgba(205, 127, 50, 0.15), rgba(205, 127, 50, 0.05));
+    border: 1px solid rgba(205, 127, 50, 0.3);
+    color: #CD7F32;
+}
+
+.user-info {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.user-avatar {
+    width: 45px;
+    height: 45px;
+    background: linear-gradient(135deg, rgba(0, 255, 149, 0.15), rgba(0, 255, 149, 0.05));
+    border: 1px solid rgba(0, 255, 149, 0.2);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #00ff95;
+    font-size: 1.2rem;
+    transition: all 0.3s ease;
+}
+
+.user-details h4 {
+    margin: 0;
+    color: #fff;
+    font-size: 1.1rem;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+}
+
+.roll-number {
+    color: #8A8F98;
+    font-size: 0.9rem;
+    margin-top: 4px;
+    display: block;
+}
+
+.branch-badge, .section-badge {
+    padding: 0.6rem 1rem;
+    border-radius: 12px;
+    font-size: 0.9rem;
+    background: rgba(30, 38, 57, 0.95);
+    border: 1px solid rgba(99, 255, 203, 0.15);
+    color: #fff;
+    text-align: center;
+    transition: all 0.3s ease;
+    letter-spacing: 0.5px;
+}
+
+.branch-badge:hover, .section-badge:hover {
+    background: rgba(99, 255, 203, 0.1);
+    transform: translateY(-2px);
+    border-color: rgba(99, 255, 203, 0.3);
+}
+
+.problems-solved {
+    display: flex;
+    flex-direction: column;
+    gap: 0.8rem;
+    padding: 1.2rem;
+    background: rgba(30, 38, 57, 0.5);
+    border-radius: 12px;
+    border: 1px solid rgba(99, 255, 203, 0.1);
+}
+
+.solved-count {
+    display: flex;
+    align-items: baseline;
+    gap: 0.8rem;
+}
+
+.solved-count .count {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: #00ff95;
+    font-family: 'Fira Code', monospace;
+}
+
+.solved-count .label {
+    color: #8A8F98;
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.progress-container {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.progress-bar {
+    flex: 1;
+    height: 8px;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 4px;
+    overflow: hidden;
+    box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+.progress {
+    height: 100%;
+    background: linear-gradient(90deg, #00ff95 0%, #00b8ff 100%);
+    border-radius: 4px;
+    transition: width 1s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+}
+
+.progress::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(
+        90deg,
+        rgba(255, 255, 255, 0.1) 0%,
+        rgba(255, 255, 255, 0.2) 50%,
+        rgba(255, 255, 255, 0.1) 100%
+    );
+    animation: shimmer 2s infinite;
+}
+
+.progress-label {
+    font-family: 'Fira Code', monospace;
+    font-size: 0.9rem;
+    color: #8A8F98;
+    min-width: 70px;
+    text-align: right;
+}
+
+.leetcode-link {
+    width: 42px;
+    height: 42px;
+    border-radius: 12px;
+    background: rgba(30, 38, 57, 0.95);
+    border: 1px solid rgba(255, 161, 22, 0.2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #FFA116;
+    font-size: 1.2rem;
+    transition: all 0.3s ease;
+    text-decoration: none;
+}
+
+.leetcode-link:hover {
+    transform: translateY(-2px);
+    background: rgba(255, 161, 22, 0.1);
+    border-color: rgba(255, 161, 22, 0.4);
+    box-shadow: 0 4px 12px rgba(255, 161, 22, 0.1);
+}
+
+.leetcode-link i {
+    transition: transform 0.3s ease;
+}
+
+.leetcode-link:hover i {
+    transform: scale(1.1);
+}
+
+@keyframes shimmer {
+    0% {
+        transform: translateX(-100%);
+    }
+    100% {
+        transform: translateX(100%);
+    }
+}
+
+/* Animations */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes slideInRight {
+    from {
+        opacity: 0;
+        transform: translateX(-30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+.stat-card {
+    animation: fadeInUp 0.6s ease-out forwards;
+}
+
+.leaderboard-row {
+    animation: slideInRight 0.5s ease-out forwards;
+    animation-delay: calc(var(--row-index, 0) * 0.1s);
+}
+
+/* Responsive Design */
+@media (max-width: 1200px) {
+    .leaderboard-section {
+        padding: 2rem 1.5rem;
+    }
+    
+    .leaderboard-row {
+        padding: 1.2rem 1.5rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .admin-container {
+        flex-direction: column;
+        padding-top: 0;
+    }
+    
+    .admin-sidebar {
+        width: 100%;
+        height: auto;
+        position: relative;
+        top: 0;
+    }
+    
+    .admin-content {
+        max-width: 100%;
+        padding: 1rem;
+        margin-left: 0;
+    }
+    
+    .sidebar-menu ul {
+        display: flex;
+        overflow-x: auto;
+        padding: 0.5rem;
+    }
+    
+    .sidebar-menu li a {
+        padding: 0.5rem 1rem;
+        white-space: nowrap;
+    }
+    
+    .stat-cards {
+        grid-template-columns: 1fr;
+    }
+    
+    .leaderboard-section {
+        padding: 1.5rem 1rem;
+    }
+    
+    .leaderboard-filters {
+        flex-direction: column;
+        align-items: stretch;
+        width: 100%;
+    }
+    
+    .filter-select, .search-box input {
+        width: 100%;
+    }
+}
+</style>
+
+<script>
+// Initialize AOS
+AOS.init({
+    duration: 800,
+    once: true
+});
+
+// Filter functionality
+function filterUsers() {
+    const branch = document.getElementById('branchFilter').value.toLowerCase();
+    const section = document.getElementById('sectionFilter').value.toLowerCase();
+    const search = document.getElementById('searchInput').value.toLowerCase();
+    
+    document.querySelectorAll('.leaderboard-row').forEach(row => {
+        const rowBranch = row.dataset.branch.toLowerCase();
+        const rowSection = row.dataset.section.toLowerCase();
+        const rowRoll = row.dataset.roll.toLowerCase();
+        
+        const branchMatch = !branch || rowBranch === branch;
+        const sectionMatch = !section || rowSection === section;
+        const searchMatch = !search || rowRoll.includes(search);
+        
+        if (branchMatch && sectionMatch && searchMatch) {
+            row.style.display = 'grid';
+        } else {
+            row.style.display = 'none';
+        }
+    });
+    
+    updateRanks();
+}
+
+// Update ranks after filtering
+function updateRanks() {
+    let rank = 1;
+    document.querySelectorAll('.leaderboard-row:not([style*="display: none"])').forEach(row => {
+        const rankElement = row.querySelector('.rank');
+        if (rank <= 3) {
+            rankElement.innerHTML = `<div class="rank-medal rank-${rank}"><i class="fas fa-medal"></i></div>`;
+        } else {
+            rankElement.textContent = `#${rank}`;
+        }
+        rank++;
+    });
+}
+
+// Add event listeners
+document.getElementById('branchFilter').addEventListener('change', filterUsers);
+document.getElementById('sectionFilter').addEventListener('change', filterUsers);
+document.getElementById('searchInput').addEventListener('input', filterUsers);
+
+// Initialize ranks
+updateRanks();
+</script>
+
+<%- include('../partials/footer') %> 

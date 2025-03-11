@@ -92,4 +92,6 @@ router.patch('/problems/:id', async (req, res) => {
     }
 });
 
+router.get('/stats', adminController.getUserStats);
+
 module.exports = router; 

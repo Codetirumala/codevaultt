@@ -61,7 +61,47 @@
             </div>
 
             <% if (!locals.isAdmin) { %>
-              <div class="form-group mb-4" id="leetcodeField">
+              <div class="form-group mb-3">
+                <label for="rollNumber" class="form-label">
+                  <i class="fas fa-id-card"></i> Roll Number
+                </label>
+                <input type="text" 
+                       class="form-control custom-input" 
+                       id="rollNumber" 
+                       name="rollNumber" 
+                       required 
+                       pattern=".{10,10}"
+                       maxlength="10"
+                       title="Roll number must be exactly 10 characters">
+              </div>
+
+              <div class="form-group mb-3">
+                <label for="branch" class="form-label">
+                  <i class="fas fa-code-branch"></i> Branch
+                </label>
+                <select class="form-control custom-input" id="branch" name="branch" required>
+                  <option value="">Select Branch</option>
+                  <option value="CSE">CSE</option>
+                  <option value="CSM">CSM</option>
+                  <option value="CSD">CSD</option>
+                  <option value="IT">IT</option>
+                </select>
+              </div>
+
+              <div class="form-group mb-3">
+                <label for="section" class="form-label">
+                  <i class="fas fa-users"></i> Section
+                </label>
+                <select class="form-control custom-input" id="section" name="section" required>
+                  <option value="">Select Section</option>
+                  <option value="A">A</option>
+                  <option value="B">B</option>
+                  <option value="C">C</option>
+                  <option value="D">D</option>
+                </select>
+              </div>
+
+              <div class="form-group mb-4">
                 <label for="leetcodeUsername" class="form-label">
                   <i class="fas fa-code"></i> LeetCode Username
                 </label>
@@ -287,12 +327,36 @@ body {
 .fa-spinner {
     animation: spin 1s linear infinite;
 }
+
+select.custom-input {
+    background-image: linear-gradient(45deg, transparent 50%, #00ff95 50%), 
+                     linear-gradient(135deg, #00ff95 50%, transparent 50%);
+    background-position: calc(100% - 20px) calc(1em + 2px),
+                       calc(100% - 15px) calc(1em + 2px);
+    background-size: 5px 5px,
+                    5px 5px;
+    background-repeat: no-repeat;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+}
+
+select.custom-input option {
+    background: #1a1a2e;
+    color: #fff;
+}
+
+select.custom-input:focus {
+    background-image: linear-gradient(45deg, #00ff95 50%, transparent 50%),
+                     linear-gradient(135deg, transparent 50%, #00ff95 50%);
+}
 </style>
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     const adminToggle = document.getElementById('adminToggle');
     const leetcodeField = document.getElementById('leetcodeField');
+    const rollNumberInput = document.getElementById('rollNumber');
 
     if (adminToggle && leetcodeField) {
         adminToggle.addEventListener('change', function() {
@@ -300,6 +364,16 @@ document.addEventListener('DOMContentLoaded', function() {
             const leetcodeInput = document.getElementById('leetcodeUsername');
             if (leetcodeInput) {
                 leetcodeInput.required = !this.checked;
+            }
+        });
+    }
+
+    if (rollNumberInput) {
+        rollNumberInput.addEventListener('input', function() {
+            if (this.value.length !== 10) {
+                this.setCustomValidity('Roll number must be exactly 10 characters');
+            } else {
+                this.setCustomValidity('');
             }
         });
     }
@@ -324,6 +398,31 @@ document.getElementById('signupForm').addEventListener('submit', function(e) {
     // Update button state
     button.disabled = true;
     button.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i> Creating Account...';
+});
+
+document.addEventListener('DOMContentLoaded', function() {
+    const form = document.getElementById('signupForm');
+    const rollNumberInput = document.getElementById('rollNumber');
+
+    if (form) {
+        form.addEventListener('submit', function(e) {
+            if (rollNumberInput && rollNumberInput.value.length !== 10) {
+                e.preventDefault();
+                alert('Roll number must be exactly 10 characters');
+                return;
+            }
+        });
+    }
+
+    if (rollNumberInput) {
+        rollNumberInput.addEventListener('input', function() {
+            if (this.value.length !== 10) {
+                this.setCustomValidity('Roll number must be exactly 10 characters');
+            } else {
+                this.setCustomValidity('');
+            }
+        });
+    }
 });
 </script>
 

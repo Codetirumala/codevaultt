@@ -34,7 +34,7 @@ exports.getSignupPage = async (req, res) => {
 
 exports.signup = async (req, res) => {
     try {
-        const { name, email, password, leetcodeUsername, isAdmin } = req.body;
+        const { name, email, password, isAdmin, leetcodeUsername, rollNumber, branch, section } = req.body;
         
         console.log('Signup attempt:', { 
             name, 
@@ -55,10 +55,10 @@ exports.signup = async (req, res) => {
         }
 
         // Check if user already exists
-        const userExists = await User.findOne({ email });
-        if (userExists) {
+        const existingUser = await User.findOne({ email });
+        if (existingUser) {
             return res.render('signup', { 
-                error: 'User already exists',
+                error: 'Email already registered',
                 isAdmin: isAdmin === 'true'
             });
         }
@@ -79,16 +79,19 @@ exports.signup = async (req, res) => {
             });
         }
 
-        // Create user object
+        // Create new user
         const userData = {
             name,
             email,
             password,
-            isAdmin: isAdmin === 'true'
+            isAdmin: isAdmin === 'true',
+            rollNumber,
+            branch,
+            section
         };
 
-        // Add leetcodeUsername only for regular users
-        if (!userData.isAdmin && leetcodeUsername) {
+        // Add leetcodeUsername if provided
+        if (leetcodeUsername) {
             userData.leetcodeUsername = leetcodeUsername;
         }
 
@@ -140,12 +143,12 @@ exports.signup = async (req, res) => {
         if (user.isAdmin) {
             return res.redirect('/admin/dashboard');
         } else {
-            return res.redirect('/');
+            return res.redirect('/dsa/sheet');
         }
     } catch (error) {
         console.error('Signup error:', error);
         return res.render('signup', { 
-            error: 'Error creating user',
+            error: 'Error creating account. Please try again.',
             isAdmin: req.body.isAdmin === 'true',
             adminExists: true // Default to true on error for safety
         });

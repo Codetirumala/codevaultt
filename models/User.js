@@ -17,6 +17,21 @@ const userSchema = new mongoose.Schema({
     required: true,
     minlength: 6
   },
+  rollNumber: {
+    type: String,
+    required: true,
+    trim: true
+  },
+  branch: {
+    type: String,
+    required: true,
+    trim: true
+  },
+  section: {
+    type: String,
+    required: true,
+    trim: true
+  },
   leetcodeUsername: {
     type: String,
     trim: true

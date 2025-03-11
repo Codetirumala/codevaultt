@@ -15,6 +15,20 @@
                         <h3 class="profile-name"><%= user.name %></h3>
                         <p class="profile-email"><%= user.email %></p>
                         <% if (!user.isAdmin) { %>
+                            <div class="student-details">
+                                <div class="detail-item">
+                                    <i class="fas fa-id-card"></i>
+                                    <span><%= user.rollNumber %></span>
+                                </div>
+                                <div class="detail-item">
+                                    <i class="fas fa-code-branch"></i>
+                                    <span><%= user.branch %></span>
+                                </div>
+                                <div class="detail-item">
+                                    <i class="fas fa-users"></i>
+                                    <span>Section <%= user.section %></span>
+                                </div>
+                            </div>
                             <a href="https://leetcode.com/<%= user.leetcodeUsername %>" 
                                class="leetcode-link" target="_blank">
                                 <i class="fab fa-leetcode"></i>
@@ -97,6 +111,30 @@
                             </div>
 
                             <% if (!user.isAdmin) { %>
+                                <div class="form-group">
+                                    <label>
+                                        <i class="fas fa-id-card"></i>
+                                        Roll Number
+                                    </label>
+                                    <input type="text" value="<%= user.rollNumber %>" readonly>
+                                </div>
+
+                                <div class="form-group">
+                                    <label>
+                                        <i class="fas fa-code-branch"></i>
+                                        Branch
+                                    </label>
+                                    <input type="text" value="<%= user.branch %>" readonly>
+                                </div>
+
+                                <div class="form-group">
+                                    <label>
+                                        <i class="fas fa-users"></i>
+                                        Section
+                                    </label>
+                                    <input type="text" value="<%= user.section %>" readonly>
+                                </div>
+
                                 <div class="form-group">
                                     <label>
                                         <i class="fab fa-leetcode"></i>
@@ -442,6 +480,40 @@
     .achievement-grid {
         grid-template-columns: 1fr;
     }
+}
+
+.student-details {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+    padding: 1rem;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 10px;
+}
+
+.detail-item {
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+    color: var(--text-secondary);
+}
+
+.detail-item i {
+    color: var(--accent-color);
+    width: 20px;
+    text-align: center;
+}
+
+.detail-item span {
+    color: var(--text-primary);
+}
+
+/* Update existing form input styles for readonly fields */
+.settings-form input[readonly] {
+    background: rgba(255, 255, 255, 0.02);
+    cursor: not-allowed;
+    opacity: 0.7;
 }
 </style>
 
