@@ -5,6 +5,8 @@ const Problem = require('../models/Problem');
 const Topic = require('../models/Topic');
 const Submission = require('../models/Submission');
 const axios = require('axios');
+const User = require('../models/User');
+const { requireAuth } = require('../middleware/auth');
 
 // DSA Sheet route
 router.get('/sheet', auth, async (req, res) => {
@@ -212,6 +214,8 @@ router.post('/sync-submissions', auth, async (req, res) => {
         let updatedCount = 0;
         const updates = [];
 
+        // Count total solved problems
+        let solvedCount = 0;
         for (const submission of acceptedSubmissions) {
             console.log(`\nChecking submission for: ${submission.titleSlug}`);
             
@@ -246,10 +250,15 @@ router.post('/sync-submissions', auth, async (req, res) => {
                         status: 'solved'
                     });
                 }
+
+                solvedCount++;
             } else {
                 console.log(`No matching problem found for: ${submission.titleSlug}`);
             }
         }
+
+        // Update user's solved count
+        await User.findByIdAndUpdate(userId, { solvedProblemsCount: solvedCount });
 
         console.log(`\nSync complete. Updated ${updatedCount} problems`);
 
@@ -343,6 +352,27 @@ router.post('/problems/:id/mark-solved', auth, async (req, res) => {
             success: false,
             message: 'Failed to mark problem as solved'
         });
+    }
+});
+
+// Update the leaderboard route to require auth
+router.get('/leaderboard', requireAuth, async (req, res) => {
+    try {
+        const users = await User.find({ isAdmin: false })
+            .select('name rollNumber branch section leetcodeUsername solvedProblemsCount')
+            .sort({ solvedProblemsCount: -1 })
+            .lean();
+
+        const totalProblems = await Problem.countDocuments();
+
+        res.render('dsa/leaderboard', {
+            users,
+            totalProblems,
+            currentUser: req.user
+        });
+    } catch (error) {
+        console.error('Error loading leaderboard:', error);
+        res.status(500).render('error', { message: 'Error loading leaderboard' });
     }
 });
 

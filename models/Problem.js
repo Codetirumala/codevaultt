@@ -33,6 +33,12 @@ problemSchema.methods.markAsSolved = async function(userId) {
         this.solvedBy.push({ user: userId });
         this.solvedCount += 1;
         await this.save();
+        
+        // Update user's solved count
+        await mongoose.model('User').findByIdAndUpdate(
+            userId,
+            { $inc: { solvedProblemsCount: 1 } }
+        );
     }
     return !alreadySolved;
 };

@@ -130,41 +130,24 @@ exports.deleteTopic = async (req, res) => {
 
 exports.getUserStats = async (req, res) => {
     try {
-        // Get all problems first
-        const problems = await Problem.find().lean();
-
-        // Get all non-admin users with their stats
+        // Get all non-admin users sorted by solvedProblemsCount
         const users = await User.find({ isAdmin: false })
-            .select('name email rollNumber branch section leetcodeUsername')
+            .select('name email rollNumber branch section leetcodeUsername solvedProblemsCount')
+            .sort({ solvedProblemsCount: -1 }) // Sort in descending order
             .lean();
 
-        // Get all accepted submissions
-        const submissions = await Submission.find({
-            user: { $in: users.map(u => u._id) },
-            status: 'Accepted'
-        }).lean();
-
-        // Create a map of user submissions for faster lookup
-        const userSubmissionsMap = new Map();
-        submissions.forEach(sub => {
-            const userId = sub.user.toString();
-            if (!userSubmissionsMap.has(userId)) {
-                userSubmissionsMap.set(userId, new Set());
-            }
-            userSubmissionsMap.get(userId).add(sub.problem.toString());
-        });
+        // Get all problems
+        const problems = await Problem.find().lean();
 
         // Process user stats
         const userStats = users.map(user => {
-            // Get solved problems for this user
-            const solvedProblemIds = userSubmissionsMap.get(user._id.toString()) || new Set();
-            
-            // Add problems array to user object with isSolved flag
             return {
                 ...user,
                 problems: problems.map(prob => ({
                     ...prob,
-                    isSolved: solvedProblemIds.has(prob._id.toString())
+                    isSolved: prob.solvedBy?.some(solve => 
+                        solve.user.toString() === user._id.toString()
+                    ) || false
                 }))
             };
         });

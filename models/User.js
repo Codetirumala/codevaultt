@@ -43,6 +43,10 @@ const userSchema = new mongoose.Schema({
   createdAt: {
     type: Date,
     default: Date.now
+  },
+  solvedProblemsCount: {
+    type: Number,
+    default: 0
   }
 });
 
