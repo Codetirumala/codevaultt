@@ -71,7 +71,10 @@
                 <div class="rank-info">
                     <div class="rank-badge <%= index < 3 ? 'top-' + (index + 1) : '' %>">
                         <% if(index < 3) { %>
-                            <i class="fas fa-crown"></i>
+                            <div class="rank-content">
+                                <i class="fas fa-crown"></i>
+                                <span class="rank-number">#<%= index + 1 %></span>
+                            </div>
                         <% } else { %>
                             #<%= index + 1 %>
                         <% } %>
@@ -359,7 +362,8 @@
 }
 
 .rank-badge {
-    width: 40px;
+    width: auto;
+    min-width: 80px;
     height: 40px;
     border-radius: 12px;
     display: flex;
@@ -369,11 +373,42 @@
     font-weight: 600;
     background: rgba(255, 255, 255, 0.05);
     color: var(--text-secondary);
+    padding: 0 12px;
 }
 
-.rank-badge.top-1 { background: linear-gradient(135deg, #FFD700, #FFA500); color: #000; }
-.rank-badge.top-2 { background: linear-gradient(135deg, #C0C0C0, #A0A0A0); color: #000; }
-.rank-badge.top-3 { background: linear-gradient(135deg, #CD7F32, #8B4513); color: #000; }
+.rank-content {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.rank-number {
+    font-size: 1rem;
+    font-weight: 600;
+    opacity: 0.9;
+}
+
+.rank-badge.top-1 { 
+    background: linear-gradient(135deg, #FFD700, #FFA500); 
+    color: #000; 
+}
+.rank-badge.top-2 { 
+    background: linear-gradient(135deg, #C0C0C0, #A0A0A0); 
+    color: #000; 
+}
+.rank-badge.top-3 { 
+    background: linear-gradient(135deg, #CD7F32, #8B4513); 
+    color: #000; 
+}
+
+.rank-badge {
+    transition: all 0.3s ease;
+}
+
+.rank-badge:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
 
 .user-info {
     display: flex;

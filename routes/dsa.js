@@ -314,14 +314,36 @@ router.get('/check-problem/:slug', auth, async (req, res) => {
     }
 });
 
-// Add a route to manually mark a problem as solved
+// Update the manual validation route
 router.post('/problems/:id/mark-solved', auth, async (req, res) => {
     try {
         const problemId = req.params.id;
         const userId = req.user._id;
 
-        // Update both Problem and Submission
+        // Find the problem first
+        const problem = await Problem.findById(problemId);
+        if (!problem) {
+            return res.status(404).json({
+                success: false,
+                message: 'Problem not found'
+            });
+        }
+
+        // Check if already solved by this user
+        const alreadySolved = problem.solvedBy.some(solve => 
+            solve.user.toString() === userId.toString()
+        );
+
+        if (alreadySolved) {
+            return res.json({
+                success: false,
+                message: 'Problem already marked as solved'
+            });
+        }
+
+        // Update problem and create submission
         await Promise.all([
+            // Add user to solvedBy array and increment solvedCount
             Problem.findByIdAndUpdate(
                 problemId,
                 {
@@ -330,20 +352,27 @@ router.post('/problems/:id/mark-solved', auth, async (req, res) => {
                             user: userId,
                             solvedAt: new Date()
                         }
-                    }
+                    },
+                    $inc: { solvedCount: 1 }
                 }
             ),
+            // Create submission record
             Submission.create({
                 user: userId,
                 problem: problemId,
                 status: 'Accepted',
                 submittedAt: new Date()
-            })
+            }),
+            // Increment user's solved problems count
+            User.findByIdAndUpdate(
+                userId,
+                { $inc: { solvedProblemsCount: 1 } }
+            )
         ]);
 
         res.json({
             success: true,
-            message: 'Problem marked as solved'
+            message: 'Problem marked as solved successfully'
         });
 
     } catch (error) {
