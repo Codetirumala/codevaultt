@@ -2,6 +2,8 @@ const User = require('../models/User');
 const Topic = require('../models/Topic');
 const Problem = require('../models/Problem');
 const Submission = require('../models/Submission');
+const xlsx = require('xlsx');
+const bcrypt = require('bcryptjs');
 
 exports.getDashboard = async (req, res) => {
     try {
@@ -160,5 +162,73 @@ exports.getUserStats = async (req, res) => {
     } catch (error) {
         console.error('Error fetching user stats:', error);
         res.status(500).render('error', { message: 'Error loading statistics' });
+    }
+};
+
+exports.bulkRegisterUsers = async (req, res) => {
+    try {
+        if (!req.files || !req.files.file) {
+            return res.status(400).json({ error: 'No file uploaded' });
+        }
+
+        const file = req.files.file;
+        const workbook = xlsx.read(file.data);
+        const sheet = workbook.Sheets[workbook.SheetNames[0]];
+        const users = xlsx.utils.sheet_to_json(sheet);
+
+        // Validate Excel data structure
+        const requiredFields = ['name', 'email', 'rollNumber', 'branch', 'section'];
+        const missingFields = users.some(user => 
+            requiredFields.some(field => !user[field])
+        );
+
+        if (missingFields) {
+            return res.status(400).json({ 
+                error: 'Excel file must contain columns: name, email, rollNumber, branch, section' 
+            });
+        }
+
+        const defaultPassword = await bcrypt.hash('student123', 12);
+        let registeredCount = 0;
+        let errors = [];
+
+        for (const userData of users) {
+            try {
+                // Check if user already exists
+                const existingUser = await User.findOne({ email: userData.email });
+                if (existingUser) {
+                    errors.push(`User with email ${userData.email} already exists`);
+                    continue;
+                }
+
+                // Create new user with all required fields
+                await User.create({
+                    name: userData.name,
+                    email: userData.email.toLowerCase(),
+                    rollNumber: userData.rollNumber,
+                    branch: userData.branch.toUpperCase(),
+                    section: userData.section.toUpperCase(),
+                    password: defaultPassword,
+                    isFirstLogin: true
+                });
+                registeredCount++;
+            } catch (error) {
+                errors.push(`Error registering ${userData.email}: ${error.message}`);
+            }
+        }
+
+        // Return response with results
+        res.json({ 
+            message: 'Bulk registration completed',
+            registeredCount,
+            errors: errors.length > 0 ? errors : undefined,
+            success: registeredCount > 0
+        });
+    } catch (error) {
+        console.error('Bulk registration error:', error);
+        res.status(500).json({ 
+            error: 'Error processing file',
+            details: error.message 
+        });
     }
 }; 

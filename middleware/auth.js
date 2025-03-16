@@ -46,4 +46,16 @@ const adminAuth = (req, res, next) => {
   next();
 };
 
-module.exports = { auth, requireAuth, adminAuth }; 
+const firstLoginRequired = (req, res, next) => {
+  if (!req.user) {
+    return res.redirect('/signin');
+  }
+  
+  if (req.user.isFirstLogin) {
+    return res.redirect('/first-login');
+  }
+  
+  next();
+};
+
+module.exports = { auth, requireAuth, adminAuth, firstLoginRequired }; 

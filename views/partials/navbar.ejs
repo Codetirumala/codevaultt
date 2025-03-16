@@ -74,9 +74,21 @@
                     </li>
                 <% } %>
             </ul>
+            <div class="signal-wrapper">
+                <div class="signal-indicator">
+                    <div class="signal-bar"></div>
+                    <div class="signal-bar"></div>
+                    <div class="signal-bar"></div>
+                    <div class="signal-bar"></div>
+                </div>
+                <span class="connection-status">Strong</span>
+            </div>
+            
         </div>
     </div>
 </nav>
+
+
 
 <style>
 .navbar {
@@ -174,4 +186,168 @@
         border: none;
     }
 }
-</style> 
+
+.signal-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 12px;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 12px;
+    margin-left: 15px;
+    transition: all 0.3s ease;
+}
+
+.signal-wrapper:hover {
+    background: rgba(255, 255, 255, 0.1);
+    transform: translateY(-2px);
+}
+
+.signal-indicator {
+    display: inline-flex;
+    align-items: flex-end;
+    height: 16px;
+    gap: 3px;
+    padding: 0 4px;
+}
+
+.signal-bar {
+    width: 4px;
+    background: currentColor;
+    border-radius: 4px;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
+}
+
+.signal-bar::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(
+        to bottom,
+        var(--accent-color),
+        var(--accent-hover)
+    );
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.signal-bar:nth-child(1) { height: 25%; }
+.signal-bar:nth-child(2) { height: 50%; }
+.signal-bar:nth-child(3) { height: 75%; }
+.signal-bar:nth-child(4) { height: 100%; }
+
+.signal-bar.active::after {
+    opacity: 1;
+}
+
+.signal-bar:not(.active) {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.connection-status {
+    font-size: 0.8rem;
+    font-weight: 500;
+    color: var(--text-secondary);
+    min-width: 60px;
+}
+
+/* Signal strength variations */
+.signal-wrapper[data-strength="no-signal"] {
+    color: #ff4d4d;
+}
+
+.signal-wrapper[data-strength="weak"] {
+    color: #ffbd2e;
+}
+
+.signal-wrapper[data-strength="medium"] {
+    color: #00b8ff;
+}
+
+.signal-wrapper[data-strength="strong"] {
+    color: #27c93f;
+}
+
+/* Add pulse animation for active bars */
+@keyframes pulse {
+    0% { transform: scaleY(1); }
+    50% { transform: scaleY(0.85); }
+    100% { transform: scaleY(1); }
+}
+
+.signal-bar.active {
+    animation: pulse 2s ease-in-out infinite;
+}
+
+.signal-bar.active:nth-child(1) { animation-delay: 0.1s; }
+.signal-bar.active:nth-child(2) { animation-delay: 0.2s; }
+.signal-bar.active:nth-child(3) { animation-delay: 0.3s; }
+.signal-bar.active:nth-child(4) { animation-delay: 0.4s; }
+</style>
+
+<script>
+function updateSignalStrength() {
+    const wrapper = document.querySelector('.signal-wrapper');
+    const bars = document.querySelectorAll('.signal-bar');
+    const statusText = document.querySelector('.connection-status');
+    
+    if (!navigator.onLine) {
+        wrapper.dataset.strength = 'no-signal';
+        statusText.textContent = 'Offline';
+        bars.forEach(bar => bar.classList.remove('active'));
+        return;
+    }
+
+    const connection = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
+    let strength = 4;
+    let status = 'Strong';
+
+    if (connection) {
+        switch(connection.effectiveType) {
+            case 'slow-2g':
+                strength = 1;
+                status = 'Weak';
+                wrapper.dataset.strength = 'weak';
+                break;
+            case '2g':
+                strength = 2;
+                status = 'Fair';
+                wrapper.dataset.strength = 'weak';
+                break;
+            case '3g':
+                strength = 3;
+                status = 'Good';
+                wrapper.dataset.strength = 'medium';
+                break;
+            case '4g':
+                strength = 4;
+                status = 'Strong';
+                wrapper.dataset.strength = 'strong';
+                break;
+        }
+    }
+
+    statusText.textContent = status;
+    
+    bars.forEach((bar, index) => {
+        if (index < strength) {
+            bar.classList.add('active');
+        } else {
+            bar.classList.remove('active');
+        }
+    });
+}
+
+// Update signal strength initially and when connection changes
+updateSignalStrength();
+window.addEventListener('online', updateSignalStrength);
+window.addEventListener('offline', updateSignalStrength);
+if (navigator.connection) {
+    navigator.connection.addEventListener('change', updateSignalStrength);
+}
+</script> 

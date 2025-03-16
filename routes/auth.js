@@ -20,4 +20,8 @@ router.post('/reset-password', authController.resetPassword);
 router.get('/profile', requireAuth, authController.getProfile);
 router.post('/profile/update', requireAuth, authController.updateProfile);
 
+// Add these routes
+router.get('/first-login', requireAuth, authController.getFirstLoginPage);
+router.post('/first-login', requireAuth, authController.completeFirstLogin);
+
 module.exports = router; 

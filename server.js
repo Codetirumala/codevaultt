@@ -7,6 +7,7 @@ const { auth } = require('./middleware/auth');
 const homeController = require('./controllers/homeController');
 const { sendEmail } = require('./services/emailService');
 const app = express();
+const fileUpload = require('express-fileupload');
 
 // Middleware
 app.use(express.json());
@@ -16,6 +17,11 @@ app.use(express.static('public'));
 
 // Auth middleware should come after cookie-parser
 app.use(auth);
+
+// Add this middleware
+app.use(fileUpload({
+    limits: { fileSize: 50 * 1024 * 1024 }, // 50MB max-file-size
+}));
 
 // View engine setup
 app.set('view engine', 'ejs');

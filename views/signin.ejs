@@ -23,6 +23,20 @@
               </label>
               <input type="email" class="form-control custom-input" id="email" name="email" required>
             </div>
+            <% if (locals.isFirstLogin) { %>
+                <div class="form-group mb-3">
+                    <label for="leetcodeUsername" class="form-label">
+                        <i class="fas fa-code"></i> LeetCode Username
+                    </label>
+                    <input type="text" 
+                           class="form-control custom-input" 
+                           id="leetcodeUsername" 
+                           name="leetcodeUsername" 
+                           required>
+                    <small class="text-muted">Required for first-time login</small>
+                </div>
+                <input type="hidden" name="email" value="<%= locals.email %>">
+            <% } %>
             <div class="form-group mb-4">
               <label for="password" class="form-label">
                 <i class="fas fa-lock"></i> Password
@@ -69,6 +83,16 @@
 <script>
 document.getElementById('signinForm').addEventListener('submit', function(e) {
     const button = document.getElementById('signinBtn');
+    const isFirstLogin = <%= locals.isFirstLogin ? 'true' : 'false' %>;
+    
+    if (isFirstLogin) {
+        const leetcodeUsername = document.getElementById('leetcodeUsername').value;
+        if (!leetcodeUsername) {
+            e.preventDefault();
+            alert('Please enter your LeetCode username');
+            return;
+        }
+    }
     
     // Create and show loader overlay
     const loader = document.createElement('div');
@@ -77,7 +101,7 @@ document.getElementById('signinForm').addEventListener('submit', function(e) {
         <div class="loader-content">
             <div class="loader"></div>
             <div class="loader-text">
-                Signing In<span class="loader-dots"></span>
+                ${isFirstLogin ? 'Setting Up Account' : 'Signing In'}<span class="loader-dots"></span>
             </div>
         </div>
     `;
@@ -85,7 +109,7 @@ document.getElementById('signinForm').addEventListener('submit', function(e) {
     
     // Update button state
     button.disabled = true;
-    button.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i> Signing In...';
+    button.innerHTML = `<i class="fas fa-spinner fa-spin me-2"></i> ${isFirstLogin ? 'Setting Up...' : 'Signing In...'}`;
 });
 </script>
 
@@ -244,6 +268,17 @@ body {
 
 .fa-spinner {
     animation: spin 1s linear infinite;
+}
+
+.alert-info {
+    background: rgba(0, 184, 255, 0.1);
+    border: 1px solid rgba(0, 184, 255, 0.3);
+    color: #00b8ff;
+}
+
+.text-muted {
+    color: rgba(255, 255, 255, 0.5) !important;
+    font-size: 0.9rem;
 }
 </style>
 

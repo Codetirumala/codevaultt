@@ -157,69 +157,101 @@ exports.signup = async (req, res) => {
 
 exports.signin = async (req, res) => {
     try {
-        const { email, password } = req.body;
+        const { email, password, leetcodeUsername } = req.body;
         
-        console.log('Signin attempt for email:', email);
-
         // Find user by email
         const user = await User.findOne({ email });
 
-        // Debug logs
-        console.log('User found:', user ? 'Yes' : 'No');
-        if (user) {
-            console.log('Is Admin:', user.isAdmin);
-        }
-
-        // If no user found
         if (!user) {
-            console.log('No user found with this email');
             return res.render('signin', { 
                 error: 'Invalid credentials'
             });
         }
 
-        // Compare password using the new method
-        const isMatch = await user.comparePassword(password);
-        console.log('Password match:', isMatch);
+        // If it's first login and leetcode username is provided
+        if (user.isFirstLogin && leetcodeUsername) {
+            try {
+                // Update user with new password and leetcode username
+                const hashedPassword = await bcrypt.hash(password, 12);
+                user.password = hashedPassword;
+                user.leetcodeUsername = leetcodeUsername;
+                user.isFirstLogin = false;
+                await user.save();
+                
+                // Create token and login
+                const token = jwt.sign(
+                    { id: user._id, isAdmin: user.isAdmin },
+                    process.env.JWT_SECRET,
+                    { expiresIn: '30d' }
+                );
 
-        if (!isMatch) {
-            console.log('Password does not match');
-            return res.render('signin', { 
-                error: 'Invalid credentials'
+                res.cookie('token', token, {
+                    httpOnly: true,
+                    secure: process.env.NODE_ENV === 'production',
+                    maxAge: 30 * 24 * 60 * 60 * 1000
+                });
+
+                return res.redirect(user.isAdmin ? '/admin/dashboard' : '/');
+            } catch (error) {
+                console.error('First login update error:', error);
+                return res.render('signin', {
+                    error: 'Error updating profile',
+                    isFirstLogin: true,
+                    email: email
+                });
+            }
+        }
+
+        // Regular login flow
+        if (user.isFirstLogin) {
+            return res.render('signin', {
+                error: 'Please set your LeetCode username for first-time login',
+                isFirstLogin: true,
+                email: email
             });
         }
 
-        // Create token
-        const token = jwt.sign(
-            { 
-                id: user._id, 
-                isAdmin: user.isAdmin 
-            }, 
-            process.env.JWT_SECRET,
-            { expiresIn: '30d' }
-        );
+        // Check password - using bcrypt.compare directly
+        try {
+            const isMatch = await bcrypt.compare(password, user.password);
+            
+            if (!isMatch) {
+                console.log('Password mismatch for user:', email);
+                return res.render('signin', { 
+                    error: 'Invalid credentials'
+                });
+            }
 
-        // Set cookie
-        res.cookie('token', token, {
-            httpOnly: true,
-            secure: process.env.NODE_ENV === 'production',
-            maxAge: 30 * 24 * 60 * 60 * 1000 // 30 days
-        });
+            // Create token
+            const token = jwt.sign(
+                { id: user._id, isAdmin: user.isAdmin },
+                process.env.JWT_SECRET,
+                { expiresIn: '30d' }
+            );
 
-        // Remove password from user object
-        const userWithoutPassword = user.toObject();
-        delete userWithoutPassword.password;
-        res.locals.user = userWithoutPassword;
+            // Set cookie
+            res.cookie('token', token, {
+                httpOnly: true,
+                secure: process.env.NODE_ENV === 'production',
+                maxAge: 30 * 24 * 60 * 60 * 1000
+            });
 
-        console.log('Login successful, redirecting user');
+            // Set user in res.locals
+            const userWithoutPassword = user.toObject();
+            delete userWithoutPassword.password;
+            res.locals.user = userWithoutPassword;
 
-        // Redirect based on user role
-        if (user.isAdmin) {
-            console.log('Redirecting to admin dashboard');
-            return res.redirect('/admin/dashboard');
-        } else {
-            console.log('Redirecting to home');
-            return res.redirect('/');
+            // Redirect based on user role
+            if (user.isAdmin) {
+                return res.redirect('/admin/dashboard');
+            } else {
+                return res.redirect('/');
+            }
+        } catch (error) {
+            console.error('Password comparison error:', error);
+            return res.render('signin', { 
+                error: 'Error during login'
+            });
         }
 
     } catch (error) {
@@ -411,5 +443,37 @@ exports.resetPassword = async (req, res) => {
     } catch (error) {
         console.error('Error resetting password:', error);
         res.status(500).json({ error: 'Error resetting password' });
+    }
+};
+
+exports.getFirstLoginPage = (req, res) => {
+    if (!req.user.isFirstLogin) {
+        return res.redirect('/');
+    }
+    res.render('first-login');
+};
+
+exports.completeFirstLogin = async (req, res) => {
+    try {
+        const { leetcodeUsername, newPassword } = req.body;
+        
+        if (!leetcodeUsername || !newPassword) {
+            return res.render('first-login', {
+                error: 'Both LeetCode username and new password are required'
+            });
+        }
+
+        const user = await User.findById(req.user._id);
+        user.leetcodeUsername = leetcodeUsername;
+        user.password = newPassword;
+        user.isFirstLogin = false;
+        await user.save();
+
+        res.redirect('/');
+    } catch (error) {
+        console.error('First login error:', error);
+        res.render('first-login', {
+            error: 'Error updating profile'
+        });
     }
 }; 

@@ -181,6 +181,39 @@
                     </form>
                 </div>
             </div>
+
+            <!-- Bulk User Registration Card -->
+            <div class="action-card bulk-upload-card" data-aos="fade-up" data-aos-delay="200">
+                <div class="card-header">
+                    <h3><i class="fas fa-users-cog"></i> Bulk User Registration</h3>
+                </div>
+                <div class="card-body">
+                    <form id="bulkUploadForm" enctype="multipart/form-data">
+                        <div class="form-group">
+                            <label>Upload Excel Sheet (.xlsx)</label>
+                            <div class="file-upload-wrapper">
+                                <input type="file" id="bulkUsersFile" accept=".xlsx" required>
+                                <label for="bulkUsersFile" class="file-upload-label">
+                                    <i class="fas fa-file-excel"></i>
+                                    <span>Choose Excel File</span>
+                                </label>
+                            </div>
+                            <small class="help-text">
+                                Excel file should contain columns: name, email, rollNumber, branch, section
+                            </small>
+                        </div>
+                        <button type="submit" class="btn-primary">
+                            <i class="fas fa-upload"></i> Upload and Register Users
+                        </button>
+                    </form>
+                    <div id="uploadProgress" class="upload-progress" style="display: none;">
+                        <div class="progress-bar">
+                            <div class="progress"></div>
+                        </div>
+                        <span class="progress-text">Processing users...</span>
+                    </div>
+                </div>
+            </div>
         </div>
 
         <!-- Data Tables -->
@@ -730,6 +763,68 @@ td {
         width: 200px;
     }
 }
+
+.bulk-upload-card {
+    margin-top: 2rem;
+}
+
+.file-upload-wrapper {
+    position: relative;
+    margin-bottom: 1rem;
+}
+
+.file-upload-wrapper input[type="file"] {
+    position: absolute;
+    left: -9999px;
+}
+
+.file-upload-label {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 2px dashed rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.file-upload-label:hover {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: var(--accent-color);
+}
+
+.help-text {
+    display: block;
+    margin-top: 8px;
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+}
+
+.upload-progress {
+    margin-top: 1rem;
+}
+
+.progress-bar {
+    height: 6px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 3px;
+    overflow: hidden;
+    margin-bottom: 8px;
+}
+
+.progress-bar .progress {
+    height: 100%;
+    background: var(--accent-color);
+    width: 0%;
+    transition: width 0.3s ease;
+}
+
+.progress-text {
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+}
 </style>
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -900,6 +995,59 @@ document.addEventListener('DOMContentLoaded', function() {
             slugNameInput.value = '';
         }
     });
+});
+
+document.getElementById('bulkUploadForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    
+    const fileInput = document.getElementById('bulkUsersFile');
+    const file = fileInput.files[0];
+    
+    if (!file) {
+        alert('Please select an Excel file');
+        return;
+    }
+
+    const formData = new FormData();
+    formData.append('file', file);
+
+    const progressBar = document.querySelector('.progress');
+    const progressText = document.querySelector('.progress-text');
+    const uploadProgress = document.getElementById('uploadProgress');
+
+    try {
+        uploadProgress.style.display = 'block';
+        progressBar.style.width = '0%';
+        progressText.textContent = 'Processing users...';
+
+        const response = await fetch('/admin/bulk-register', {
+            method: 'POST',
+            body: formData
+        });
+
+        const result = await response.json();
+
+        if (response.ok) {
+            progressBar.style.width = '100%';
+            progressText.textContent = `Successfully registered ${result.count} users`;
+            setTimeout(() => {
+                uploadProgress.style.display = 'none';
+                fileInput.value = '';
+            }, 3000);
+        } else {
+            throw new Error(result.error || 'Error registering users');
+        }
+    } catch (error) {
+        console.error('Error:', error);
+        progressText.textContent = error.message;
+        progressBar.style.backgroundColor = '#ff4d4d';
+    }
+});
+
+// Update file input label with selected filename
+document.getElementById('bulkUsersFile').addEventListener('change', function() {
+    const label = this.nextElementSibling.querySelector('span');
+    label.textContent = this.files[0] ? this.files[0].name : 'Choose Excel File';
 });
 </script>
 

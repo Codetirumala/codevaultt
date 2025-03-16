@@ -94,4 +94,7 @@ router.patch('/problems/:id', async (req, res) => {
 
 router.get('/stats', adminController.getUserStats);
 
+// Add this route
+router.post('/bulk-register', adminAuth, adminController.bulkRegisterUsers);
+
 module.exports = router; 

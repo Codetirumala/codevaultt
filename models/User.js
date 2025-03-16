@@ -47,6 +47,10 @@ const userSchema = new mongoose.Schema({
   solvedProblemsCount: {
     type: Number,
     default: 0
+  },
+  isFirstLogin: {
+    type: Boolean,
+    default: false
   }
 });
 
@@ -70,6 +74,7 @@ userSchema.methods.comparePassword = async function(candidatePassword) {
   try {
     return await bcrypt.compare(candidatePassword, this.password);
   } catch (error) {
+    console.error('Password comparison error in model:', error);
     throw error;
   }
 };
