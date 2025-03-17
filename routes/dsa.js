@@ -323,96 +323,78 @@ router.post('/problems/:problemId/mark-solved', async (req, res) => {
         const { code } = req.body;
         const userId = req.user._id;
 
-        // Validate the problem ID
-        if (!problemId || problemId === 'null' || problemId === 'undefined') {
-            return res.status(400).json({ error: 'Invalid problem ID' });
-        }
-        
-        // Check if it's a valid MongoDB ObjectId
-        if (!mongoose.Types.ObjectId.isValid(problemId)) {
-            return res.status(400).json({ error: 'Invalid problem ID format' });
+        // Find and update the problem's solved status
+        const problem = await Problem.findByIdAndUpdate(
+            problemId,
+            {
+                $addToSet: {
+                    solvedBy: { user: userId, solvedAt: new Date() }
+                }
+            },
+            { new: true }
+        ).populate('topic');
+
+        if (!problem) {
+            return res.status(404).json({ success: false, message: 'Problem not found' });
         }
 
-        // Find or create user progress
+        // Update user progress
         let userProgress = await UserProgress.findOne({ userId });
         if (!userProgress) {
-            userProgress = new UserProgress({ 
-                userId,
-                problems: []
-            });
+            userProgress = new UserProgress({ userId, problems: [] });
         }
 
-        // Add or update the problem in user's progress
-        const existingProblemIndex = userProgress.problems.findIndex(
-            p => p.problemId && p.problemId.toString() === problemId
+        // Update or add the problem to user's progress
+        const problemIndex = userProgress.problems.findIndex(
+            p => p.problemId.toString() === problemId
         );
 
-        if (existingProblemIndex === -1) {
+        if (problemIndex === -1) {
             userProgress.problems.push({
-                problemId: problemId,
+                problemId,
                 solved: true,
                 solution: code,
                 solvedAt: new Date()
             });
         } else {
-            userProgress.problems[existingProblemIndex].solved = true;
-            userProgress.problems[existingProblemIndex].solution = code;
-            userProgress.problems[existingProblemIndex].solvedAt = new Date();
+            userProgress.problems[problemIndex].solved = true;
+            userProgress.problems[problemIndex].solution = code;
+            userProgress.problems[problemIndex].solvedAt = new Date();
         }
 
         await userProgress.save();
 
-        // Update the problem's solutions array
-        await Problem.findByIdAndUpdate(problemId, {
-            $push: {
-                solutions: {
-                    userId: userId,
-                    code: code,
-                    submittedAt: new Date()
-                }
-            }
+        // Update user's solved count
+        await User.findByIdAndUpdate(
+            userId,
+            { $inc: { solvedProblemsCount: 1 } }
+        );
+
+        // Get total problems in topic for progress calculation
+        const totalProblems = await Problem.countDocuments({ topic: problem.topic });
+        const solvedProblems = await Problem.countDocuments({
+            topic: problem.topic,
+            'solvedBy.user': userId
         });
 
-        // Get updated topic stats to return to client
-        const problem = await Problem.findById(problemId).populate('topicId');
-        const topicId = problem.topicId._id;
-        
-        // Get all problems for this topic
-        const topicProblems = await Problem.find({ topicId });
-        
-        // Count solved problems for this topic
-        const solvedProblems = await UserProgress.aggregate([
-            { $match: { userId: mongoose.Types.ObjectId(userId) } },
-            { $unwind: "$problems" },
-            { $match: { "problems.solved": true } },
-            { $lookup: {
-                from: "problems",
-                localField: "problems.problemId",
-                foreignField: "_id",
-                as: "problemDetails"
-            }},
-            { $unwind: "$problemDetails" },
-            { $match: { "problemDetails.topicId": mongoose.Types.ObjectId(topicId) } },
-            { $count: "solved" }
-        ]);
-        
-        const solvedCount = solvedProblems.length > 0 ? solvedProblems[0].solved : 0;
-        const totalCount = topicProblems.length;
-        const progress = Math.round((solvedCount / totalCount) * 100);
+        const progress = Math.round((solvedProblems / totalProblems) * 100);
 
-        res.json({ 
-            success: true, 
+        res.json({
+            success: true,
             message: 'Problem marked as solved and solution saved',
             stats: {
-                solved: solvedCount,
-                total: totalCount,
+                solved: solvedProblems,
+                total: totalProblems,
                 progress: progress
             }
         });
 
     } catch (error) {
-        console.error('Error marking problem as solved:', error);
-        res.status(500).json({ error: 'Server error' });
+        console.error('Error saving solution:', error);
+        res.status(500).json({
+            success: false,
+            message: error.message || 'Failed to save solution'
+        });
     }
 });
 

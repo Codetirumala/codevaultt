@@ -111,10 +111,8 @@
                         <span class="label">Problems Solved</span>
                     </div>
                     <div class="progress-container">
-                        <div class="progress-bar">
-                            <div class="progress" style="width: <%= (user.solvedProblemsCount / totalProblems) * 100 %>%">
-                                <div class="progress-glow"></div>
-                            </div>
+                        <div class="progress" style="width: <%= (user.solvedProblemsCount / totalProblems) * 100 %>%">
+                            <div class="progress-glow"></div>
                         </div>
                         <span class="progress-text"><%= Math.round((user.solvedProblemsCount / totalProblems) * 100) %>%</span>
                     </div>
@@ -138,13 +136,14 @@
 <style>
 /* Premium UI Styles */
 .leaderboard-container {
-    max-width: 1200px;
+    max-width: 1400px;
     margin: 0 auto;
     padding: 2rem;
     background: var(--primary-bg);
 }
 
 .hero-section {
+    animation: float 6s ease-in-out infinite;
     background: linear-gradient(135deg, rgba(13, 17, 23, 0.95) 0%, rgba(22, 27, 34, 0.95) 100%);
     border-radius: 24px;
     padding: 3rem;
@@ -206,7 +205,16 @@
     display: flex;
     align-items: center;
     gap: 1rem;
-    min-width: 200px;
+    min-width: 250px;
+    transform: translateY(0);
+    transition: all 0.3s ease;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.stat-card:hover {
+    transform: translateY(-5px);
+    border-color: var(--accent-color);
+    box-shadow: 0 10px 20px rgba(0, 255, 149, 0.1);
 }
 
 .stat-icon {
@@ -320,11 +328,11 @@
 .leaderboard-card {
     background: rgba(255, 255, 255, 0.03);
     border-radius: 16px;
-    padding: 1.5rem;
+    padding: 2rem;
     display: flex;
     align-items: center;
     gap: 2rem;
-    transition: all 0.3s ease;
+    transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
     border: 1px solid rgba(255, 255, 255, 0.05);
     position: relative;
     overflow: hidden;
@@ -349,16 +357,20 @@
 .leaderboard-card.top-1 {
     background: linear-gradient(135deg, rgba(255, 215, 0, 0.1), rgba(255, 215, 0, 0.02));
     border-color: rgba(255, 215, 0, 0.2);
+    animation: glow 3s infinite;
+    transform-origin: center;
 }
 
 .leaderboard-card.top-2 {
     background: linear-gradient(135deg, rgba(192, 192, 192, 0.1), rgba(192, 192, 192, 0.02));
     border-color: rgba(192, 192, 192, 0.2);
+    animation: glow 3s infinite 0.5s;
 }
 
 .leaderboard-card.top-3 {
     background: linear-gradient(135deg, rgba(205, 127, 50, 0.1), rgba(205, 127, 50, 0.02));
     border-color: rgba(205, 127, 50, 0.2);
+    animation: glow 3s infinite 1s;
 }
 
 .rank-badge {
@@ -374,6 +386,7 @@
     background: rgba(255, 255, 255, 0.05);
     color: var(--text-secondary);
     padding: 0 12px;
+    transition: all 0.3s ease;
 }
 
 .rank-content {
@@ -399,10 +412,6 @@
 .rank-badge.top-3 { 
     background: linear-gradient(135deg, #CD7F32, #8B4513); 
     color: #000; 
-}
-
-.rank-badge {
-    transition: all 0.3s ease;
 }
 
 .rank-badge:hover {
@@ -541,6 +550,7 @@
     background: linear-gradient(90deg, #00ff95, #00b8ff);
     border-radius: 4px;
     position: relative;
+    transition: width 1s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .progress-glow {
@@ -551,6 +561,7 @@
     bottom: 0;
     background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
     animation: shimmer 2s infinite;
+    filter: blur(3px);
 }
 
 .progress-text {
@@ -597,6 +608,35 @@
 @keyframes shimmer {
     0% { transform: translateX(-100%); }
     100% { transform: translateX(100%); }
+}
+
+@keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
+}
+
+@keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+    100% { transform: scale(1); }
+}
+
+@keyframes glow {
+    0%, 100% { box-shadow: 0 0 5px rgba(0, 255, 149, 0.2); }
+    50% { box-shadow: 0 0 20px rgba(0, 255, 149, 0.4); }
+}
+
+@keyframes cardEntrance {
+    from {
+        opacity: 0;
+        transform: scale(0.9);
+        filter: blur(3px);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+        filter: blur(0);
+    }
 }
 
 @media (max-width: 768px) {
@@ -646,10 +686,28 @@
 </style>
 
 <script>
-// Initialize AOS
+// Update the AOS initialization
 AOS.init({
     duration: 800,
-    once: true
+    once: false,
+    mirror: true,
+    anchorPlacement: 'top-bottom',
+    easing: 'ease-out-cubic'
+});
+
+// Add entrance animation for leaderboard cards
+document.querySelectorAll('.leaderboard-card').forEach((card, index) => {
+    card.style.animation = `cardEntrance 0.8s ease-out forwards ${index * 0.1}s`;
+});
+
+// Add hover animation for rank badges
+document.querySelectorAll('.rank-badge').forEach(badge => {
+    badge.addEventListener('mouseover', () => {
+        badge.style.transform = 'scale(1.1) translateY(-5px)';
+    });
+    badge.addEventListener('mouseout', () => {
+        badge.style.transform = 'scale(1) translateY(0)';
+    });
 });
 
 // Filter functionality

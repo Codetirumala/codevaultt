@@ -91,8 +91,8 @@
                                     <a href="<%= problem.leetcodeLink %>" target="_blank" class="solve-btn completed">
                                         <i class="fas fa-check"></i> Review
                                     </a>
-                                    <button onclick="viewSolution('<%= problem._id %>', '<%= problem.name %>')" class="view-solution-btn">
-                                        View Solution
+                                    <button onclick="viewSolution('<%= problem._id %>', '<%= problem.name.replace(/'/g, "\\'") %>')" class="view-solution-btn">
+                                        <i class="fas fa-code"></i> View Solution
                                     </button>
                                 <% } else { %>
                                     <a href="<%= problem.leetcodeLink %>" target="_blank" class="solve-btn">
@@ -110,15 +110,38 @@
     </div>
 </div>
 
-<!-- Add this modal for viewing solutions -->
+<!-- Replace the existing solution modal with this new version -->
 <div id="solutionModal" class="modal">
     <div class="modal-content">
         <div class="modal-header">
-            <h2 id="modalTitle">Solution</h2>
-            <span class="close">&times;</span>
+            <div class="header-left">
+                <h2 id="modalTitle">Solution</h2>
+                <div class="problem-meta">
+                    <span class="submission-date">Submitted on <span id="submissionDate"></span></span>
+                </div>
+            </div>
+            <button class="close-btn">
+                <i class="fas fa-times"></i>
+            </button>
         </div>
         <div class="modal-body">
-            <pre><code id="solutionCode"></code></pre>
+            <div class="solution-wrapper">
+                <div class="code-header">
+                    <div class="language-info">
+                        <i class="fas fa-code"></i>
+                        <span id="languageType">Code Solution</span>
+                    </div>
+                    <div class="code-actions">
+                        <button class="action-btn" id="copyBtn" title="Copy Code">
+                            <i class="fas fa-copy"></i>
+                            Copy
+                        </button>
+                    </div>
+                </div>
+                <div class="code-container">
+                    <pre><code id="solutionCode" class="language-cpp"></code></pre>
+                </div>
+            </div>
         </div>
     </div>
 </div>
@@ -324,24 +347,70 @@
 .difficulty-badge.hard { background: rgba(255,77,77,0.1); color: var(--hard-color); }
 
 .solve-btn {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.5rem;
-    padding: 0.5rem 1rem;
+    padding: 8px 16px;
     border-radius: 6px;
-    background: var(--accent-color);
+    background: #00FFA3;
     color: #000;
     text-decoration: none;
-    font-size: 0.9rem;
+    font-size: 14px;
+    font-weight: 500;
     transition: all 0.3s ease;
 }
 
-.solve-btn:hover {
-    transform: translateY(-2px);
+.solve-btn.completed {
+    background: #00FFA3;
 }
 
-.solve-btn.completed {
-    background: var(--easy-color);
+.view-solution-btn {
+    padding: 8px 16px;
+    border-radius: 6px;
+    background: #00FFA3;
+    color: #000;
+    border: none;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-size: 14px;
+    font-weight: 500;
+    margin-left: 8px;
+}
+
+.view-solution-btn:hover {
+    transform: translateY(-2px);
+    opacity: 0.9;
+}
+
+.solution-input {
+    padding: 8px 16px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 6px;
+    background: rgba(255, 255, 255, 0.05);
+    color: #fff;
+    font-family: 'Fira Code', monospace;
+    width: 200px;
+    transition: all 0.3s ease;
+}
+
+.validate-btn {
+    padding: 8px 16px;
+    border-radius: 6px;
+    border: none;
+    background: rgba(255, 255, 255, 0.1);
+    color: #888;
+    cursor: not-allowed;
+    transition: all 0.3s ease;
+    font-size: 14px;
+    font-weight: 500;
+}
+
+.validate-btn.active {
+    background: #00FFA3;
+    color: #000;
+    cursor: pointer;
+}
+
+.validate-btn.active:hover {
+    transform: translateY(-2px);
+    opacity: 0.9;
 }
 
 @media (max-width: 768px) {
@@ -484,38 +553,6 @@
     background: rgba(255, 255, 255, 0.08);
 }
 
-.validate-btn {
-    padding: 8px 16px;
-    border-radius: 6px;
-    border: none;
-    background: rgba(255, 255, 255, 0.1);
-    color: #888;
-    cursor: not-allowed;
-    transition: all 0.3s ease;
-}
-
-.validate-btn.active {
-    background: var(--accent-color);
-    color: #000;
-    cursor: pointer;
-}
-
-.validate-btn.active:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 15px rgba(0, 255, 149, 0.4);
-}
-
-@media (max-width: 992px) {
-    .code-upload-container {
-        flex-direction: column;
-        align-items: stretch;
-    }
-
-    .code-input {
-        width: 100%;
-    }
-}
-
 .modal {
     display: none;
     position: fixed;
@@ -524,210 +561,169 @@
     top: 0;
     width: 100%;
     height: 100%;
-    background-color: rgba(0,0,0,0.7);
+    background-color: rgba(0, 0, 0, 0.85);
     backdrop-filter: blur(5px);
 }
 
 .modal-content {
-    background: var(--card-bg);
-    margin: 10% auto;
-    padding: 0;
+    background: #1a1a2e;
+    margin: 5% auto;
+    width: 90%;
+    max-width: 900px;
     border-radius: 12px;
-    width: 80%;
-    max-width: 800px;
-    box-shadow: 0 8px 32px rgba(0,0,0,0.2);
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+    position: relative;
+    overflow: hidden;
+    animation: modalSlideIn 0.3s ease-out;
 }
 
 .modal-header {
-    padding: 1rem 1.5rem;
-    border-bottom: 1px solid rgba(255,255,255,0.1);
+    padding: 1.5rem;
+    background: #16213e;
     display: flex;
     justify-content: space-between;
     align-items: center;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.header-left {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.header-left h2 {
+    color: #fff;
+    margin: 0;
+    font-size: 1.5rem;
+}
+
+.problem-meta {
+    display: flex;
+    gap: 1rem;
+    color: #888;
+    font-size: 0.9rem;
+}
+
+.close-btn {
+    background: transparent;
+    border: none;
+    color: #888;
+    cursor: pointer;
+    padding: 0.5rem;
+    transition: all 0.3s ease;
+    border-radius: 6px;
+}
+
+.close-btn:hover {
+    background: rgba(255, 255, 255, 0.1);
+    color: #fff;
 }
 
 .modal-body {
     padding: 1.5rem;
-    max-height: 70vh;
-    overflow-y: auto;
 }
 
-.close {
-    color: var(--text-secondary);
-    font-size: 1.5rem;
-    cursor: pointer;
-}
-
-#solutionCode {
-    background: rgba(0,0,0,0.3);
-    padding: 1rem;
+.solution-wrapper {
+    background: #1e1e2e;
     border-radius: 8px;
-    overflow-x: auto;
-    font-family: 'Fira Code', monospace;
-    color: var(--text-primary);
-    width: 100%;
-    min-height: 200px;
-    white-space: pre-wrap;
+    overflow: hidden;
 }
 
-.view-solution-btn {
-    padding: 0.5rem 1rem;
-    border-radius: 6px;
-    background: var(--accent-color);
-    color: #000;
-    border: none;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    margin-left: 0.5rem;
-}
-
-.view-solution-btn:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 15px rgba(0, 255, 149, 0.4);
-}
-
-.status-badge.solved {
-    color: var(--accent-color);
-}
-
-.status-badge.solved i {
-    animation: fadeIn 0.5s ease-in-out;
-}
-
-@keyframes fadeIn {
-    from { opacity: 0; transform: scale(0.8); }
-    to { opacity: 1; transform: scale(1); }
-}
-
-.solve-btn.completed {
-    background: var(--accent-color);
-}
-
-tr.solved {
-    background: rgba(0, 255, 149, 0.05);
-}
-
-.solution-input {
-    padding: 8px 12px;
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: 6px;
+.code-header {
+    padding: 1rem;
     background: rgba(255, 255, 255, 0.05);
-    color: #fff;
-    font-family: 'Fira Code', monospace;
-    width: 200px;
-    transition: all 0.3s ease;
-}
-
-.solution-input:focus {
-    border-color: var(--accent-color);
-    outline: none;
-}
-
-.validate-btn {
-    padding: 8px 16px;
-    border-radius: 6px;
-    border: none;
-    background: rgba(255, 255, 255, 0.1);
-    color: #888;
-    cursor: not-allowed;
-    transition: all 0.3s ease;
-}
-
-.validate-btn.active {
-    background: var(--accent-color);
-    color: #000;
-    cursor: pointer;
-}
-
-.validate-btn.active:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 15px rgba(0, 255, 149, 0.4);
-}
-
-.view-solution-btn {
-    padding: 0.5rem 1rem;
-    border-radius: 6px;
-    background: var(--accent-color);
-    color: #000;
-    border: none;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    margin-left: 0.5rem;
-}
-
-.view-solution-btn:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 15px rgba(0, 255, 149, 0.4);
-}
-
-.solution-modal {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.8);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    opacity: 0;
-    transition: opacity 0.3s ease;
-    z-index: 1000;
-}
-
-.solution-modal.show {
-    opacity: 1;
-}
-
-.solution-content {
-    background: var(--card-bg);
-    border-radius: 12px;
-    width: 90%;
-    max-width: 800px;
-    max-height: 90vh;
-    transform: translateY(20px);
-    transition: transform 0.3s ease;
-}
-
-.solution-content.show {
-    transform: translateY(0);
-}
-
-.solution-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 16px;
     border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-.solution-header h3 {
-    margin: 0;
-    color: #fff;
+.language-info {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: var(--accent-color);
 }
 
-.close-btn {
-    background: none;
-    border: none;
-    color: #888;
+.code-actions {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.action-btn {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+    border-radius: 6px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    background: rgba(255, 255, 255, 0.05);
+    color: #fff;
     cursor: pointer;
-    font-size: 1.2rem;
-    transition: color 0.3s ease;
+    transition: all 0.3s ease;
 }
 
-.close-btn:hover {
-    color: #fff;
+.action-btn:hover {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: var(--accent-color);
 }
 
-.solution-code {
-    padding: 20px;
+.code-container {
+    padding: 1.5rem;
+    max-height: 60vh;
+    overflow-y: auto;
+}
+
+.code-container pre {
     margin: 0;
-    background: rgba(0, 0, 0, 0.3);
-    border-radius: 0 0 12px 12px;
-    overflow-x: auto;
+    white-space: pre-wrap;
     font-family: 'Fira Code', monospace;
-    color: #fff;
+    font-size: 0.95rem;
     line-height: 1.5;
+}
+
+.code-container code {
+    color: #e4e4e4;
+}
+
+@keyframes modalSlideIn {
+    from {
+        transform: translateY(-20px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+/* Add syntax highlighting colors */
+.hljs-keyword { color: #ff79c6; }
+.hljs-string { color: #f1fa8c; }
+.hljs-number { color: #bd93f9; }
+.hljs-function { color: #50fa7b; }
+.hljs-comment { color: #6272a4; }
+.hljs-operator { color: #ff79c6; }
+.hljs-punctuation { color: #f8f8f2; }
+
+/* Scrollbar styling */
+.code-container::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+.code-container::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.05);
+}
+
+.code-container::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 4px;
+}
+
+.code-container::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.2);
 }
 </style>
 
@@ -863,56 +859,94 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 });
 
-// Add this function to handle viewing solutions
-async function viewSolution(problemId) {
-    const modal = document.createElement('div');
-    modal.className = 'solution-modal';
-    modal.innerHTML = `
-        <div class="solution-content">
-            <div class="solution-header">
-                <h3>Your Solution</h3>
-                <button class="close-btn"><i class="fas fa-times"></i></button>
-            </div>
-            <pre><code class="solution-code">Loading...</code></pre>
-        </div>
-    `;
-
-    document.body.appendChild(modal);
-
-    // Add animation classes
-    setTimeout(() => {
-        modal.classList.add('show');
-        modal.querySelector('.solution-content').classList.add('show');
-    }, 10);
-
+// Update the viewSolution function
+async function viewSolution(problemId, problemName) {
     try {
         const response = await fetch(`/dsa/problems/${problemId}/solution`);
         const data = await response.json();
 
         if (data.success) {
-            const codeElement = modal.querySelector('.solution-code');
-            codeElement.textContent = data.solution.code;
-            // Initialize code highlighting if you're using a library like Prism or highlight.js
-            if (window.Prism) {
-                Prism.highlightElement(codeElement);
+            const modal = document.getElementById('solutionModal');
+            const modalTitle = document.getElementById('modalTitle');
+            const solutionCode = document.getElementById('solutionCode');
+            const submissionDate = document.getElementById('submissionDate');
+
+            // Set the problem name - handle case where problemName might be undefined
+            modalTitle.textContent = problemName ? 
+                `Solution: ${problemName}` : 
+                'Solution';
+
+            // Set the code
+            solutionCode.textContent = data.solution.code || '';
+
+            // Format and set the submission date
+            if (data.solution.solvedAt) {
+                const date = new Date(data.solution.solvedAt);
+                submissionDate.textContent = date.toLocaleDateString('en-US', {
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric',
+                    hour: '2-digit',
+                    minute: '2-digit'
+                });
+            } else {
+                submissionDate.textContent = 'Recently submitted';
             }
+
+            // Detect language and set syntax highlighting
+            const language = detectLanguage(data.solution.code);
+            const languageType = document.getElementById('languageType');
+            if (languageType) {
+                languageType.textContent = `${language} Solution`;
+            }
+
+            // Show the modal
+            modal.style.display = 'block';
+
+            // Initialize syntax highlighting if available
+            if (window.hljs) {
+                hljs.highlightElement(solutionCode);
+            }
+
+            // Add copy functionality
+            const copyBtn = document.getElementById('copyBtn');
+            if (copyBtn) {
+                copyBtn.onclick = () => {
+                    navigator.clipboard.writeText(data.solution.code);
+                    copyBtn.innerHTML = '<i class="fas fa-check"></i> Copied!';
+                    setTimeout(() => {
+                        copyBtn.innerHTML = '<i class="fas fa-copy"></i> Copy';
+                    }, 2000);
+                };
+            }
+
+            // Close modal functionality
+            const closeBtn = modal.querySelector('.close-btn');
+            if (closeBtn) {
+                closeBtn.onclick = () => {
+                    modal.style.display = 'none';
+                };
+            }
+
+            // Close on outside click
+            window.onclick = (event) => {
+                if (event.target === modal) {
+                    modal.style.display = 'none';
+                }
+            };
         }
     } catch (error) {
-        console.error('Error:', error);
+        console.error('Error fetching solution:', error);
     }
+}
 
-    // Handle closing
-    modal.querySelector('.close-btn').onclick = () => {
-        modal.classList.remove('show');
-        setTimeout(() => modal.remove(), 300);
-    };
-
-    modal.onclick = (e) => {
-        if (e.target === modal) {
-            modal.classList.remove('show');
-            setTimeout(() => modal.remove(), 300);
-        }
-    };
+// Helper function to detect programming language
+function detectLanguage(code) {
+    if (code.includes('#include')) return 'C++';
+    if (code.includes('public class')) return 'Java';
+    if (code.includes('def ')) return 'Python';
+    if (code.includes('function')) return 'JavaScript';
+    return 'Code';
 }
 
 // Add this function to update progress stats
