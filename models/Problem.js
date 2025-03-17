@@ -1,10 +1,35 @@
 const mongoose = require('mongoose');
 
+const solutionSchema = new mongoose.Schema({
+    userId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User',
+        required: true
+    },
+    code: {
+        type: String,
+        required: true
+    },
+    submittedAt: {
+        type: Date,
+        default: Date.now
+    }
+});
+
 const problemSchema = new mongoose.Schema({
-    name: String,
-    slug: String,
-    leetcodeLink: String,
-    difficulty: String,
+    name: {
+        type: String,
+        required: true
+    },
+    difficulty: {
+        type: String,
+        required: true,
+        enum: ['Easy', 'Medium', 'Hard']
+    },
+    leetcodeLink: {
+        type: String,
+        required: true
+    },
     topic: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Topic'
@@ -20,6 +45,7 @@ const problemSchema = new mongoose.Schema({
         },
         solvedAt: Date
     }],
+    solutions: [solutionSchema]
 }, {
     timestamps: true
 });

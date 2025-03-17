@@ -422,6 +422,22 @@ function getTopicIcon(topicName) {
 </style>
 
 <script>
+// Add auto-reload functionality
+function checkForValidation() {
+    // Check if there's a validation flag in localStorage
+    if (localStorage.getItem('problem_validated') === 'true') {
+        // Clear the flag
+        localStorage.removeItem('problem_validated');
+        // Reload the page
+        window.location.reload();
+    }
+    // Check again after 2 seconds
+    setTimeout(checkForValidation, 2000);
+}
+
+// Start checking for validation
+checkForValidation();
+
 // Initialize AOS
 AOS.init({
     duration: 800,

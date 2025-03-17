@@ -7,6 +7,8 @@ const Submission = require('../models/Submission');
 const axios = require('axios');
 const User = require('../models/User');
 const { requireAuth } = require('../middleware/auth');
+const UserProgress = require('../models/UserProgress');
+const mongoose = require('mongoose');
 
 // DSA Sheet route
 router.get('/sheet', auth, async (req, res) => {
@@ -315,72 +317,102 @@ router.get('/check-problem/:slug', auth, async (req, res) => {
 });
 
 // Update the manual validation route
-router.post('/problems/:id/mark-solved', auth, async (req, res) => {
+router.post('/problems/:problemId/mark-solved', async (req, res) => {
     try {
-        const problemId = req.params.id;
+        const { problemId } = req.params;
+        const { code } = req.body;
         const userId = req.user._id;
 
-        // Find the problem first
-        const problem = await Problem.findById(problemId);
-        if (!problem) {
-            return res.status(404).json({
-                success: false,
-                message: 'Problem not found'
+        // Validate the problem ID
+        if (!problemId || problemId === 'null' || problemId === 'undefined') {
+            return res.status(400).json({ error: 'Invalid problem ID' });
+        }
+        
+        // Check if it's a valid MongoDB ObjectId
+        if (!mongoose.Types.ObjectId.isValid(problemId)) {
+            return res.status(400).json({ error: 'Invalid problem ID format' });
+        }
+
+        // Find or create user progress
+        let userProgress = await UserProgress.findOne({ userId });
+        if (!userProgress) {
+            userProgress = new UserProgress({ 
+                userId,
+                problems: []
             });
         }
 
-        // Check if already solved by this user
-        const alreadySolved = problem.solvedBy.some(solve => 
-            solve.user.toString() === userId.toString()
+        // Add or update the problem in user's progress
+        const existingProblemIndex = userProgress.problems.findIndex(
+            p => p.problemId && p.problemId.toString() === problemId
         );
 
-        if (alreadySolved) {
-            return res.json({
-                success: false,
-                message: 'Problem already marked as solved'
+        if (existingProblemIndex === -1) {
+            userProgress.problems.push({
+                problemId: problemId,
+                solved: true,
+                solution: code,
+                solvedAt: new Date()
             });
+        } else {
+            userProgress.problems[existingProblemIndex].solved = true;
+            userProgress.problems[existingProblemIndex].solution = code;
+            userProgress.problems[existingProblemIndex].solvedAt = new Date();
         }
 
-        // Update problem and create submission
-        await Promise.all([
-            // Add user to solvedBy array and increment solvedCount
-            Problem.findByIdAndUpdate(
-                problemId,
-                {
-                    $addToSet: {
-                        solvedBy: {
-                            user: userId,
-                            solvedAt: new Date()
-                        }
-                    },
-                    $inc: { solvedCount: 1 }
-                }
-            ),
-            // Create submission record
-            Submission.create({
-                user: userId,
-                problem: problemId,
-                status: 'Accepted',
-                submittedAt: new Date()
-            }),
-            // Increment user's solved problems count
-            User.findByIdAndUpdate(
-                userId,
-                { $inc: { solvedProblemsCount: 1 } }
-            )
-        ]);
+        await userProgress.save();
 
-        res.json({
-            success: true,
-            message: 'Problem marked as solved successfully'
+        // Update the problem's solutions array
+        await Problem.findByIdAndUpdate(problemId, {
+            $push: {
+                solutions: {
+                    userId: userId,
+                    code: code,
+                    submittedAt: new Date()
+                }
+            }
+        });
+
+        // Get updated topic stats to return to client
+        const problem = await Problem.findById(problemId).populate('topicId');
+        const topicId = problem.topicId._id;
+        
+        // Get all problems for this topic
+        const topicProblems = await Problem.find({ topicId });
+        
+        // Count solved problems for this topic
+        const solvedProblems = await UserProgress.aggregate([
+            { $match: { userId: mongoose.Types.ObjectId(userId) } },
+            { $unwind: "$problems" },
+            { $match: { "problems.solved": true } },
+            { $lookup: {
+                from: "problems",
+                localField: "problems.problemId",
+                foreignField: "_id",
+                as: "problemDetails"
+            }},
+            { $unwind: "$problemDetails" },
+            { $match: { "problemDetails.topicId": mongoose.Types.ObjectId(topicId) } },
+            { $count: "solved" }
+        ]);
+        
+        const solvedCount = solvedProblems.length > 0 ? solvedProblems[0].solved : 0;
+        const totalCount = topicProblems.length;
+        const progress = Math.round((solvedCount / totalCount) * 100);
+
+        res.json({ 
+            success: true, 
+            message: 'Problem marked as solved and solution saved',
+            stats: {
+                solved: solvedCount,
+                total: totalCount,
+                progress: progress
+            }
         });
 
     } catch (error) {
         console.error('Error marking problem as solved:', error);
-        res.status(500).json({
-            success: false,
-            message: 'Failed to mark problem as solved'
-        });
+        res.status(500).json({ error: 'Server error' });
     }
 });
 
@@ -403,6 +435,100 @@ router.get('/leaderboard', requireAuth, async (req, res) => {
         console.error('Error loading leaderboard:', error);
         res.status(500).render('error', { message: 'Error loading leaderboard' });
     }
+});
+
+router.get('/problems/:problemId/solutions', async (req, res) => {
+    try {
+        const { problemId } = req.params;
+        const problem = await Problem.findById(problemId)
+            .populate({
+                path: 'solutions.userId',
+                select: 'username'
+            });
+
+        if (!problem) {
+            return res.status(404).json({ success: false, message: 'Problem not found' });
+        }
+
+        res.json({ 
+            success: true, 
+            solutions: problem.solutions 
+        });
+    } catch (error) {
+        console.error('Error fetching solutions:', error);
+        res.status(500).json({ 
+            success: false, 
+            message: 'Failed to fetch solutions'
+        });
+    }
+});
+
+// Get solution for a specific problem
+router.get('/problems/:problemId/solution', async (req, res) => {
+    try {
+        const { problemId } = req.params;
+        const userId = req.user._id;
+
+        const userProgress = await UserProgress.findOne({
+            userId,
+            'problems.problemId': problemId
+        });
+
+        if (!userProgress) {
+            return res.status(404).json({
+                success: false,
+                message: 'No solution found for this problem'
+            });
+        }
+
+        const problemProgress = userProgress.problems.find(
+            p => p.problemId.toString() === problemId
+        );
+
+        if (!problemProgress || !problemProgress.solution) {
+            return res.status(404).json({
+                success: false,
+                message: 'No solution found for this problem'
+            });
+        }
+
+        res.json({
+            success: true,
+            solution: {
+                code: problemProgress.solution,
+                solvedAt: problemProgress.solvedAt
+            }
+        });
+    } catch (error) {
+        console.error('Error fetching solution:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Failed to fetch solution'
+        });
+    }
+});
+
+// In your validation route
+router.post('/validate-problem', async (req, res) => {
+  try {
+    const { problemId } = req.body;
+    
+    // Add validation for problemId
+    if (!problemId || problemId === 'null' || problemId === 'undefined') {
+      return res.status(400).json({ error: 'Invalid problem ID' });
+    }
+    
+    // Check if the problem ID is a valid ObjectId
+    if (!mongoose.Types.ObjectId.isValid(problemId)) {
+      return res.status(400).json({ error: 'Invalid problem ID format' });
+    }
+    
+    // Rest of your validation logic
+    // ...
+  } catch (error) {
+    console.error('Error validating problem:', error);
+    res.status(500).json({ error: 'Failed to validate problem' });
+  }
 });
 
 module.exports = router;

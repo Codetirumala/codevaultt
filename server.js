@@ -65,6 +65,19 @@ app.use((err, req, res, next) => {
             : 'Internal server error'
     });
 });
+app.use((err, req, res, next) => {
+    console.error(err.stack);
+    if (req.xhr || req.headers.accept.includes('application/json')) {
+        // Send JSON response for API requests
+        res.status(500).json({
+            success: false,
+            message: 'An error occurred while processing your request'
+        });
+    } else {
+        // Send HTML response for regular requests
+        res.status(500).render('error', { error: err });
+    }
+});
 
 // Import all models
 require('./models/User');  // if you have this

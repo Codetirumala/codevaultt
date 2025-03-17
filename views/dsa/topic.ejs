@@ -64,7 +64,7 @@
                 </thead>
                 <tbody>
                     <% problems.forEach(problem => { %>
-                        <tr class="problem-row <%= problem.isSolved ? 'solved' : '' %>" data-difficulty="<%= problem.difficulty %>">
+                        <tr class="problem-row <%= problem.isSolved ? 'solved' : '' %>" data-problem-id="<%= problem._id %>" data-difficulty="<%= problem.difficulty %>">
                             <td class="status-cell">
                                 <% if (problem.isSolved) { %>
                                     <span class="status-badge solved">
@@ -87,31 +87,38 @@
                                 </span>
                             </td>
                             <td>
-                                <a href="<%= problem.leetcodeLink %>" 
-                                   target="_blank" 
-                                   class="solve-btn <%= problem.isSolved ? 'completed' : '' %>">
-                                    <i class="fas <%= problem.isSolved ? 'fa-check' : 'fa-code' %>"></i>
-                                    <%= problem.isSolved ? 'Review' : 'Solve' %>
-                                </a>
-                                <% if (!problem.isSolved) { %>
-                                    <button 
-                                        id="validate-<%= problem._id %>" 
-                                        onclick="markProblemAsSolved('<%= problem._id %>')"
-                                        class="btn btn-primary validate-btn">
-                                        Validate
+                                <% if (problem.isSolved) { %>
+                                    <a href="<%= problem.leetcodeLink %>" target="_blank" class="solve-btn completed">
+                                        <i class="fas fa-check"></i> Review
+                                    </a>
+                                    <button onclick="viewSolution('<%= problem._id %>', '<%= problem.name %>')" class="view-solution-btn">
+                                        View Solution
                                     </button>
                                 <% } else { %>
-                                    <button 
-                                        class="btn btn-success" 
-                                        disabled>
-                                        Solved ✓
-                                    </button>
+                                    <a href="<%= problem.leetcodeLink %>" target="_blank" class="solve-btn">
+                                        <i class="fas fa-code"></i> Solve
+                                    </a>
+                                    <input type="text" placeholder="Paste your solution" class="solution-input">
+                                    <button class="validate-btn" disabled>Validate</button>
                                 <% } %>
                             </td>
                         </tr>
                     <% }); %>
                 </tbody>
             </table>
+        </div>
+    </div>
+</div>
+
+<!-- Add this modal for viewing solutions -->
+<div id="solutionModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2 id="modalTitle">Solution</h2>
+            <span class="close">&times;</span>
+        </div>
+        <div class="modal-body">
+            <pre><code id="solutionCode"></code></pre>
         </div>
     </div>
 </div>
@@ -444,6 +451,284 @@
 .save-btn:hover {
     background: #00a884;
 }
+
+.action-group {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+}
+
+.code-upload-container {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+}
+
+.code-input {
+    width: 200px;
+    height: 35px;
+    padding: 0.5rem;
+    border-radius: 6px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: #fff;
+    font-family: 'Fira Code', monospace;
+    font-size: 0.9rem;
+    resize: none;
+    transition: all 0.3s ease;
+}
+
+.code-input:focus {
+    outline: none;
+    border-color: var(--accent-color);
+    background: rgba(255, 255, 255, 0.08);
+}
+
+.validate-btn {
+    padding: 8px 16px;
+    border-radius: 6px;
+    border: none;
+    background: rgba(255, 255, 255, 0.1);
+    color: #888;
+    cursor: not-allowed;
+    transition: all 0.3s ease;
+}
+
+.validate-btn.active {
+    background: var(--accent-color);
+    color: #000;
+    cursor: pointer;
+}
+
+.validate-btn.active:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(0, 255, 149, 0.4);
+}
+
+@media (max-width: 992px) {
+    .code-upload-container {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .code-input {
+        width: 100%;
+    }
+}
+
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0,0,0,0.7);
+    backdrop-filter: blur(5px);
+}
+
+.modal-content {
+    background: var(--card-bg);
+    margin: 10% auto;
+    padding: 0;
+    border-radius: 12px;
+    width: 80%;
+    max-width: 800px;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.2);
+}
+
+.modal-header {
+    padding: 1rem 1.5rem;
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.modal-body {
+    padding: 1.5rem;
+    max-height: 70vh;
+    overflow-y: auto;
+}
+
+.close {
+    color: var(--text-secondary);
+    font-size: 1.5rem;
+    cursor: pointer;
+}
+
+#solutionCode {
+    background: rgba(0,0,0,0.3);
+    padding: 1rem;
+    border-radius: 8px;
+    overflow-x: auto;
+    font-family: 'Fira Code', monospace;
+    color: var(--text-primary);
+    width: 100%;
+    min-height: 200px;
+    white-space: pre-wrap;
+}
+
+.view-solution-btn {
+    padding: 0.5rem 1rem;
+    border-radius: 6px;
+    background: var(--accent-color);
+    color: #000;
+    border: none;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin-left: 0.5rem;
+}
+
+.view-solution-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(0, 255, 149, 0.4);
+}
+
+.status-badge.solved {
+    color: var(--accent-color);
+}
+
+.status-badge.solved i {
+    animation: fadeIn 0.5s ease-in-out;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: scale(0.8); }
+    to { opacity: 1; transform: scale(1); }
+}
+
+.solve-btn.completed {
+    background: var(--accent-color);
+}
+
+tr.solved {
+    background: rgba(0, 255, 149, 0.05);
+}
+
+.solution-input {
+    padding: 8px 12px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 6px;
+    background: rgba(255, 255, 255, 0.05);
+    color: #fff;
+    font-family: 'Fira Code', monospace;
+    width: 200px;
+    transition: all 0.3s ease;
+}
+
+.solution-input:focus {
+    border-color: var(--accent-color);
+    outline: none;
+}
+
+.validate-btn {
+    padding: 8px 16px;
+    border-radius: 6px;
+    border: none;
+    background: rgba(255, 255, 255, 0.1);
+    color: #888;
+    cursor: not-allowed;
+    transition: all 0.3s ease;
+}
+
+.validate-btn.active {
+    background: var(--accent-color);
+    color: #000;
+    cursor: pointer;
+}
+
+.validate-btn.active:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(0, 255, 149, 0.4);
+}
+
+.view-solution-btn {
+    padding: 0.5rem 1rem;
+    border-radius: 6px;
+    background: var(--accent-color);
+    color: #000;
+    border: none;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin-left: 0.5rem;
+}
+
+.view-solution-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(0, 255, 149, 0.4);
+}
+
+.solution-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.8);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    z-index: 1000;
+}
+
+.solution-modal.show {
+    opacity: 1;
+}
+
+.solution-content {
+    background: var(--card-bg);
+    border-radius: 12px;
+    width: 90%;
+    max-width: 800px;
+    max-height: 90vh;
+    transform: translateY(20px);
+    transition: transform 0.3s ease;
+}
+
+.solution-content.show {
+    transform: translateY(0);
+}
+
+.solution-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.solution-header h3 {
+    margin: 0;
+    color: #fff;
+}
+
+.close-btn {
+    background: none;
+    border: none;
+    color: #888;
+    cursor: pointer;
+    font-size: 1.2rem;
+    transition: color 0.3s ease;
+}
+
+.close-btn:hover {
+    color: #fff;
+}
+
+.solution-code {
+    padding: 20px;
+    margin: 0;
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 0 0 12px 12px;
+    overflow-x: auto;
+    font-family: 'Fira Code', monospace;
+    color: #fff;
+    line-height: 1.5;
+}
 </style>
 
 <script>
@@ -514,67 +799,140 @@ if (leetcodeForm) {
     });
 }
 
-// Add this function after your existing event listeners
-async function markProblemAsSolved(problemId) {
-    try {
-        const response = await fetch(`/dsa/problems/${problemId}/mark-solved`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
+// Add this script to your topic.ejs file
+document.addEventListener('DOMContentLoaded', function() {
+    // Enable validate button when solution is pasted
+    const solutionInputs = document.querySelectorAll('.solution-input');
+    
+    solutionInputs.forEach(input => {
+        input.addEventListener('input', function() {
+            const validateBtn = this.nextElementSibling;
+            if (this.value.trim()) {
+                validateBtn.classList.add('active');
+                validateBtn.disabled = false;
+            } else {
+                validateBtn.classList.remove('active');
+                validateBtn.disabled = true;
             }
         });
+    });
 
+    // Handle validate button click
+    document.querySelectorAll('.validate-btn').forEach(btn => {
+        btn.addEventListener('click', async function() {
+            const row = this.closest('tr');
+            const problemId = row.dataset.problemId;
+            const solutionInput = row.querySelector('.solution-input');
+            const code = solutionInput.value.trim();
+
+            if (!code) return;
+
+            try {
+                const response = await fetch(`/dsa/problems/${problemId}/mark-solved`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ code })
+                });
+
+                const data = await response.json();
+                if (data.success) {
+                    // Update UI to show solved status
+                    row.classList.add('solved');
+                    row.querySelector('.status-badge').innerHTML = '<i class="fas fa-check-circle"></i>';
+                    
+                    // Replace input and validate button with review and view solution buttons
+                    const actionCell = row.querySelector('td:last-child');
+                    actionCell.innerHTML = `
+                        <a href="${row.querySelector('a').href}" target="_blank" class="solve-btn completed">
+                            <i class="fas fa-check"></i> Review
+                        </a>
+                        <button onclick="viewSolution('${problemId}')" class="view-solution-btn">
+                            <i class="fas fa-code"></i> View Solution
+                        </button>
+                    `;
+
+                    // Update progress stats
+                    updateProgressStats(data.stats);
+                }
+            } catch (error) {
+                console.error('Error:', error);
+            }
+        });
+    });
+});
+
+// Add this function to handle viewing solutions
+async function viewSolution(problemId) {
+    const modal = document.createElement('div');
+    modal.className = 'solution-modal';
+    modal.innerHTML = `
+        <div class="solution-content">
+            <div class="solution-header">
+                <h3>Your Solution</h3>
+                <button class="close-btn"><i class="fas fa-times"></i></button>
+            </div>
+            <pre><code class="solution-code">Loading...</code></pre>
+        </div>
+    `;
+
+    document.body.appendChild(modal);
+
+    // Add animation classes
+    setTimeout(() => {
+        modal.classList.add('show');
+        modal.querySelector('.solution-content').classList.add('show');
+    }, 10);
+
+    try {
+        const response = await fetch(`/dsa/problems/${problemId}/solution`);
         const data = await response.json();
-        
+
         if (data.success) {
-            // Update the UI
-            // 1. Update the status badge
-            const row = document.querySelector(`#validate-${problemId}`).closest('tr');
-            const statusCell = row.querySelector('.status-cell');
-            statusCell.innerHTML = `
-                <span class="status-badge solved">
-                    <i class="fas fa-check-circle"></i>
-                </span>
-            `;
-            
-            // 2. Update the action buttons
-            const actionCell = row.querySelector('td:last-child');
-            const solveBtn = actionCell.querySelector('.solve-btn');
-            solveBtn.innerHTML = '<i class="fas fa-check"></i> Review';
-            solveBtn.classList.add('completed');
-            
-            // Replace validate button with solved button
-            const validateBtn = actionCell.querySelector('.validate-btn');
-            validateBtn.outerHTML = `
-                <button class="btn btn-success" disabled>
-                    Solved ✓
-                </button>
-            `;
-
-            // 3. Update the problem count and progress
-            const solvedCountElement = document.querySelector('.topic-stats .stat span');
-            const [current, total] = solvedCountElement.textContent.split('/');
-            const newCount = parseInt(current) + 1;
-            solvedCountElement.textContent = `${newCount}/${total}`;
-
-            // 4. Update progress percentage
-            const progressElement = document.querySelector('.topic-stats .stat:last-child span');
-            const newProgress = Math.round((newCount / parseInt(total)) * 100);
-            progressElement.textContent = `Progress: ${newProgress}%`;
-
-            // 5. Update progress circle
-            const progressCircle = document.querySelector('.progress-circle');
-            progressCircle.style.setProperty('--progress', `${newProgress}%`);
-            progressCircle.querySelector('.progress-text').textContent = `${newProgress}%`;
-
-            // 6. Add solved class to row
-            row.classList.add('solved');
-        } else {
-            alert(data.message || 'Failed to mark problem as solved');
+            const codeElement = modal.querySelector('.solution-code');
+            codeElement.textContent = data.solution.code;
+            // Initialize code highlighting if you're using a library like Prism or highlight.js
+            if (window.Prism) {
+                Prism.highlightElement(codeElement);
+            }
         }
     } catch (error) {
         console.error('Error:', error);
-        alert('Failed to mark problem as solved');
+    }
+
+    // Handle closing
+    modal.querySelector('.close-btn').onclick = () => {
+        modal.classList.remove('show');
+        setTimeout(() => modal.remove(), 300);
+    };
+
+    modal.onclick = (e) => {
+        if (e.target === modal) {
+            modal.classList.remove('show');
+            setTimeout(() => modal.remove(), 300);
+        }
+    };
+}
+
+// Add this function to update progress stats
+function updateProgressStats(stats) {
+    const progressCircle = document.querySelector('.progress-circle');
+    const progressText = document.querySelector('.progress-text');
+    const solvedStats = document.querySelector('.topic-stats .stat:first-child span');
+    const progressStats = document.querySelector('.topic-stats .stat:last-child span');
+
+    if (progressCircle) {
+        progressCircle.style.setProperty('--progress', `${stats.progress}%`);
+    }
+    if (progressText) {
+        progressText.textContent = `${stats.progress}%`;
+    }
+    if (solvedStats) {
+        solvedStats.textContent = `Solved: ${stats.solved}/${stats.total}`;
+    }
+    if (progressStats) {
+        progressStats.textContent = `Progress: ${stats.progress}%`;
     }
 }
 </script>
