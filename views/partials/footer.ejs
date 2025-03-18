@@ -81,6 +81,31 @@
                     </ul>
                 </div>
             </div>
+            
+            <div class="developers-credits">
+                <div class="credit-text">
+                    Developed by 
+                    <a href="https://www.linkedin.com/in/reddi-lakshmi-narasimha-543a45289?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=android_app" target="_blank" class="dev-link">
+                        R.Lakshmi Narasimha
+                        <i class="fab fa-linkedin"></i>
+                    </a> 
+                    & 
+                    <a href="https://www.linkedin.com/in/shareen-dandasi-20a271272?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=android_app" target="_blank" class="dev-link">
+                        D.Shareen
+                        <i class="fab fa-linkedin"></i>
+                    </a>
+                    <span class="department">Department of CSM</span>
+                </div>
+                <div class="guidance-text">
+                    Under the esteemed guidance of 
+                    <a href="https://www.linkedin.com/" target="_blank" class="mentor-link">
+                        Sri CH.Ravi Kishore
+                        <i class="fab fa-linkedin"></i>
+                    </a>
+                    <span class="designation">Sr. Asst. Professor</span>
+                    <span class="department">Department of TPC</span>
+                </div>
+            </div>
         </div>
     </div>
 </footer>
@@ -275,6 +300,103 @@
     
     .footer-title {
         margin-top: 1.5rem;
+    }
+}
+
+.developers-credits {
+    margin-top: 2rem;
+    padding-top: 2rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    text-align: center;
+    background: linear-gradient(to right, rgba(0, 255, 149, 0.05), rgba(0, 184, 255, 0.05));
+    border-radius: 12px;
+    padding: 1.5rem;
+}
+
+.credit-text, .guidance-text {
+    color: var(--text-secondary);
+    font-size: 0.95rem;
+    line-height: 1.8;
+    margin-bottom: 0.5rem;
+}
+
+.dev-link, .mentor-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    color: var(--accent-color);
+    text-decoration: none;
+    padding: 0.2rem 0.5rem;
+    border-radius: 4px;
+    transition: all 0.3s ease;
+    position: relative;
+}
+
+.dev-link:hover, .mentor-link:hover {
+    color: #fff;
+    background: linear-gradient(135deg, #00ff95, #00b8ff);
+    transform: translateY(-2px);
+}
+
+.dev-link i, .mentor-link i {
+    font-size: 0.9rem;
+    opacity: 0.8;
+}
+
+.department, .designation {
+    display: inline-block;
+    padding: 0.2rem 0.6rem;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 4px;
+    margin: 0 0.3rem;
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+}
+
+.guidance-text {
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.mentor-link {
+    color: #00ff95;
+}
+
+.mentor-link:hover {
+    background: linear-gradient(135deg, #00ff95, #00b8ff);
+    box-shadow: 0 4px 15px rgba(0, 255, 149, 0.2);
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.developers-credits {
+    animation: fadeInUp 0.8s ease-out forwards;
+}
+
+@media (max-width: 768px) {
+    .developers-credits {
+        margin-top: 1.5rem;
+        padding: 1rem;
+    }
+
+    .credit-text, .guidance-text {
+        font-size: 0.9rem;
+    }
+
+    .department, .designation {
+        display: block;
+        margin: 0.5rem auto;
+        max-width: fit-content;
     }
 }
 </style>
